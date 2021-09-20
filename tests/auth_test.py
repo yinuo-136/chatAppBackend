@@ -52,7 +52,7 @@ def test_basic_failed_login__email():
     auth_register_v1("test@gmail.com", "password", "First", "Last")
 
     with pytest.raises(InputError):
-        auth_login_v1("not_correct@yahoo.com", "password", "First", "Last")
+        auth_login_v1("not_correct@yahoo.com", "password")
 
 
 def test_basic_failed_login__password():
@@ -62,7 +62,7 @@ def test_basic_failed_login__password():
     auth_register_v1("test@gmail.com", "password", "First", "Last")
 
     with pytest.raises(InputError):
-        auth_login_v1("test@gmail.com", "not_correct", "First", "Last")
+        auth_login_v1("test@gmail.com", "not_correct")
 
 
 def test_basic_failed_register__invalid_email():
@@ -79,7 +79,7 @@ def test_basic_failed_register__duplicate_email():
 
     auth_register_v1("test@gmail.com", "password", "Nick", "Stathakis")
 
-    with pytest.raises(InputError):
+    with pytest.raises(AccessError):
         auth_register_v1("test@gmail.com", "another_password", "Jayden", "Matthews")
 
 
