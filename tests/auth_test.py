@@ -15,3 +15,8 @@ def test_basic_auth_multiple():
     assert auth_register_v1("email@gmail.com", "password", "Jayden", "Matthews") == { 'auth_user_id' : 1 }
     assert auth_register_v1("email@yahoo.com", "password", "Nick", "Stathakis") == { 'auth_user_id' : 2 }
     assert auth_register_v1("email@outlook.com", "password", "Sample", "Name") == { 'auth_user_id' : 3 }
+
+def test_basic_auth_fail():
+    clear_v1()
+    with pytest.raises(InputError):
+        auth_register_v1("invalid_email", "password", "Nick", "Stathakis")
