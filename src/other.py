@@ -2,5 +2,9 @@ from src.data_store import data_store
 
 def clear_v1():
     store = data_store.get()
-    store['users'] = []
+    store['registered_users'] = {}
+    store['user_ids'] = {}
+    store['logged_in_users'] = []
+    store['user_details'] = {}
+    store['channels'] = {}
     data_store.set(store)
