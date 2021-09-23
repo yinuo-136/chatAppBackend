@@ -42,12 +42,23 @@ def auth_register_v1(email, password, name_first, name_last):
     if len(password) < 6:
         raise InputError()
     
+    #error checking for name
     if len(name_first) > 50 or len(name_first) < 1:
         raise InputError()
         
     if len(name_last) > 50 or len(name_last) < 1:
         raise InputError()
-
+   
+    #error checking for non-alnum in name     
+    name_regex = r'^[A-Za-z0-9]*$'   
+    
+    if re.fullmatch(name_regex, name_first) == None:
+        raise InputError()
+    elif re.fullmatch(name_regex, name_last) == None:
+        raise InputError()
+    
+    
+    # Storing Details in Datastore
     new_id = len(store['registered_users']) + 1
      
     store['user_details'].update({new_id : (email, password, name_first, name_last)})
