@@ -7,5 +7,4 @@ def clear_v1():
     store['logged_in_users'] = []
     store['user_details'] = {}
     store['channels'] = {}
-    store['channel_members'] = {}
     data_store.set(store)
