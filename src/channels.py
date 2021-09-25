@@ -30,7 +30,7 @@ def channels_listall_v1(auth_user_id):
     else:
         for channel_id in channel_list:
             channel = channel_list.get(channel_id)
-            channel_name = channel[1]
+            channel_name = channel[0]
             channel_info = {'channel_id': channel_id, 'name': channel_name,}
             all_list.append(channel_info)
 
