@@ -14,13 +14,28 @@ def channels_list_v1(auth_user_id):
     }
 
 def channels_listall_v1(auth_user_id):
+    
+    store = data_store.get()
+
+    u_dict = store['user_details']
+    # implement the user id validity check
+    if auth_user_id not in u_dict.keys():
+        raise AccessError("the user id you entered does not exist")
+
+    #implement the return list_all dictionary
+    all_list = []
+    channel_list = store['channels']
+    if channel_list == {}:
+        all_list = []
+    else:
+        for channel_id in channel_list:
+            channel = channel_list.get(channel_id)
+            channel_name = channel[1]
+            channel_info = {'channel_id': channel_id, 'name': channel_name,}
+            all_list.append(channel_info)
+
     return {
-        'channels': [
-        	{
-        		'channel_id': 1,
-        		'name': 'My Channel',
-        	}
-        ],
+        'channels': all_list
     }
 
 def channels_create_v1(auth_user_id, name, is_public):
