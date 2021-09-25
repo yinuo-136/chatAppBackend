@@ -1,9 +1,13 @@
 import pytest
 
-from src.channels import channels_create_v1
+from src.channels import channels_create_v1, channels_listall_v1
 from src.auth import auth_register_v1
 from src.error import AccessError, InputError
 from src.other import clear_v1
+
+#########################################################################################
+
+## channels_create_v1 tests:
 
 # channels_create_v1 feature 1: length of name is less than 1 or more than 20 characters, 
 # if it fails the rule, raise an InputError.
@@ -63,3 +67,74 @@ def test_channel_id_unique():
     c_id_1 = c_dict_1['channel_id']
     c_id_2 = c_dict_2['channel_id']
     assert c_id_1 != c_id_2
+
+###################################################################################
+
+## channels_listall_v1 tests
+
+#feature 1: if there is no channels that has been created, return an empty list
+def test_listall_empty_channel():
+
+    clear_v1()
+
+    u_dict = auth_register_v1("test@gmail.com", "password", "First", "Last")
+    u_id = u_dict['auth_user_id']
+
+    all_list = channels_listall_v1(u_id)
+    assert all_list == {'channels': []}
+
+
+#feature 2: if user id that given in the parameter dose not exist, raise AccessError
+def test_listall_uid_validity():
+
+    clear_v1()
+
+    u_id = 12 
+
+    with pytest.raises(AccessError):
+        channels_listall_v1(u_id)
+
+
+#feature 3: test the general functionality of the listall function
+def test_listall_general():
+
+    clear_v1()
+
+    u_dict_1 = auth_register_v1("test_1@gmail.com", "password", "First", "Last")
+    u_id_1 = u_dict_1['auth_user_id']
+
+    u_dict_2 = auth_register_v1("test_2@gmail.com", "password", "First", "Last")
+    u_id_2 = u_dict_2['auth_user_id']
+
+    c_dict_1 = channels_create_v1(u_id_1, 'name_1', False)
+    c_dict_2 = channels_create_v1(u_id_2, 'name_2', True)
+
+    c_id_1 = c_dict_1['channel_id']
+    c_id_2 = c_dict_2['channel_id']
+
+    assert channels_listall_v1(u_id_1) == {
+                                        'channels': [
+                                            {'channel_id': c_id_1,
+                                             'name': 'name_1',
+                                            },
+                                            {'channel_id': c_id_2,
+                                             'name': 'name_2',
+                                            }
+                                         ],
+                                    }
+    
+    assert channels_listall_v1(u_id_2) == {
+                                        'channels': [
+                                            {'channel_id': c_id_1,
+                                             'name': 'name_1',
+                                            },
+                                            {'channel_id': c_id_2,
+                                             'name': 'name_2',
+                                            }
+                                         ],
+                                    }
+
+############################################################
+
+    
+

@@ -26,7 +26,7 @@ Example usage:
 
 ## YOU SHOULD MODIFY THIS OBJECT BELOW
 initial_object = {
-    'registerd_users' : {},
+    'registered_users' : {},
     'user_ids' : {},
     'user_details' : {},
     'logged_in_users' : [],
