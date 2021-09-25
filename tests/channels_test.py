@@ -58,6 +58,8 @@ def test_channel_id_unique():
 
     u_dict = auth_register_v1("test@gmail.com", "password", "First", "Last")
     u_id = u_dict['auth_user_id']
-    c_id_1 = channels_create_v1(u_id, "correct_name", False)
-    c_id_2 = channels_create_v1(u_id, "correct_name_1", False)
+    c_dict_1 = channels_create_v1(u_id, "correct_name", False)
+    c_dict_2 = channels_create_v1(u_id, "correct_name_1", False)
+    c_id_1 = c_dict_1['channel_id']
+    c_id_2 = c_dict_2['channel_id']
     assert c_id_1 != c_id_2
