@@ -55,7 +55,8 @@ def channels_create_v1(auth_user_id, name, is_public):
     c_id = len(store['channels']) + 1
     owner = [auth_user_id]
     members = [auth_user_id]
-    store['channels'].update({c_id : (name, is_public, owner, members)})
+    messages = []
+    store['channels'].update({c_id : (name, is_public, owner, members,messages)})
         
     return {
         'channel_id': c_id,
