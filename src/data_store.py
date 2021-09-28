@@ -31,7 +31,7 @@ initial_object = {
     'logged_in_users' : [],
     'user_details' : {},
     'channels' : {},
-    'channel_members' : {},
+    'global_permissions' : {},
 }
 ## YOU SHOULD MODIFY THIS OBJECT ABOVE
 
