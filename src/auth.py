@@ -62,8 +62,10 @@ def auth_register_v1(email, password, name_first, name_last):
     
     handle_matches = 0
     for i in store['user_details'].keys():
-        user = store['user_details'][i]   
-        if user[4][0:20] == handle:
+        user = store['user_details'][i]
+        temp_handle = re.sub(r'[0-9]+', '', user[4])
+        print(temp_handle)
+        if temp_handle == handle:
             handle_matches += 1
     
     if (handle_matches > 0):        

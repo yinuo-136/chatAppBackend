@@ -5,6 +5,7 @@ from src.auth import auth_login_v1
 from src.error import InputError
 from src.error import AccessError
 from src.other import clear_v1
+from src.data_store import *
 
 
 def test_basic_auth_single():
@@ -151,3 +152,42 @@ def test_failed_register__invalid_last__invalid_characters():
 
     with pytest.raises(InputError):
         auth_register_v1("test@gmail.com", "password", "FirstName", "I$Am_Invalid+-")
+
+def test_basic_handle():
+    auth_register_v1("email@gmail.com", "password" , "jayden" , "matthews")
+    
+    store = data_store.get()
+    
+    user = store['user_details'].get(1)
+    assert user[4] == "jaydenmatthews"
+    
+    clear_v1()
+
+def test_duplicate_handle():
+    auth_register_v1("email@gmail.com", "password" , "jayden" , "matthews")
+    auth_register_v1("email2@gmail.com", "password2" , "jayden" , "matthews")
+    auth_register_v1("email3@gmail.com", "password3" , "jayden" , "matthews")
+    auth_register_v1("email4@gmail.com", "password4" , "jayden" , "matthews")
+    
+    store = data_store.get()
+    
+    user = store['user_details'].get(1)
+    assert user[4] == "jaydenmatthews"  
+    user = store['user_details'].get(2)
+    assert user[4] == "jaydenmatthews0"
+    user = store['user_details'].get(3)
+    assert user[4] == "jaydenmatthews1"
+    user = store['user_details'].get(4)
+    assert user[4] == "jaydenmatthews2"
+    
+    clear_v1()
+    
+def test_long_name():
+    auth_register_v1("email@gmail.com", "password" , "thisisalongstring" , "lastnamelong")
+    
+    store = data_store.get()
+    
+    user = store['user_details'].get(1)
+    assert user[4] == "thisisalongstringlas"
+    
+    clear_v1()
