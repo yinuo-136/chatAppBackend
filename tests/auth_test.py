@@ -191,3 +191,20 @@ def test_long_name():
     assert user[4] == "thisisalongstringlas"
     
     clear_v1()
+    
+def test_basic_global_permissions():
+    auth_register_v1("email@gmail.com", "password" , "jayden" , "matthews")
+    auth_register_v1("email2@gmail.com", "password2" , "nick" , "stath")
+    auth_register_v1("email3@gmail.com", "password3" , "other" , "guy")
+    
+    store = data_store.get()
+    
+    user_id1 = store['user_ids'].get("email@gmail.com")
+    user_id2 = store['user_ids'].get("email2@gmail.com")    
+    user_id3 = store['user_ids'].get("email3@gmail.com")    
+    
+    assert store['global_permissions'].get(user_id1) == 1
+    assert store['global_permissions'].get(user_id2) == 2
+    assert store['global_permissions'].get(user_id3) == 2
+    
+    clear_v1()

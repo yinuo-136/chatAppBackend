@@ -1,3 +1,1 @@
-channels_create_v1 assuptions:
-    1. eachtime the channel_id that created by the function should  be unique.
-    2. 
+- Assume that name_first and name_last provided in auth-register-v1 will be only alphanumeric characters i.e. [A-Za-z0-9]

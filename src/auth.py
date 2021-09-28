@@ -45,7 +45,7 @@ def auth_register_v1(email, password, name_first, name_last):
     if len(name_last) > 50 or len(name_last) < 1:
         raise InputError()
    
-    #error checking for non-alnum in name #
+    #error checking for non-alnum in name 
     name_regex = r'^[A-Za-z0-9]*$'   
     
     if re.fullmatch(name_regex, name_first) == None:
@@ -69,10 +69,18 @@ def auth_register_v1(email, password, name_first, name_last):
             handle_matches += 1
     
     if (handle_matches > 0):        
-        handle = handle + str(handle_matches - 1)     
+        handle = handle + str(handle_matches - 1)    
         
+    
     # Storing Details in Datastore
-    new_id = len(store['registered_users']) + 1
+    new_id = len(store['registered_users']) + 1 
+    
+    #implementation of global permissions (1 for Owner, 2 for Member)
+    if len(store['registered_users'].keys()) == 0:
+        store['global_permissions'].update({new_id: 1})
+    else:
+        store['global_permissions'].update({new_id: 2})
+    
      
     store['user_details'].update({new_id : (email, password, name_first, name_last, handle)})
     store['registered_users'].update({email: password})
