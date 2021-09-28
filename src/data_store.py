@@ -27,10 +27,11 @@ Example usage:
 ## YOU SHOULD MODIFY THIS OBJECT BELOW
 initial_object = {
     'registered_users' : {},
-    'user_ids' : {},
-    'user_details' : {},
+    'user_ids': {},
     'logged_in_users' : [],
-    'channels' : {},  
+    'user_details' : {},
+    'channels' : {},
+    'global_permissions' : {},
 }
 ## YOU SHOULD MODIFY THIS OBJECT ABOVE
 
