@@ -24,7 +24,7 @@ def test_user_name_validity():
     
     #chcek if the error raises if length of the name is more than 20
     with pytest.raises(InputError):
-        channels_create_v1(u_id, "abcdefghijklmnopqrstuvwxyz", False) 
+        channels_create_v1(u_id, "a" * 21, False) 
 
 
 # channels_create_v1 feature 2: if the user didn't input the correct u_id（not exist), raise an 
@@ -51,7 +51,7 @@ def test_which_error_raised():
         channels_create_v1(u_id,"", False)
     
     with pytest.raises(AccessError):
-        channels_create_v1(u_id, "akgoiq1214109r5172847129124-9091724asd", False)
+        channels_create_v1(u_id, "a" * 38, False)
 
 
 # channels_create_v1 feature 4:  eachtime the channel_id that created by the function should
