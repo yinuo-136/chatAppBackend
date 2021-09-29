@@ -8,11 +8,29 @@ from src.other import clear_v1
 from src.data_store import *
 
 
-def test_basic_auth_single():
+@pytest.fixture
+def clear_and_register_single_user():
 
     clear_v1()
 
-    assert auth_register_v1("email@gmail.com", "password", "First", "Last") == { 'auth_user_id' : 1 }
+    result = auth_register_v1("test@gmail.com", "password", "First", "Last")
+
+    return result
+
+@pytest.fixture
+def register_single_user():
+
+    result = auth_register_v1("test@gmail.com", "password", "First", "Last")
+
+    return result
+
+
+
+
+
+def test_basic_auth_single(clear_and_register_single_user):
+
+    assert clear_and_register_single_user == { 'auth_user_id' : 1 }
 
 
 def test_basic_auth_multiple():
@@ -24,11 +42,10 @@ def test_basic_auth_multiple():
     assert auth_register_v1("email@outlook.com", "password", "Sample", "Name") == { 'auth_user_id' : 3 }
 
 
-def test_basic_no_duplicates():
+def test_basic_no_duplicates(clear_and_register_single_user):
 
-    clear_v1()
+    clear_and_register_single_user
 
-    auth_register_v1("test@gmail.com", "password", "First", "Last")
     with pytest.raises(AccessError):
         auth_register_v1("test@gmail.com", "password", "First", "Last")
 
@@ -46,21 +63,17 @@ def test_full_workflow_correct():
     assert auth_user_id_log == auth_user_id_reg
 
 
-def test_basic_failed_login__email():
+def test_basic_failed_login__email(clear_and_register_single_user):
 
-    clear_v1()
-
-    auth_register_v1("test@gmail.com", "password", "First", "Last")
+    clear_and_register_single_user
 
     with pytest.raises(InputError):
         auth_login_v1("not_correct@yahoo.com", "password")
 
 
-def test_basic_failed_login__password():
+def test_basic_failed_login__password(clear_and_register_single_user):
 
-    clear_v1()
-
-    auth_register_v1("test@gmail.com", "password", "First", "Last")
+    clear_and_register_single_user
 
     with pytest.raises(InputError):
         auth_login_v1("test@gmail.com", "not_correct")
@@ -74,11 +87,9 @@ def test_basic_failed_register__invalid_email():
         auth_register_v1("invalid_email", "password", "Nick", "Stathakis")
 
 
-def test_basic_failed_register__duplicate_email():
+def test_basic_failed_register__duplicate_email(clear_and_register_single_user):
 
-    clear_v1()
-
-    auth_register_v1("test@gmail.com", "password", "Nick", "Stathakis")
+    clear_and_register_single_user
 
     with pytest.raises(AccessError):
         auth_register_v1("test@gmail.com", "another_password", "Jayden", "Matthews")
@@ -96,7 +107,7 @@ def test_success_register__valid_first():
 
     clear_v1()
 
-    auth_register_v1("test@gmail.com", "password", "MyNameIsVeryLongButStillValid123", "Stathakis")
+    auth_register_v1("test@gmail.com", "password", "a" * 36, "Stathakis")
 
 
 def test_failed_register__invalid_first__empty():
@@ -112,7 +123,7 @@ def test_failed_register__invalid_first__more_than_fifty():
     clear_v1()
 
     with pytest.raises(InputError):
-        auth_register_v1("test@gmail.com", "password", "ThisStringIsMoreThanFiftyCharactersXXXXXXXXXXXXXXXX", "Stathakis")
+        auth_register_v1("test@gmail.com", "password", "a" * 51, "Stathakis")
 
 
 def test_failed_register__invalid_first__invalid_characters():
@@ -127,7 +138,7 @@ def test_success_register__valid_last():
 
     clear_v1()
 
-    auth_register_v1("test@gmail.com", "password", "FirstName", "MyLastNameIsVeryLongButStillValid123")
+    auth_register_v1("test@gmail.com", "password", "FirstName", "a" * 36)
 
 
 def test_failed_register__invalid_last__empty():
@@ -143,7 +154,7 @@ def test_failed_register__invalid_last__more_than_fifty():
     clear_v1()
 
     with pytest.raises(InputError):
-        auth_register_v1("test@gmail.com", "password", "FirstName", "ThisStringIsMoreThanFiftyCharactersXXXXXXXXXXXXXXXX")
+        auth_register_v1("test@gmail.com", "password", "FirstName", "a" * 51)
 
 
 def test_failed_register__invalid_last__invalid_characters():
@@ -153,53 +164,72 @@ def test_failed_register__invalid_last__invalid_characters():
     with pytest.raises(InputError):
         auth_register_v1("test@gmail.com", "password", "FirstName", "I$Am_Invalid+-")
 
+
 def test_basic_handle():
-    auth_register_v1("email@gmail.com", "password" , "jayden" , "matthews")
+
+    clear_v1()
+
+    auth_register_v1("test@gmail.com", "password" , "Jayden" , "Matthews")
     
     store = data_store.get()
     
     user = store['user_details'].get(1)
     assert user[4] == "jaydenmatthews"
     
-    clear_v1()
+    
+
 
 def test_duplicate_handle():
-    auth_register_v1("email@gmail.com", "password" , "jayden" , "matthews")
-    auth_register_v1("email2@gmail.com", "password2" , "jayden" , "matthews")
-    auth_register_v1("email3@gmail.com", "password3" , "jayden" , "matthews")
-    auth_register_v1("email4@gmail.com", "password4" , "jayden" , "matthews")
+
+    clear_v1()
+
+    auth_register_v1("email1@gmail.com", "password1" , "Jayden" , "Matthews")
+    auth_register_v1("email2@gmail.com", "password2" , "Jayden" , "Matthews")
+    auth_register_v1("email3@gmail.com", "password3" , "Jayden" , "Matthews")
+    auth_register_v1("email4@gmail.com", "password4" , "Jayden" , "Matthews")
     
     store = data_store.get()
     
     user = store['user_details'].get(1)
     assert user[4] == "jaydenmatthews"  
+
     user = store['user_details'].get(2)
     assert user[4] == "jaydenmatthews0"
+
     user = store['user_details'].get(3)
     assert user[4] == "jaydenmatthews1"
+    
     user = store['user_details'].get(4)
     assert user[4] == "jaydenmatthews2"
     
-    clear_v1()
     
+
+
 def test_long_name():
-    auth_register_v1("email@gmail.com", "password" , "thisisalongstring" , "lastnamelong")
+
+    clear_v1()
+
+    auth_register_v1("email@gmail.com", "password" , "a" * 19 , "b" * 10)
     
     store = data_store.get()
     
     user = store['user_details'].get(1)
-    assert user[4] == "thisisalongstringlas"
+    assert user[4] == "a" * 19 + "b"
     
-    clear_v1()
     
+
+   
 def test_basic_global_permissions():
-    auth_register_v1("email@gmail.com", "password" , "jayden" , "matthews")
+
+    clear_v1()
+
+    auth_register_v1("email1@gmail.com", "password1" , "jayden" , "matthews")
     auth_register_v1("email2@gmail.com", "password2" , "nick" , "stath")
     auth_register_v1("email3@gmail.com", "password3" , "other" , "guy")
     
     store = data_store.get()
     
-    user_id1 = store['user_ids'].get("email@gmail.com")
+    user_id1 = store['user_ids'].get("email1@gmail.com")
     user_id2 = store['user_ids'].get("email2@gmail.com")    
     user_id3 = store['user_ids'].get("email3@gmail.com")    
     
@@ -207,4 +237,4 @@ def test_basic_global_permissions():
     assert store['global_permissions'].get(user_id2) == 2
     assert store['global_permissions'].get(user_id3) == 2
     
-    clear_v1()
+    
