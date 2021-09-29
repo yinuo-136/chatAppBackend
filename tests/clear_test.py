@@ -47,8 +47,6 @@ def test_full_clear():
 
     store = data_store.get()
 
-    print(store)
-
     assert store == {
         'registered_users' : {}, 
         'user_ids': {}, 
