@@ -7,4 +7,6 @@ def clear_v1():
     store['logged_in_users'] = []
     store['user_details'] = {}
     store['channels'] = {}
+    store['channel_members'] = {}
+    store['global_permissions'] = {}
     data_store.set(store)
