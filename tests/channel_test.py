@@ -1,0 +1,36 @@
+import pytest
+
+from src.channel import channel_details_v1
+from src.auth import auth_register_v1
+from src.channels import channels_create_v1
+from src.error import InputError, AccessError
+from src.other import clear_v1
+
+#Checks if InputError is raised when channel_id does not refer to a valid channel.
+def test_details_channel_id_valid():
+    clear_v1()
+
+    user = auth_register_v1("test@gmail.com", "password", "First", "Last")
+
+    with pytest.raises(InputError):
+        channel_details_v1(user, ' ')
+
+#Checks if AccessError is raised when channel_id is valid but user is not a member.
+def test_details_user_is_member():
+    clear_v1()
+
+    user = auth_register_v1("test@gmail.com", "password", "First", "Last")
+    user2 = auth_register_v1("test2@gmail.com", "password2", "First2", "Last2")
+    channel = channels_create_v1(user, "Name", "false")
+
+    with pytest.raises(AccessError):
+        channel_details_v1(user2, channel)
+
+#Tests if details_v1 returns valid fields.
+def test_details_return_types():
+    clear_v1()
+
+    user = auth_register_v1("test@gmail.com", "password", "First", "Last")
+    channel = channels_create_v1(user, "Name", "false")
+
+    assert channel_details_v1(user, channel) == {("Name", "false", "1", "1")}
