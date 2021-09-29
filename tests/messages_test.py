@@ -66,9 +66,6 @@ def test_start_isgreat_message():
     c_id_1 = c_dict_1['channel_id']
 
     with pytest.raises(InputError):
-        channel_messages_v1(u_id_1, c_id_1, 0)
-
-    with pytest.raises(InputError):
         channel_messages_v1(u_id_1, c_id_1, 1)
 
     with pytest.raises(InputError):
@@ -94,4 +91,16 @@ def test_start_less_than_zero():
     with pytest.raises(InputError):
         channel_messages_v1(u_id_1, c_id_1, -100)
 
-    
+#feature 6: return an empty messages list when everything's correct and start is 0
+def test_messages_return():
+
+    clear_v1()
+
+    u_dict_1 = auth_register_v1("test1@gmail.com", "password", "First", "Last")
+    u_id_1 = u_dict_1['auth_user_id']
+
+    c_dict_1 = channels_create_v1(u_id_1, "correct_name", False)
+    c_id_1 = c_dict_1['channel_id']
+
+    assert channel_messages_v1(u_id_1, c_id_1, 0) == { 'messages': [], 'start': 0, 'end': -1}
+        

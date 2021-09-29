@@ -54,10 +54,14 @@ def channel_messages_v1(auth_user_id, channel_id, start):
     if start < 0 :
         raise InputError("start number needs to be greater ot equal to zero")
 
-    if len(c_messages) < start + 1:
+    if len(c_messages) < start:
         raise InputError("start is greater than the total number of messages in the channel")
     
-    #since at this stage that messages can not be added, so the function can only raise errors, return won't be used.
+    if c_messages == {}:
+        return { 'messages': [], 'start': 0, 'end': -1}
+
+
+    #since at this stage that messages can not be added, so the function can only raise errors or return empty message lists, thus this return won't be used.
     return {
         'messages': [
             {
