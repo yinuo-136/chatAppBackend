@@ -54,12 +54,10 @@ def auth_login_v1(email, password):
     store = data_store.get()
     # if email not in store['registered_users'].keys() raise error
     if email not in store['registered_users'].keys():
-        print("Email doesnt exist!")
         raise InputError()
 
     # if email in store['registered_users'].keys(), but password not matching, raise error
     if password != store['registered_users'].get(email):
-        print("Wrong Password")
         raise InputError()
 
     store['logged_in_users'].append(store['user_ids'].get(email))
