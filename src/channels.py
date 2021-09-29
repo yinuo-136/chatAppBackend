@@ -4,13 +4,43 @@ from src.data_store import data_store
 
 
 def channels_list_v1(auth_user_id):
+    
+    store = data_store.get()
+    u_dict = store['user_details']
+    current_channel = store['channels'].get(channel_id)
+    #user id validity check
+    if auth_user_id not in u_dict.keys():
+        raise AccessError("the user id you entered does not exist")
+    
+    list_dict = []
+    channel_list = store('channels')
+    #check whether user id given is in the owner list or members list
+    if auth_user_id not in current_channel[3] or current_channel[4]:
+        raise AccessError("You are not apart of any channels")
+    #Check if user id is in owner list 
+    if auth_user_id in current_channel[3]:
+        for channel_id in channel_list:
+            channel = channel_list.get(channel_id)
+            channel_name = channel[0]
+            channel_info = {'channel_id': channel_id, 'name': channel_name,}
+            #append to return type
+            list_dict.append(channel_info)
+        
+         #Check if user id is in the members list
+    if auth_user_id in current_channel[4]:
+        for channel_id in channel_list:
+            channel = channel_list.get(channel_id)
+            channel_name = channel[0]
+            channel_info = {'channel_id': channel_id, 'name': channel_name,}
+            #append to return type
+            list_dict.append(channel_info) 
+        
+   
+    #return channel id and name
     return {
-        'channels': [
-        	{
-        		'channel_id': 1,
-        		'name': 'My Channel',
-        	}
-        ],
+    
+    	'channels':list_dict
+     
     }
 
 def channels_listall_v1(auth_user_id):
