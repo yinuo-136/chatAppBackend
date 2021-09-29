@@ -1,0 +1,1 @@
+- Assume that name_first and name_last provided in auth-register-v1 will be only alphanumeric characters i.e. [A-Za-z0-9]
