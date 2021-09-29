@@ -8,4 +8,5 @@ def clear_v1():
     store['user_details'] = {}
     store['channels'] = {}
     store['channel_members'] = {}
+    store['global_permissions'] = {}
     data_store.set(store)
