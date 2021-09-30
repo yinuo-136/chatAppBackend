@@ -1,6 +1,6 @@
 from src.error import InputError
 from src.error import AccessError
-import src.data_store
+from src.other import data_store
 import src.error
 
 def channel_invite_v1(auth_user_id, channel_id, u_id):
