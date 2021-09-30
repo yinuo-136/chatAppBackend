@@ -12,7 +12,7 @@ def channels_list_v1(auth_user_id):
     if auth_user_id not in u_dict.keys():
     	raise AccessError("the user id you entered does not exist") 
     list_dict = []
-    channel_list = store{'channels'}
+    channel_list = store['channels']
     #check whether user id given is in the owner list or members list
     for channel_id in channel_list:
     	current_channel = store['channels'].get(channel_id)
