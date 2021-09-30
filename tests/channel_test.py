@@ -12,6 +12,7 @@ def test_details_channel_id_valid():
 
     user = auth_register_v1("test@gmail.com", "password", "First", "Last")
     user_id = user['auth_user_id']
+
     #No channel names exist that are less that 1 as per channels_create_v1,
     #thus channel_id "" refers to an invalid channel
     with pytest.raises(InputError):

@@ -37,7 +37,6 @@ def channel_details_v1(auth_user_id, channel_id):
             'handle_str': user[4],
         })
 
-
     for u_id in channel[3]:
         user = user_details.get(u_id)
         members.append({
