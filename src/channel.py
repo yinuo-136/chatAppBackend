@@ -63,7 +63,7 @@ def channel_messages_v1(auth_user_id, channel_id, start):
     # implement the user id validity check
     if auth_user_id not in u_dict.keys():
         raise AccessError("the user id you entered does not exist")
-    
+
     #implement the channel id validity check
     c_dict = store['channels']
     if channel_id not in c_dict.keys():
@@ -83,12 +83,13 @@ def channel_messages_v1(auth_user_id, channel_id, start):
 
     if len(c_messages) < start:
         raise InputError("start is greater than the total number of messages in the channel")
-    
+
     if c_messages == {}:
         return { 'messages': [], 'start': 0, 'end': -1}
 
 
-    #since at this stage that messages can not be added, so the function can only raise errors or return empty message lists, thus this return won't be used.
+    #since at this stage that messages can not be added, so the function can only raise errors
+    #or return empty message lists, thus this return won't be used.
     return {
         'messages': [
             {

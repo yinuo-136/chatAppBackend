@@ -47,7 +47,7 @@ def test_details_return_types():
     details_public = details['is_public']
     details_owners = details['owner_members']
     details_members = details['all_members']
-    a = [{
+    test_dict = [{
         'u_id': 1,
         'email': "test@gmail.com",
         'name_first': "First",
@@ -55,8 +55,7 @@ def test_details_return_types():
         'handle_str': "firstlast"
     }]
 
-
     assert details_name == 'Name'
-    assert details_public == False
-    assert details_owners == a
-    assert details_members == a
+    assert not details_public
+    assert details_owners == test_dict
+    assert details_members == test_dict
