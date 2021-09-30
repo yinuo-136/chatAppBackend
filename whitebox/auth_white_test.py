@@ -77,3 +77,21 @@ def test_basic_global_permissions():
     assert store['global_permissions'].get(user_id1) == 1
     assert store['global_permissions'].get(user_id2) == 2
     assert store['global_permissions'].get(user_id3) == 2
+    
+
+#Basic test for non-alnum first/last name, and resulting handle   
+def test_non_alphanumeric_handle_basic():
+    clear_v1()
+    auth_register_v1("email1@gmail.com", "password1" , "J@yd!n" , "M@++hew$")
+    
+    store = data_store.get()
+    
+    u_id = store['user_ids'].get("email1@gmail.com")
+    user = store['user_details'].get(u_id)
+    
+    assert user[4] == "jydnmhew"
+    
+    
+    
+    
+    
