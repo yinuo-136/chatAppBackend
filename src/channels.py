@@ -1,3 +1,6 @@
+'''
+doc string
+'''
 from src.error import InputError
 from src.error import AccessError
 from src.data_store import data_store
