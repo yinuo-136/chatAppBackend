@@ -103,9 +103,6 @@ def channel_join_v1(auth_user_id, channel_id):
     if channel[1] == False and store['global_permissions'].get(auth_user_id) != 1:
         raise AccessError()
 
-
-    u_id = store['user_details'].get(auth_user_id)
-    #add user to channel
     members = channel[3]
     members.append(u_id)
     
