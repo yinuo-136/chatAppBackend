@@ -1,57 +1,58 @@
 import pytest
 
 from src.other import clear_v1
-from src.data_store import *
+from src.auth import auth_register_v1
 
 
-def test_basic_clear__set():
+################# START OF PYTEST FIXTURES #################
 
-    store = data_store.get()
-    store['registered_users'] = {"Some", "Information"}
-    data_store.set(store)
-
-    clear_v1()
-
-    store = data_store.get()
-
-    assert store['registered_users'] == {}
-
-
-
-def test_basic_clear__append():
-
-    store = data_store.get()
-    store['logged_in_users'].append("Gerald")
+# uses method clear_v1 and registers a user with the details:
+#       email: test@gmail.com
+#       password: password
+#       first_name: First
+#       last_name: Last
+@pytest.fixture
+def clear_and_register_single_user():
 
     clear_v1()
 
-    store = data_store.get()
+    result = auth_register_v1("test@gmail.com", "password", "First", "Last")
 
-    assert store['logged_in_users'] == []
+    return result
 
 
-def test_full_clear():
 
-    store = data_store.get()
+# registers four users with emails "test1@gmail.com", "test2@gmail.com", "test3@gmail.com" and "test4@gmail.com"
+@pytest.fixture
+def register_four_users():
 
-    store['registered_users'] = {"Person1", "Person2"}
-    store['user_ids'] = {1, 2}
-    store['logged_in_users'] = ["Person2"]
-    store['user_details'] = {"Lives in Galactron, 18th Crescent", "Has three legs"}
-    store['channels'] = {"Channel1", "Channel2"}
-    store['global_permissions'] = {None}
+    auth_register_v1("test1@gmail.com", "password", "First", "Last")
+    auth_register_v1("test2@gmail.com", "password", "First", "Last")
+    auth_register_v1("test3@gmail.com", "password", "First", "Last")
+    auth_register_v1("test4@gmail.com", "password", "First", "Last")
 
-    data_store.set(store)
+
+
+
+
+################# START OF BLACKBOX TESTS #################
+
+# blackbox test which will test that data is successfully cleared in a duplicate registration
+def test_clear__basic_register_single(clear_and_register_single_user):
+
+    # register user once
+    clear_and_register_single_user
+
+    # clear and register same user -- notice no duplicate errors being thrown!
+    clear_and_register_single_user
+
+
+
+# test clearing with multiple users registered
+def test_clear__register_multiple(register_four_users):
+
+    register_four_users
 
     clear_v1()
 
-    store = data_store.get()
-
-    assert store == {
-        'registered_users' : {}, 
-        'user_ids': {}, 
-        'logged_in_users' : [], 
-        'user_details' : {}, 
-        'channels' : {}, 
-        'global_permissions' : {},
-        }
+    register_four_users
