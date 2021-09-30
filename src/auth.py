@@ -140,8 +140,7 @@ def auth_register_v1(email, password, name_first, name_last):
     store['user_details'].update({new_id : (email, password, name_first, name_last, handle)})
     store['registered_users'].update({email: password})
     store['user_ids'].update({email: new_id})
-    print(store['user_details'])
-    print(store['registered_users'])
+
 
     return {
         'auth_user_id': new_id,
