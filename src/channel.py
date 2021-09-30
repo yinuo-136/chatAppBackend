@@ -104,7 +104,7 @@ def channel_join_v1(auth_user_id, channel_id):
         raise AccessError()
 
     members = channel[3]
-    members.append(u_id)
+    members.append(auth_user_id)
     
     c_name = channel[0]
     c_public = channel[1]
