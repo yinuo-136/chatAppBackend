@@ -1,6 +1,6 @@
 import pytest
 
-from src.channels import channels_create_v1, channels_listall_v1
+from src.channels import channels_create_v1, channels_listall_v1, channels_list_v1
 from src.auth import auth_register_v1
 from src.error import AccessError, InputError
 from src.other import clear_v1
@@ -133,6 +133,17 @@ def test_listall_general():
                                             }
                                          ],
                                     }
+
+
+#test user id validity check in list function
+def test_list_ui_validity():
+    clear_v1()
+    u_id = 12 
+    with pytest.raises(AccessError):
+        channels_list_v1(u_id)
+
+
+
 
 ############################################################
 
