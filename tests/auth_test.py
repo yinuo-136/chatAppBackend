@@ -125,16 +125,6 @@ def test_failed_register__first_more_than_fifty():
     with pytest.raises(InputError):
         auth_register_v1("test@gmail.com", "password", "a" * 51, "Stathakis")
 
-
-# test that a first name with invalid characters, such as symbols, will throw an InputError
-def test_failed_register__first_invalid_characters():
-
-    clear_v1()
-
-    with pytest.raises(InputError):
-        auth_register_v1("test@gmail.com", "password", "I$Am_Invalid+-", "Stathakis")
-
-
 # test that the maximum characters of last name (50) is valid
 def test_success_register__last_long():
 
@@ -159,15 +149,6 @@ def test_failed_register__last_more_than_fifty():
 
     with pytest.raises(InputError):
         auth_register_v1("test@gmail.com", "password", "FirstName", "a" * 51)
-
-
-# test that is the last name has invalid characters, such as symbols, then an InputError is thrown
-def test_failed_register__last_invalid_characters():
-
-    clear_v1()
-
-    with pytest.raises(InputError):
-        auth_register_v1("test@gmail.com", "password", "FirstName", "I$Am_Invalid+-")
 
 
 ############### End of Blackbox testing -- see whitebox/auth_white_test.py for whitebox tests
