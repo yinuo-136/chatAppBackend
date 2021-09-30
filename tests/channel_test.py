@@ -23,11 +23,14 @@ def test_details_user_is_member():
     clear_v1()
 
     user = auth_register_v1("test@gmail.com", "password", "First", "Last")
+    user_id = user['auth_user_id']
     user2 = auth_register_v1("test2@gmail.com", "password2", "First2", "Last2")
-    channel = channels_create_v1(user, "Name", False)
+    user2_id = user2['auth_user_id']
+    channel = channels_create_v1(user_id, "Name", False)
+    channel_id = channel['channel_id']
 
     with pytest.raises(AccessError):
-        channel_details_v1(user2, channel)
+        channel_details_v1(user2_id, channel_id)
 
 #Tests if details_v1 returns valid fields.
 def test_details_return_types():
