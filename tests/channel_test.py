@@ -37,11 +37,10 @@ Parameters:{
 def test_channel_inv__user_id_valid():
 
     register_id_return = auth_register_v1("test@gmail.com", "password", "First", "Last")
-
     auth_u_id = register_id_return['auth_user_id']
 
-    c_id = channels_create_v1(auth_u_id, "TestChannel", False)
-
+    return_c_id = channels_create_v1(auth_u_id, "TestChannel", False)
+    c_id = return_c_id['channel_id']
 
     unregistered_u_id = 999
 
