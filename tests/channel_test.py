@@ -11,11 +11,11 @@ def test_details_channel_id_valid():
     clear_v1()
 
     user = auth_register_v1("test@gmail.com", "password", "First", "Last")
-
+    user_id = user['auth_user_id']
     #No channel names exist that are less that 1 as per channels_create_v1,
     #thus channel_id "" refers to an invalid channel
     with pytest.raises(InputError):
-        channel_details_v1(user, "")
+        channel_details_v1(user_id, "")
 
 
 #Checks if AccessError is raised when channel_id is valid but user is not a member.
@@ -32,12 +32,31 @@ def test_details_user_is_member():
     with pytest.raises(AccessError):
         channel_details_v1(user2_id, channel_id)
 
-#Tests if details_v1 returns valid fields.
+
+#Tests if details_v1 returns correct fields for a simple test case.
 def test_details_return_types():
     clear_v1()
 
     user = auth_register_v1("test@gmail.com", "password", "First", "Last")
-    channel = channels_create_v1(user, "Name", False)
+    user_id = user['auth_user_id']
+    channel = channels_create_v1(user_id, "Name", False)
+    channel_id = channel['channel_id']
 
-    assert channel_details_v1(user, channel) == {("Name", False, "1", "1")}
-    
+    details = channel_details_v1(user_id, channel_id)
+    details_name = details['name']
+    details_public = details['is_public']
+    details_owners = details['owner_members']
+    details_members = details['all_members']
+    a = [{
+        'u_id': 1,
+        'email': "test@gmail.com",
+        'name_first': "First",
+        'name_last': "Last",
+        'handle_str': "firstlast"
+    }]
+
+
+    assert details_name == 'Name'
+    assert details_public == False
+    assert details_owners == a
+    assert details_members == a
