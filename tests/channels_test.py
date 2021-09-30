@@ -1,10 +1,9 @@
 import pytest
 
-from src.channels import channels_create_v1, channels_listall_v1
+from src.channels import channels_create_v1, channels_listall_v1, channels_list_v1
 from src.auth import auth_register_v1
 from src.error import AccessError, InputError
 from src.other import clear_v1
-from src.data_store import data_store
 
 #########################################################################################
 
@@ -136,44 +135,13 @@ def test_listall_general():
                                     }
 
 
-#test list basic functionality
-def test_list_general():
+#test user id validity check in list function
+def test_list_ui_validity():
     clear_v1()
-    store = data_store.get()
-    current_channel = store['channels'].get(channel_id)
+    u_id = 12 
+    with pytest.raises(AccessError):
+        channels_list_v1(u_id)
 
-    u_dict_1 = auth_register_v1("test_1@gmail.com", "password", "First", "Last")
-    u_id_1 = u_dict_1['auth_user_id']
-    #u_id_1 is a owner of channel 
-    current_channel[3].append(u_id_1)
-
-    u_dict_2 = auth_register_v1("test_2@gmail.com", "password", "First", "Last")
-    u_id_2 = u_dict_2['auth_user_id']
-    #u_id_2 is a member of channel
-    current_channel[4].append(u_id_2)
-
-    c_dict_1 = channels_create_v1(u_id_1, 'name_1', True)
-    c_dict_2 = channels_create_v1(u_id_2, 'name_2', True)
-
-    c_id_1 = c_dict_1['channel_id']
-    c_id_2 = c_dict_2['channel_id']
-    
-    
-    assert channels_list_v1(u_id_1) == {
-                                        'channels': [
-                                            {'channel_id': c_id_1,
-                                             'name': 'name_1',
-                                            }
-                                         ],
-                                    }
-
-    assert channels_list_v1(u_id_2) == {
-                                        'channels': [ 
-                                            {'channel_id': c_id_2,
-                                             'name': 'name_2',
-                                            }
-                                         ],
-                                    }
 
 
 
