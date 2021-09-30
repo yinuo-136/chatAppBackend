@@ -34,13 +34,22 @@ Parameters:{
 
 '''
 
-def test_channel_inv__user_id_valid():
+@pytest.fixture
+def register_user_and_create_channel():
 
     register_id_return = auth_register_v1("test@gmail.com", "password", "First", "Last")
     auth_u_id = register_id_return['auth_user_id']
 
     return_c_id = channels_create_v1(auth_u_id, "TestChannel", False)
     c_id = return_c_id['channel_id']
+
+    return [auth_u_id, c_id]
+
+
+
+def test_channel_inv__user_id_valid(register_user_and_create_channel):
+
+    auth_u_id, c_id = register_user_and_create_channel
 
     unregistered_u_id = 999
 
