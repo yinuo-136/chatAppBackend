@@ -27,8 +27,6 @@ def channel_invite_v1(auth_user_id, channel_id, u_id):
     if (auth_user_id not in channel[2]) or (auth_user_id not in channel[3]):
         raise AccessError()
 
-    user = store['user_details'].get(u_id)
-    #add user to channel
     
     members = channel[3]
     members.append(u_id)
