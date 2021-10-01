@@ -35,8 +35,8 @@ def test_basic_failed_register__duplicates(clear_and_register_single_user):
     # registers a user with email = "test@gmail.com"
     clear_and_register_single_user
 
-    # registers another user with the SAME email, causing an AccessError
-    with pytest.raises(AccessError):
+    # registers another user with the SAME email, causing an InputError
+    with pytest.raises(InputError):
         auth_register_v1("test@gmail.com", "password", "First", "Last")
 
 
@@ -80,13 +80,13 @@ def test_failed_register__email_invalid():
         auth_register_v1("invalid_email", "password", "Nick", "Stathakis")
 
 
-# test that a duplicate email during registration FAILS and throws an AccessError
+# test that a duplicate email during registration FAILS and throws an InputError
 def test_failed_register__duplicate_email(clear_and_register_single_user):
 
     # register a user with the email = "test@gmail.com"
     clear_and_register_single_user
 
-    with pytest.raises(AccessError):
+    with pytest.raises(InputError):
         auth_register_v1("test@gmail.com", "another_password", "Jayden", "Matthews")
 
 

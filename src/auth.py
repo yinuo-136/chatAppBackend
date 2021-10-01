@@ -94,7 +94,7 @@ def auth_register_v1(email, password, name_first, name_last):
 
     #implement error checking for duplicate
     if email in store['registered_users'].keys():
-        raise AccessError()
+        raise InputError()
 
 
     #error checking for password and user name
