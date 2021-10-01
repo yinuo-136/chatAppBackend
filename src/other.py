@@ -9,3 +9,4 @@ def clear_v1():
     store['channels'] = {}
     store['global_permissions'] = {}
     data_store.set(store)
+    return {}
