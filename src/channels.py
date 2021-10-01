@@ -17,7 +17,7 @@ def channels_list_v1(auth_user_id):
     #check whether user id given is in the owner list or members list
     for channel_id in channel_list:
     	current_channel = store['channels'].get(channel_id)
-    	if (auth_user_id in current_channel[2]) or (auth_user_id in current_channel[3]):
+    	if auth_user_id in current_channel[3]:
             channel_name = current_channel[0]
             channel_info = {'channel_id': channel_id, 'name': channel_name,}
             #append to return type
