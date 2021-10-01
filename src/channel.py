@@ -53,7 +53,7 @@ def channel_details_v1(auth_user_id, channel_id):
 
     #check if auth_user_id has access to channel
     channel = store['channels'].get(channel_id)
-    if (auth_user_id not in channel[2]) or (auth_user_id not in channel[3]):
+    if auth_user_id not in channel[3]:
         raise AccessError("auth_user_id does not have access to channel")
 
     #provide basic details about the channel
