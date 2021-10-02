@@ -90,6 +90,28 @@ def channel_details_v1(auth_user_id, channel_id):
 
 
 def channel_messages_v1(auth_user_id, channel_id, start):
+    '''
+    <return 50 messages from the start point in a channel>
+
+    Arguments:
+        <auth_user_id> (integer)    - user id
+        <channel_id> (integer)    -channel_id
+        <start> (integer)     - the start point where the messages should be cllected from
+    
+    Exceptions:
+        InputError  - Occurs when 1. channel_id does not refer to a valid channel
+                                  2. start number is less than to zero  
+                                  3. start is greater than the total number of messages in the channel
+        AccessError - Occurs when 1. the user id you entered does not exist
+                                  2. the authorised user is not a member of the channel
+                                  
+                                  
+    
+    Return Value:
+        Only return an empty list of channels at this stage since messages can not be added.
+
+    '''
+
     store = data_store.get()
 
     u_dict = store['user_details']
