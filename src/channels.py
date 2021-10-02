@@ -29,7 +29,19 @@ def channels_list_v1(auth_user_id):
     }
 
 def channels_listall_v1(auth_user_id):
+    '''
+    <this function checks the auth_user_id then return errors or the list
+    of channels that have been created>
+    Arguments:
+    <auth_user_id> (integer)    - the unique user id
+
+    Exceptions:
+    AccessError - Occurs when the user id you entered does not exist
     
+    Return Value:
+    return the list of channels that have been created.   
+    '''
+
     store = data_store.get()
 
     u_dict = store['user_details']
@@ -54,6 +66,22 @@ def channels_listall_v1(auth_user_id):
     }
 
 def channels_create_v1(auth_user_id, name, is_public):
+    '''
+    <create a channel based on the creator, channel name and property(public/private)>
+
+    Arguments:
+    <auth_user_id> (integer)    - user id that indicate the unique user.
+    <name> (<string)    - the channel name that user want to have.
+    <is_public>(boolean) -whether it's a public or private
+
+
+    Exceptions:
+    InputError  - Occurs when Invalid name is entered, needs to be a name between 1 and 20 characters
+    AccessError - Occurs when the user id you entered does not exist
+
+    Return Value:
+    Returns a dictionary that contains channel_id that you create.
+    '''
 
     store = data_store.get()
 
