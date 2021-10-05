@@ -1,0 +1,55 @@
+============================= test session starts ==============================
+platform linux -- Python 3.7.3, pytest-6.2.5, py-1.10.0, pluggy-1.0.0 -- /usr/bin/python3
+cachedir: .pytest_cache
+hypothesis profile 'default' -> database=DirectoryBasedExampleDatabase('/tmp_amd/kamen/export/kamen/3/cs1531/project-automarking/tempstore/.hypothesis/examples')
+rootdir: /tmp_amd/kamen/export/kamen/3/cs1531/project-automarking/tempstore, configfile: pytest.ini
+plugins: forked-1.3.0, xdist-2.2.1, hypothesis-6.1.1, timeout-1.4.2
+collecting ... collected 42 items
+
+tests/auth_test.py::test_basic_successful_register__single PASSED        [  2%]
+tests/auth_test.py::test_basic_successful_register__multiple PASSED      [  4%]
+tests/auth_test.py::test_basic_failed_register__duplicates PASSED        [  7%]
+tests/auth_test.py::test_full_register_and_login_successful PASSED       [  9%]
+tests/auth_test.py::test_failed_login__email_invalid PASSED              [ 11%]
+tests/auth_test.py::test_failed_login__password_invalid PASSED           [ 14%]
+tests/auth_test.py::test_failed_register__email_invalid PASSED           [ 16%]
+tests/auth_test.py::test_failed_register__duplicate_email PASSED         [ 19%]
+tests/auth_test.py::test_failed_register__small_password PASSED          [ 21%]
+tests/auth_test.py::test_successful_register__long_first PASSED          [ 23%]
+tests/auth_test.py::test_failed_register__empty_first PASSED             [ 26%]
+tests/auth_test.py::test_failed_register__first_more_than_fifty PASSED   [ 28%]
+tests/auth_test.py::test_success_register__last_long PASSED              [ 30%]
+tests/auth_test.py::test_failed_register__last_empty PASSED              [ 33%]
+tests/auth_test.py::test_failed_register__last_more_than_fifty PASSED    [ 35%]
+tests/channel_details_v1_test.py::test_details_channel_id_valid PASSED   [ 38%]
+tests/channel_details_v1_test.py::test_details_user_is_member PASSED     [ 40%]
+tests/channel_details_v1_test.py::test_details_return_types PASSED       [ 42%]
+tests/channel_test.py::test_channel_inv__user_id_valid PASSED            [ 45%]
+tests/channel_test.py::test_channel_inv__channel_id_invalid PASSED       [ 47%]
+tests/channel_test.py::test_channel_inv__u_id_already_member PASSED      [ 50%]
+tests/channel_test.py::test_channel_invite__channel_id_valid__auth_not_member PASSED [ 52%]
+tests/channel_test.py::test_channel_join__auth_u_id_invalid__private PASSED [ 54%]
+tests/channel_test.py::test_channel_join__auth_u_id_valid__public PASSED [ 57%]
+tests/channel_test.py::test_channel_join__channel_id_invalid PASSED      [ 59%]
+tests/channel_test.py::test_channel_join__auth_user_already_member_invalid PASSED [ 61%]
+tests/channels_test.py::test_user_name_validity PASSED                   [ 64%]
+tests/channels_test.py::test_uid_validity PASSED                         [ 66%]
+tests/channels_test.py::test_which_error_raised PASSED                   [ 69%]
+tests/channels_test.py::test_channel_id_unique PASSED                    [ 71%]
+tests/channels_test.py::test_listall_empty_channel PASSED                [ 73%]
+tests/channels_test.py::test_listall_uid_validity PASSED                 [ 76%]
+tests/channels_test.py::test_listall_general PASSED                      [ 78%]
+tests/channels_test.py::test_list_ui_validity PASSED                     [ 80%]
+tests/clear_test.py::test_clear__basic_register_single PASSED            [ 83%]
+tests/clear_test.py::test_clear__register_multiple PASSED                [ 85%]
+tests/messages_test.py::test_user_id_validity_messages PASSED            [ 88%]
+tests/messages_test.py::test_user_ismember_messages PASSED               [ 90%]
+tests/messages_test.py::test_channel_isvalid_messages PASSED             [ 92%]
+tests/messages_test.py::test_start_isgreat_message PASSED                [ 95%]
+tests/messages_test.py::test_start_less_than_zero PASSED                 [ 97%]
+tests/messages_test.py::test_messages_return PASSED                      [100%]
+
+====== Marks recorded: 42.00 ======
+
+
+============================== 42 passed in 0.20s ==============================
