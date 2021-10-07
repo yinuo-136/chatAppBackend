@@ -120,7 +120,7 @@ def test_channel_inv__u_id_already_member(clear__register_two_users):
 def test_channel_invite__channel_id_valid__auth_not_member(clear__register_two_users__create_channel_private):
 
     u_id_1, u_id_2, c_id = clear__register_two_users__create_channel_private
-
+    u_id_1 # unused variable
 
     new_user = auth_register_v1("random@gmail.com", "password", "First", "Last")
     new_u_id = new_user['auth_user_id']
@@ -136,7 +136,8 @@ def test_channel_invite__channel_id_valid__auth_not_member(clear__register_two_u
 def test_channel_join__auth_u_id_invalid__private(clear__register_two_users__create_channel_private):
     
     u_id_1, u_id_2, c_id = clear__register_two_users__create_channel_private
-
+    u_id_1 # unused variable
+    
     with pytest.raises(AccessError):
         channel_join_v1(u_id_2, c_id)
 
@@ -145,11 +146,12 @@ def test_channel_join__auth_u_id_invalid__private(clear__register_two_users__cre
 def test_channel_join__auth_u_id_valid__public(clear__register_two_users__create_channel_public):
     
     u_id_1, u_id_2, c_id = clear__register_two_users__create_channel_public
+    u_id_1 # unused variable
 
     channel_join_v1(u_id_2, c_id)
 
 
-def test_channel_join__auth_u_id_valid__public(clear__register_two_users):
+def test_channel_join__auth_u_id_valid_and_global__private(clear__register_two_users):
     
     u_id_1, u_id_2 = clear__register_two_users
 
@@ -164,6 +166,7 @@ def test_channel_join__auth_u_id_valid__public(clear__register_two_users):
 def test_channel_join__channel_id_invalid(clear__register_two_users):
 
     u_id_1, u_id_2 = clear__register_two_users
+    u_id_2 # unused variable
 
     invalid_c_id = 999
 
