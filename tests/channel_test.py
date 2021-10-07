@@ -12,6 +12,39 @@ from src.channel import channel_join_v1
 from src.other import clear_v1
 
 
+@pytest.fixture
+def clear__register_user_not_owner__create_channel_private():
+
+    clear_v1()
+
+    register_id_return_1 = auth_register_v1("test1@gmail.com", "password", "First", "Last")
+    auth_u_id_1 = register_id_return_1['auth_user_id']
+
+    register_id_return_2 = auth_register_v1("test2@gmail.com", "password", "First", "Last")
+    auth_u_id_2 = register_id_return_2['auth_user_id']
+
+    return_c_id = channels_create_v1(auth_u_id_1, "TestChannel1", False)
+    c_id = return_c_id['channel_id']
+
+    return [auth_u_id_2, c_id]
+
+
+@pytest.fixture
+def clear__register_user_not_owner__create_channel_public():
+
+    clear_v1()
+
+    register_id_return_1 = auth_register_v1("test1@gmail.com", "password", "First", "Last")
+    auth_u_id_1 = register_id_return_1['auth_user_id']
+
+    register_id_return_2 = auth_register_v1("test2@gmail.com", "password", "First", "Last")
+    auth_u_id_2 = register_id_return_2['auth_user_id']
+
+    return_c_id = channels_create_v1(auth_u_id_1, "TestChannel1", True)
+    c_id = return_c_id['channel_id']
+
+    return [auth_u_id_2, c_id]
+
 
 @pytest.fixture
 def clear__register_user__create_channel():
@@ -117,38 +150,36 @@ def test_channel_inv__u_id_already_member(clear__register_two_users):
         channel_invite_v1(auth_u_id_1, c_id, auth_u_id_2)
 
 
-def test_channel_invite__channel_id_valid__auth_not_member(clear__register_two_users__create_channel_private):
+def test_channel_invite__channel_id_valid__auth_not_member(clear__register_user_not_owner__create_channel_private):
 
-    u_id_1, u_id_2, c_id = clear__register_two_users__create_channel_private
-    u_id_1 # unused variable
+    u_id_1, c_id = clear__register_user_not_owner__create_channel_private
 
     new_user = auth_register_v1("random@gmail.com", "password", "First", "Last")
     new_u_id = new_user['auth_user_id']
 
     with pytest.raises(AccessError):
-        channel_invite_v1(new_u_id, c_id, u_id_2)
+        channel_invite_v1(new_u_id, c_id, u_id_1)
 
 
 
 ############# CHANNEL JOIN TESTS
 
 # channel_id refers to a channel that is private and the authorised user is not already a channel member and is not a global owner
-def test_channel_join__auth_u_id_invalid__private(clear__register_two_users__create_channel_private):
+def test_channel_join__auth_u_id_invalid__private(clear__register_user_not_owner__create_channel_private):
     
-    u_id_1, u_id_2, c_id = clear__register_two_users__create_channel_private
-    u_id_1 # unused variable
-    
+    u_id_1, c_id = clear__register_user_not_owner__create_channel_private
+
+
     with pytest.raises(AccessError):
-        channel_join_v1(u_id_2, c_id)
+        channel_join_v1(u_id_1, c_id) # should fail as user is trying to join private channel
 
 
 
-def test_channel_join__auth_u_id_valid__public(clear__register_two_users__create_channel_public):
+def test_channel_join__auth_u_id_valid__public(clear__register_user_not_owner__create_channel_public):
     
-    u_id_1, u_id_2, c_id = clear__register_two_users__create_channel_public
-    u_id_1 # unused variable
+    u_id_1, c_id = clear__register_user_not_owner__create_channel_public
 
-    channel_join_v1(u_id_2, c_id)
+    channel_join_v1(u_id_1, c_id) # should be successful as channel is public
 
 
 def test_channel_join__auth_u_id_valid_and_global__private(clear__register_two_users):
@@ -165,13 +196,17 @@ def test_channel_join__auth_u_id_valid_and_global__private(clear__register_two_u
 
 def test_channel_join__channel_id_invalid(clear__register_two_users):
 
-    u_id_1, u_id_2 = clear__register_two_users
-    u_id_2 # unused variable
+    clear_v1()
+
+    # register new user
+    new_user = auth_register_v1("random@gmail.com", "password", "First", "Last")
+    u_id = new_user['auth_user_id']
 
     invalid_c_id = 999
 
+    # should fail as channel does not exist
     with pytest.raises(InputError):
-        channel_join_v1(u_id_1, invalid_c_id)
+        channel_join_v1(u_id, invalid_c_id)
 
 
 
