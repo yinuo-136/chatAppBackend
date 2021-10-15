@@ -3,8 +3,9 @@ import signal
 from json import dumps
 from flask import Flask, request
 from flask_cors import CORS
-from src.error import InputError
+from src.error import InputError, AccessError
 from src import config
+from src.channels import channels_create_v1
 
 def quit_gracefully(*args):
     '''For coverage'''
@@ -38,6 +39,15 @@ def echo():
     return dumps({
         'data': data
     })
+
+@APP.route("/channels/create/v2", methods=['POST'])   
+def channels_create_v2():
+    resp = request.get_json()
+    token = resp['token']
+    name = resp['name']
+    is_public = resp['is_public']
+    return dumps(channels_create_v1(token, name, is_public))
+
 
 #### NO NEED TO MODIFY BELOW THIS POINT
 
