@@ -162,8 +162,54 @@ def test_listall_general():
                             ],
                  }
 
+###########################################################################################
 
+## channel/leave/v1
 
+# feature 1: raise access error when channel_id is valid and the authorised user is not a member of the channel
+def test_leave_not_member():
+
+    clear()
+
+    token_1 = user_sign_up('test1@gmail.com', 'password1', 'First1', 'Last1')
+    token_2 = user_sign_up('test2@gmail.com', 'password2', 'First2', 'Last2')
+    payload = requests.post(f'{BASE_URL}/channels/create/v2', json={'token': token_1,
+                                                            'name': 'correct1',
+                                                            'is_public': True})
+    p = payload.json()
+    
+    r_type = requests.post(f'{BASE_URL}/channel/leave/v1', json={'token': token_2, 'channel_id': p['channel_id']})
+
+    assert r_type.status_code == 403
+
+# feature 2: raise input error when channel_id does not refer to a valid channel
+def test_leave_channel_invalid():
+
+    clear()
+
+    token = user_sign_up('test2@gmail.com', 'password2', 'First2', 'Last2')
+    #a random invalid channel id
+    c_id = 100
+    
+    r_type = requests.post(f'{BASE_URL}/channel/leave/v1', json={'token': token, 'channel_id': c_id})
+
+    assert r_type.status_code == 400
+
+#feature 3: after successfully call the function, the return type should be an empty dict
+def test_leave_check_return():
+
+    clear()
+
+    token = user_sign_up('test1@gmail.com', 'password1', 'First1', 'Last1')
+    payload = requests.post(f'{BASE_URL}/channels/create/v2', json={'token': token,
+                                                            'name': 'correct1',
+                                                            'is_public': True})
+    p = payload.json()
+    
+    r_type = requests.post(f'{BASE_URL}/channel/leave/v1', json={'token': token, 'channel_id': p['channel_id']})
+    r = r_type.json()
+
+    assert r == {}
 
 #test user id validity check in list function
 def test_list_ui_validity():
