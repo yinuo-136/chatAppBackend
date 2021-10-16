@@ -1,15 +1,37 @@
 import pytest
+import requests
 
-from src.channels import channels_create_v1
-from src.channel import channel_messages_v1
-from src.auth import auth_register_v1
-from src.error import AccessError, InputError
-from src.other import clear_v1
 
-#feature 1: raise Accesserror if user_id does not refer to a valid user
+#######################################################################################
+# helper functions
+SECRET = 'COMP1531'
+BASE_URL = 'http://127.0.0.1:8080'
+
+def clear():
+    requests.delete(f'{BASE_URL}/clear/v1')
+
+
+def user_sign_up(email, password, first, last):
+    payload = requests.post(f'{BASE_URL}/auth/register/v2', json= {'email': email,
+                                                            'password': password,
+                                                            'name_first': first,
+                                                            'name_last': last})
+    p = payload.json()
+    return p['token']
+
+def user_create_channel(token, name, is_public):
+    payload = requests.post(f'{BASE_URL}/channels/create/v2', json={'token': token,
+                                                            'name': name,
+                                                            'is_public': is_public})
+    p = payload.json()
+    return p['channel_id']
+
+#########################################################################################
+
+#feature 1: raise Accesserror if token does not refer to a valid user(or session_id)
 def test_user_id_validity_messages():
 
-    clear_v1()
+    clear()
 
     u_dict = auth_register_v1("test@gmail.com", "password", "First", "Last")
     u_id_exist = u_dict['auth_user_id']

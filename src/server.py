@@ -39,7 +39,7 @@ def echo():
     return dumps({
         'data': data
     })
-
+'''
 @APP.route("/channels/create/v2", methods=['POST'])   
 def channels_create_v2():
     resp = request.get_json()
@@ -47,7 +47,7 @@ def channels_create_v2():
     name = resp['name']
     is_public = resp['is_public']
     return dumps(channels_create_v1(token, name, is_public))
-
+'''
 
 #### NO NEED TO MODIFY BELOW THIS POINT
 
