@@ -1,23 +1,36 @@
 import pytest
+import jwt
 import requests
+import uuid
 import json
+from tests.auth_wrappers import auth_register, auth_login, auth_logout
 from src import config
 
+# ADD CLEAR() TO EACH TEST
+
 def test_basic_auth_register():
-    '''
-    A simple test to check auth_register
-    '''
-    payload = {'email' : 'email@gmail.com', 
-        'password' : 'password123', 
-        'name_first' : 'Jayden', 
-        'name_last' : 'Matthews'}
     
-    payload = json.dumps(payload)
+    r = auth_register("email@gmail.com", "password123", "Jayden", "Matthews")
     
-    r = requests.post(config.url + "auth/register/v2", data = payload)
+    resp = r.json()
+   
+    print(resp)
     
-    print(json.loads(r.text))
+    assert resp['auth_user_id'] == 1
     
-    assert r.status_code == 200
+def test_basic_auth_login_logout():
+
+    r = auth_login("email@gmail.com", "password123")
     
-    assert json.loads(r.text) == {'token' : '1', 'auth_user_id' : 1}
+    resp = r.json()
+    
+    print(resp)
+    assert resp['auth_user_id'] == 1
+    
+    token = jwt.decode(resp['token'], config.SECRET, algorithms=["HS256"])
+    
+    r1 = auth_logout(1, token['session_id'])
+     
+    assert r1.json() == {}
+    
+    
