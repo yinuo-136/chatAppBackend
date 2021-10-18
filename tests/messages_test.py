@@ -4,7 +4,6 @@ import requests
 
 #######################################################################################
 # helper functions
-SECRET = 'COMP1531'
 BASE_URL = 'http://127.0.0.1:8080'
 
 def clear():

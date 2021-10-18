@@ -3,7 +3,6 @@ import requests
 
 #######################################################################################
 # helper functions
-SECRET = 'COMP1531'
 BASE_URL = 'http://127.0.0.1:8080'
 
 def clear():
@@ -125,7 +124,7 @@ def test_listall_empty_channel():
 
     token = user_sign_up('test@gmail.com', 'password', 'First', 'Last')
 
-    payload = requests.get(f'{BASE_URL}/channels/listall/v2', json={'token': token})
+    payload = requests.get(f'{BASE_URL}/channels/listall/v2', params={'token': token})
 
     p = payload.json()
     assert p == {}
@@ -138,9 +137,9 @@ def test_listall_sid_validity():
 
     # generate a token that doesn't exist.
     token = user_sign_up('test@gmail.com', 'password', 'First', 'Last')
-    requests.post(f'{BASE_URL}/auth/logout/v1', json={'token': token})
+    requests.post(f'{BASE_URL}/auth/logout/v1', params={'token': token})
 
-    payload = requests.get(f'{BASE_URL}/channels/listall/v2', json={'token': token})
+    payload = requests.get(f'{BASE_URL}/channels/listall/v2', params={'token': token})
 
     assert payload.status_code == 403
 
@@ -152,7 +151,7 @@ def test_listall_uid_validity():
     #clear again to make the u_id invalid
     clear()
 
-    payload = requests.get(f'{BASE_URL}/channels/listall/v2', json={'token': token})
+    payload = requests.get(f'{BASE_URL}/channels/listall/v2', params={'token': token})
 
     assert payload.status_code == 403
 
@@ -173,7 +172,7 @@ def test_listall_general():
     p1 = payload_1.json()
     p2 = payload_2.json()
 
-    payload_3 = requests.get(f'{BASE_URL}/channels/listall/v2', json={'token': token})
+    payload_3 = requests.get(f'{BASE_URL}/channels/listall/v2', params={'token': token})
     p3 = payload_3.json()
 
     assert p3 == {'channels': [

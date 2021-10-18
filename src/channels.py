@@ -1,16 +1,49 @@
 from src.error import InputError
 from src.error import AccessError
 from src.data_store import data_store
+import json
+import jwt
+
+#############################################################################
+SECRET = 'h13balpaca'
+# helper function
+def data_get():
+    try:
+        data = json.load(open('database.json', 'r'))
+    except Exception:
+        data = data_store.get()
+    return data
+
+def data_save():
+    data = data_store.get()
+    with open('database.json', 'w') as FILE:
+        json.dump(data, FILE)
 
 
-def channels_list_v1(auth_user_id):
+def token_decode(token):
+    DECODE_TOKEN = jwt.decode(token, SECRET, algorithms=['HS256'])
+    u_id = DECODE_TOKEN['user_id']
+    session_id = DECODE_TOKEN['session_id']
+
+    store = data_get()
+    if u_id not in store['user_details'].keys():
+        raise AccessError(description="Invalid Token Passed: user_id does not exist")
+    if session_id not in store['session_ids']:
+        raise AccessError(description='Invalid Token Passed: session_id does not exist')
+ 
+    return [u_id, session_id]
+
     
+#############################################################################
+def channels_list_v1(auth_user_id):
+
     store = data_store.get()
     u_dict = store['user_details']
-    
+
     #user id validity check
     if auth_user_id not in u_dict.keys():
     	raise AccessError("the user id you entered does not exist") 
+
 
     list_dict = []
     channel_list = store['channels']
@@ -83,16 +116,11 @@ def channels_create_v1(auth_user_id, name, is_public):
     Returns a dictionary that contains channel_id that you create.
     '''
 
-    store = data_store.get()
-
-    u_dict = store['user_details']
-    # implement the user id validity check
-    if auth_user_id not in u_dict.keys():
-        raise AccessError("the user id you entered does not exist")
+    store = data_get()
 
     # implement the name validity check
     if len(name) < 1 or len(name) > 20:
-        raise InputError("Invalid name is entered, needs to be a name between 1 and 20 characters!")
+        raise InputError(description="Invalid name is entered, needs to be a name between 1 and 20 characters!")
     
     #store channel information into date_store
     c_id = len(store['channels']) + 1
@@ -100,7 +128,9 @@ def channels_create_v1(auth_user_id, name, is_public):
     members = [auth_user_id]
     messages = {}
     store['channels'].update({c_id : (name, is_public, owner, members, messages)})
-        
+
+    data_save()
+
     return {
-        'channel_id': c_id,
+        'channel_id': c_id
     }
