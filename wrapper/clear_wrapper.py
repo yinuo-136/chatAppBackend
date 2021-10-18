@@ -5,5 +5,4 @@ BASE_URL = config.url
 
 # FOR USE IN OTHER CLASSES
 def clear_http():
-
-    requests.delete(BASE_URL + "clear/v1")
+    return requests.delete(BASE_URL + "clear/v1")
