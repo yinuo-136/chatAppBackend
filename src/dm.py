@@ -83,6 +83,8 @@ def dm_create_v1(owner_u_id, u_ids):
 def dm_list_v1(member_id):
 
     '''
+    Returns { dms } => List of dictionaries, where each dictionary contains types { dm_id, name } 
+
     Returns the list of DMs that the user is a member of.
     '''
 
@@ -111,21 +113,20 @@ def dm_list_v1(member_id):
         
         is_apart_of_dm = False
 
+        # if user is owner, add this to the return dms dict
         if member_id is owner_id:
             is_apart_of_dm = True
 
+        # if user is a member of u_ids, add this to return dms dict
         if member_id in u_ids:
             is_apart_of_dm = True
 
+
+        # append to list which stores all dm_id and name of dm's user is apart of
         if is_apart_of_dm:
             to_add = {'dm_id' : curr_dm_id, 'name' : dm_obj['name']}
             dms.append(to_add)
 
-
-    #print(dms)
-    '''
-    returns { dms } => List of dictionaries, where each dictionary contains types { dm_id, name } 
-    '''
 
     return { 'dms' : dms }
 

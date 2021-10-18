@@ -1,8 +1,9 @@
 import requests
 import json
 from src import config
-from src.dm import dm_create_v1
+from src.dm import dm_create_v1, dm_list_v1
 from src.auth import auth_register_v1
+from src.other import clear_v1
 
 BASE_URL = config.url
 
@@ -26,6 +27,8 @@ SUCCESS = 200
 
 def test_dm_create__local():
 
+    clear_v1()
+
     dct_1 = auth_register_v1("test1@gmail.com", "password", "Nicholas", "Stathakis")
     u_id_1 = dct_1['auth_user_id']
 
@@ -38,7 +41,6 @@ def test_dm_create__local():
 
     assert dm_id == 1
 
-'''
 
 #   InputError when: any u_id in u_ids does not refer to a valid user
 def test_dm_create__fail__user_not_valid():
@@ -118,5 +120,48 @@ def test_dm_create__success__double_dm():
     assert status_code == SUCCESS # aka 200 OK
     assert response_dict == { 'dm_id' : 2 } # NEXT SHOULD BE 2 ID
 
-'''
+
 #Note: cannot test that name of DM will be alphabetically sorted as that would break blackbox
+##################################### END OF dm_create_v1 TESTS
+
+
+#################################### START OF dm_list_v1 TESTS
+
+def test_white__dm_list():
+
+    clear_v1()
+
+    dct_1 = auth_register_v1("test1@gmail.com", "password", "Nicholas", "Stathakis")
+    u_id_1 = dct_1['auth_user_id']
+
+    dct_2 = auth_register_v1("test2@gmail.com", "password", "Zeddy", "Zarnacle")
+    u_id_2 = dct_2['auth_user_id']
+
+    dict_dm_id = dm_create_v1(u_id_1, [u_id_2])
+
+    dm_id = dict_dm_id['dm_id']
+
+    assert dm_id == 1
+
+    ret = dm_list_v1(u_id_2)
+    dm = ret['dms']
+
+    assert dm == [{'dm_id': 1, 'name': 'nicholasstathakis, zeddyzarnacle'}]
+
+
+def test_dm_list__success_basic():
+
+    # TODO: Clear, register two users, and create a dm between the two
+
+    my_user_token = "xxx"
+
+    payload = {'token' : my_user_token} 
+    payload = json.dumps(payload)
+
+    r = requests.get(BASE_URL + "dm/list/v1", data=payload)
+
+    status_code = r.status_code
+    response_dict = json.loads(r.text)
+
+    assert status_code == SUCCESS # aka 200 OK
+    assert response_dict == { 'dms' : [{'dm_id': 1, 'name': 'nicholasstathakis, zeddyzarnacle'}] } # NEXT SHOULD BE 2 ID
