@@ -17,6 +17,19 @@ def user_profile(user_id):
     
     return requests.get(config.url + "user/profile/v1", params = payload)  
     
+def list_users(user_id):
+    
+    pretoken = {
+        'user_id' : user_id,
+        'session_id' : 'assume_this_is_correct'
+    }
+    
+    token = jwt.encode(pretoken, config.SECRET, algorithm = 'HS256')
+    
+    payload = {'token' : token}
+    
+    return requests.get(config.url + "users/all/v1", params = payload)  
+    
     
 def set_name(user_id, name_first, name_last):
     pretoken = {

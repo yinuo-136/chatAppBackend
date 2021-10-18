@@ -10,6 +10,7 @@ from src import config
 from src.auth import auth_login_v1, auth_register_v1, auth_logout_v1, auth_invalidate_session, auth_store_session_id
 from src.user import user_details, list_all_users, user_set_email, user_set_handle, user_set_name
 from src.data_store import data_store
+from src.database import save_datastore, load_datastore
 from src.token import token_checker
 
 
@@ -55,6 +56,9 @@ def register():
     
     #Token implementation
     token = jwt.encode(payload, config.SECRET, algorithm = 'HS256')
+    
+    #Persistence
+    save_datastore()
     
     return dumps({'token' : token, 'auth_user_id' : user_id})
 
@@ -115,10 +119,19 @@ def profile():
     })
     
 
-'''
+
 @APP.route("/users/all/v1", methods=['GET'])
 #Parameters:{ token } Return Type:{ users }
-'''
+def list_users():
+    token = request.args.get('token')
+    
+    token_checker(token)
+    
+    users = list_all_users()
+    
+    return dumps({
+        'users' : users
+    })
 
 @APP.route("/user/profile/setname/v1", methods=['PUT']) 
 #Parameters:{ token, name_first, name_last } Return Type:{}
@@ -180,5 +193,6 @@ def set_user_handle():
 #### NO NEED TO MODIFY BELOW THIS POINT
 
 if __name__ == "__main__":
+    load_datastore()
     signal.signal(signal.SIGINT, quit_gracefully) # For coverage
     APP.run(port=config.port) # Do not edit this port

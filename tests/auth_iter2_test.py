@@ -13,9 +13,8 @@ def test_basic_auth_register():
     r = auth_register("email@gmail.com", "password123", "Jayden", "Matthews")
     
     resp = r.json()
-   
-    print(resp)
     
+    assert type(resp['token']) is str
     assert resp['auth_user_id'] == 1
     
 def test_basic_auth_login_logout():
@@ -24,7 +23,7 @@ def test_basic_auth_login_logout():
     
     resp = r.json()
     
-    print(resp)
+    assert type(resp['token']) is str
     assert resp['auth_user_id'] == 1
     
     token = jwt.decode(resp['token'], config.SECRET, algorithms=["HS256"])
