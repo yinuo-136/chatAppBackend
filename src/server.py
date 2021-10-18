@@ -1,11 +1,14 @@
 import sys
 import signal
+import uuid
+import jwt
 from json import dumps
 from flask import Flask, request
 from flask_cors import CORS
 from src.error import InputError
 from src import config
 from src.dm import dm_create_v1
+from src.token import token_checker
 
 def quit_gracefully(*args):
     '''For coverage'''
@@ -41,6 +44,7 @@ def echo():
     })
 
 
+
 @APP.route("dm/create/v1", methods=['POST'])
 def dm_create_http():
     '''
@@ -54,8 +58,14 @@ def dm_create_http():
     token = data['token']
     u_ids = data['u_ids']
 
+    token_checker(token) # will raise an error if token is invalid
 
-    dm_id = dm_create_v1(token, u_ids)
+    payload = jwt.decode(token, config.SECRET, algorithms=["HS256"])
+    owner_u_id = payload.get('user_id')
+
+
+
+    dm_id = dm_create_v1(owner_u_id, u_ids)
 
     return dumps({ 'dm_id' : dm_id })
 
