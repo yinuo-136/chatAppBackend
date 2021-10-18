@@ -1,5 +1,6 @@
 import requests
 import json
+from requests.api import request
 from src import config
 from src.dm import dm_create_v1, dm_list_v1
 from src.auth import auth_register_v1
@@ -127,7 +128,7 @@ def test_dm_create__success__double_dm():
 
 #################################### START OF dm_list_v1 TESTS
 
-def test_white__dm_list():
+def test_local__dm_list():
 
     clear_v1()
 
@@ -165,3 +166,65 @@ def test_dm_list__success_basic():
 
     assert status_code == SUCCESS # aka 200 OK
     assert response_dict == { 'dms' : [{'dm_id': 1, 'name': 'nicholasstathakis, zeddyzarnacle'}] } # NEXT SHOULD BE 2 ID
+
+
+
+##################################### END OF dm_list_v1 TESTS
+
+
+#################################### START OF dm_remove_v1 TESTS
+
+'''
+Remove an existing DM, so all members are no longer in the DM. This can only be done by the original creator of the DM.
+'''
+
+def test_dm_remove__error__dm_id_invalid():
+
+    # TODO: Clear, register one user, try remove a random channel
+
+    my_user_token = "xxx"
+    invalid_dm_id = 999
+
+    payload = {'token' : my_user_token, 'dm_id' : invalid_dm_id} 
+    payload = json.dumps(payload)
+
+    r = requests.delete(BASE_URL + "dm/remove/v1", data=payload)
+
+    status_code = r.status_code
+
+    assert status_code == INPUT_ERROR_CODE
+
+
+def test_dm_remove__error__user_unauthorised():
+
+    # TODO: Clear, register TWO users
+
+    # CREATE DM
+    my_user_token = "xxx"
+    other_u_ids = [2]
+
+    payload = {'token' : my_user_token, 'u_ids' : other_u_ids} 
+    payload = json.dumps(payload)
+
+    r = requests.post(BASE_URL + "dm/create/v1", data=payload)
+
+    status_code = r.status_code
+    response_message = json.loads(r.text)
+
+    dm_id = response_message['dm_id']
+
+
+    unauthorised_u_id = other_u_ids[0]
+
+    # TODO: Get token of unauthorised u_id
+
+    unauthorised_token = "yyy"
+
+    payload = {'token' : unauthorised_token, 'dm_id' : dm_id} 
+    payload = json.dumps(payload)
+
+    r = requests.delete(BASE_URL + "dm/remove/v1", data=payload)
+
+    status_code = r.status_code
+
+    assert status_code == ACCESS_ERROR_CODE
