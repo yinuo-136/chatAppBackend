@@ -3,6 +3,8 @@ import requests
 import json
 from src import config
 from src.dm import dm_create_v1
+from src.auth import auth_register_v1
+from src.data_store import data_store
 
 BASE_URL = config.url
 
@@ -23,6 +25,38 @@ SUCCESS = 200
     
     '''
 
+
+def test_dm_create__local():
+
+    dct_1 = auth_register_v1("test1@gmail.com", "password", "Nicholas", "Stathakis")
+    u_id_1 = dct_1['auth_user_id']
+
+    dct_2 = auth_register_v1("test2@gmail.com", "password", "Zeddy", "Zarnacle")
+    u_id_2 = dct_2['auth_user_id']
+
+    dict_dm_id = dm_create_v1(u_id_1, [u_id_2])
+
+    dm_id = dict_dm_id['dm_id']
+
+    assert dm_id == 1
+
+    store = data_store.get()
+    dict_dms = store['dms']
+
+    # TODO: this is whitebox, only for testing purposes, will be moved later on
+    assert dict_dms == { dm_id : {
+        'name' : 'nicholasstathakis, zeddyzarnacle',
+        'owner_id' : 1,
+        'u_ids' : [2],
+        'messages' : {},
+    }}
+
+
+if __name__ == '__main__':
+    test_dm_create__local()
+
+
+'''
 #   InputError when: any u_id in u_ids does not refer to a valid user
 def test_dm_create__fail__user_not_valid():
 
@@ -101,5 +135,5 @@ def test_dm_create__success__double_dm():
     assert status_code == SUCCESS # aka 200 OK
     assert response_dict == { 'dm_id' : 2 } # NEXT SHOULD BE 2 ID
 
-
+'''
 #Note: cannot test that name of DM will be alphabetically sorted as that would break blackbox

@@ -27,18 +27,56 @@ def dm_create_v1(owner_u_id, u_ids):
 
     dict_dms = store['dms']
 
+
+    all_user_handles = []
+
+
+    # store['user_details'].update({new_id : (email, password, name_first, name_last, handle)})
+
+    all_user_details = store['user_details']
+
+    for u_id in u_ids:
+
+        curr_handle = all_user_details[u_id][4]
+
+        print(f'>> {curr_handle}')
+
+        all_user_handles.append(curr_handle)
+
+    owner_handle = all_user_details[owner_u_id][4]
+    print(f'>>> {owner_handle}')
+
+    # append owner to this list of all handles
+    all_user_handles.append(owner_handle)
+
+    print(f"All Handles: {all_user_handles}")
+
+    # sort the handles alphabetically
+    all_user_handles = sorted(all_user_handles)
+
+    print(f"Sorted: {all_user_handles}")
+
+
+    
+
+    # all of our fields for the dict
     dm_id = len(dict_dms) + 1 # start dm length from 1 onwards
+    dm_name = ', '.join(all_user_handles)
     owner_id = owner_u_id
     members = u_ids
     messages = {}
 
-    # "dm_id" : {'owner_id' : 1, 'u_ids': [2,3,4], 'messages' : {},}
+    print(f"Dm Name: \'{dm_name}\'")
+
+    # "dm_id" : {'name' : 'a, b, c', owner_id' : 1, 'u_ids': [2,3,4], 'messages' : {},}
 
     dict_dms.update({dm_id : {
+        'name' : dm_name,
         'owner_id' : owner_id,
         'u_ids' : members,
-        'messages' : messages
+        'messages' : messages,
     }})
+
 
     # dummy code for `dm_id` return
     return { 'dm_id' : dm_id }
