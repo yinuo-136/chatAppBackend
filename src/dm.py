@@ -143,12 +143,28 @@ def dm_remove_v1(u_id, dm_id):
 
     # firstly check dm_id is a valid dm
 
+    store = data_store.get()
+
+    all_dm_dict = store['dms']
+
+    num_dms = len(all_dm_dict)
+
+    # if we are given a number larger than number of dms OR smaller than 1 (minimum valid dm num)
+    if (dm_id > num_dms or dm_id < 1):
+        raise InputError("dm_id does not refer to a valid DM")
 
 
     # next, check authorised user is original creator
 
+    specific_dm = all_dm_dict[dm_id]
+
+    owner_id = specific_dm['owner_id']
+
+    if (owner_id is not u_id):
+        raise AccessError("dm_id is valid and the authorised user is not the original DM creator")
 
 
+    
     # proceed to goods
 
 
