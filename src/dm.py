@@ -98,12 +98,34 @@ def dm_list_v1(member_id):
 
     all_dm_dict = store['dms']
 
-    dms = {}
+    dms = []
 
-    for dm_obj in all_dm_dict.keys():
-        print(dm_obj)
+    for curr_dm_id in all_dm_dict.keys():
+        #print(f"Currently at dm id: {curr_dm_id}")
 
+        dm_obj = all_dm_dict[curr_dm_id]
+        #print(dm_obj)
+
+        owner_id = dm_obj['owner_id']
+        u_ids = dm_obj['u_ids']
+        
+        is_apart_of_dm = False
+
+        if member_id is owner_id:
+            is_apart_of_dm = True
+
+        if member_id in u_ids:
+            is_apart_of_dm = True
+
+        if is_apart_of_dm:
+            to_add = {'dm_id' : curr_dm_id, 'name' : dm_obj['name']}
+            dms.append(to_add)
+
+
+    #print(dms)
     '''
     returns { dms } => List of dictionaries, where each dictionary contains types { dm_id, name } 
     '''
+
+    return { 'dms' : dms }
 

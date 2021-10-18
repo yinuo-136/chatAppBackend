@@ -7,7 +7,7 @@ from flask import Flask, request
 from flask_cors import CORS
 from src.error import InputError
 from src import config
-from src.dm import dm_create_v1
+from src.dm import dm_create_v1, dm_list_v1
 from src.token import token_checker
 
 def quit_gracefully(*args):
@@ -65,9 +65,34 @@ def dm_create_http():
 
 
 
-    dm_id = dm_create_v1(owner_u_id, u_ids)
+    dict_dm_id = dm_create_v1(owner_u_id, u_ids)
+    dm_id = dict_dm_id['dm_id']
 
     return dumps({ 'dm_id' : dm_id })
+
+
+
+
+@APP.route("dm/list/v1", methods=['GET'])
+def dm_create_http():
+    '''
+    
+    Parameters:{ token }
+    Return Type:{ dms }
+    
+    '''
+    token = request.args.get('token')
+
+    token_checker(token) # will raise an error if token is invalid
+
+    payload = jwt.decode(token, config.SECRET, algorithms=["HS256"])
+    member_u_id = payload.get('user_id')
+
+
+    dict_dms = dm_list_v1(member_u_id)
+    dms = dict_dms['dms']
+
+    return dumps({ 'dms' : dms })
 
 
 #### NO NEED TO MODIFY BELOW THIS POINT
