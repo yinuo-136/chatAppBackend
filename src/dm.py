@@ -130,3 +130,26 @@ def dm_list_v1(member_id):
 
     return { 'dms' : dms }
 
+
+
+# Remove an existing DM, so all members are no longer in the DM. This can only be done by the original creator of the DM.
+def dm_remove_v1(u_id, dm_id):
+
+    '''
+    Parameters:     { token, dm_id }
+    Return Type:    {}
+    '''
+
+
+    # firstly check dm_id is a valid dm
+
+
+
+    # next, check authorised user is original creator
+
+
+
+    # proceed to goods
+
+
+    return {}
