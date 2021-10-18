@@ -3,7 +3,6 @@ import json
 from src import config
 from src.dm import dm_create_v1
 from src.auth import auth_register_v1
-from src.data_store import data_store
 
 BASE_URL = config.url
 
@@ -39,7 +38,7 @@ def test_dm_create__local():
 
     assert dm_id == 1
 
-
+'''
 
 #   InputError when: any u_id in u_ids does not refer to a valid user
 def test_dm_create__fail__user_not_valid():
@@ -119,5 +118,5 @@ def test_dm_create__success__double_dm():
     assert status_code == SUCCESS # aka 200 OK
     assert response_dict == { 'dm_id' : 2 } # NEXT SHOULD BE 2 ID
 
-
+'''
 #Note: cannot test that name of DM will be alphabetically sorted as that would break blackbox
