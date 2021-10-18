@@ -78,3 +78,32 @@ def dm_create_v1(owner_u_id, u_ids):
 
     # dummy code for `dm_id` return
     return { 'dm_id' : dm_id }
+
+
+def dm_list_v1(member_id):
+
+    '''
+    Returns the list of DMs that the user is a member of.
+    '''
+
+    store = data_store.get()
+
+    all_u_ids = store['user_details']
+    
+    #InputError when: any u_id in u_ids does not refer to a valid user
+    # ASSUMPTION: we raise an ACCESS ERROR
+    if member_id not in all_u_ids.keys():
+        raise AccessError("User ID does not exist") 
+
+
+    all_dm_dict = store['dms']
+
+    dms = {}
+
+    for dm_obj in all_dm_dict.keys():
+        print(dm_obj)
+
+    '''
+    returns { dms } => List of dictionaries, where each dictionary contains types { dm_id, name } 
+    '''
+
