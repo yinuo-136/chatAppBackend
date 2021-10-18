@@ -47,7 +47,7 @@ def test_white__dm_list():
 
     assert dm_id == 1
 
-    ret = dm_list_v1(u_id_1)
-    print(ret)
+    ret = dm_list_v1(u_id_2)
+    dm = ret['dms']
 
-test_white__dm_list()
+    assert dm == [{'dm_id': 1, 'name': 'nicholasstathakis, zeddyzarnacle'}]
