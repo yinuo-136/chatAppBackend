@@ -27,11 +27,8 @@ def dm_create_v1(owner_u_id, u_ids):
 
     dict_dms = store['dms']
 
-
+    # stores all user handles, will be sorted alphabetically and joined later on
     all_user_handles = []
-
-
-    # store['user_details'].update({new_id : (email, password, name_first, name_last, handle)})
 
     all_user_details = store['user_details']
 
@@ -39,22 +36,22 @@ def dm_create_v1(owner_u_id, u_ids):
 
         curr_handle = all_user_details[u_id][4]
 
-        print(f'>> {curr_handle}')
+        #print(f'>> {curr_handle}')
 
         all_user_handles.append(curr_handle)
 
     owner_handle = all_user_details[owner_u_id][4]
-    print(f'>>> {owner_handle}')
+    #print(f'>>> {owner_handle}')
 
     # append owner to this list of all handles
     all_user_handles.append(owner_handle)
 
-    print(f"All Handles: {all_user_handles}")
+    #print(f"All Handles: {all_user_handles}")
 
     # sort the handles alphabetically
     all_user_handles = sorted(all_user_handles)
 
-    print(f"Sorted: {all_user_handles}")
+    #print(f"Sorted: {all_user_handles}")
 
 
     
@@ -66,9 +63,10 @@ def dm_create_v1(owner_u_id, u_ids):
     members = u_ids
     messages = {}
 
-    print(f"Dm Name: \'{dm_name}\'")
+    #print(f"Dm Name: \'{dm_name}\'")
 
-    # "dm_id" : {'name' : 'a, b, c', owner_id' : 1, 'u_ids': [2,3,4], 'messages' : {},}
+    # STRUCTURE:
+    #       "dm_id" : {'name' : 'a, b, c', owner_id' : 1, 'u_ids': [2,3,4], 'messages' : {},}
 
     dict_dms.update({dm_id : {
         'name' : dm_name,
