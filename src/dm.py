@@ -147,10 +147,15 @@ def dm_remove_v1(u_id, dm_id):
 
     all_dm_dict = store['dms']
 
-    num_dms = len(all_dm_dict)
+
+    dm_exists = False
+
+    for curr_dm_id in all_dm_dict.keys():
+        if (curr_dm_id is dm_id):
+            dm_exists = True
 
     # if we are given a number larger than number of dms OR smaller than 1 (minimum valid dm num)
-    if (dm_id > num_dms or dm_id < 1):
+    if (not dm_exists):
         raise InputError("dm_id does not refer to a valid DM")
 
 
@@ -164,8 +169,9 @@ def dm_remove_v1(u_id, dm_id):
         raise AccessError("dm_id is valid and the authorised user is not the original DM creator")
 
 
-    
+
     # proceed to goods
+
 
 
     return {}
