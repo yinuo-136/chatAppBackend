@@ -3,7 +3,7 @@ from src.auth import auth_register_v1
 from src.data_store import data_store
 from src.other import clear_v1
 
-def te1st_dm_create__local():
+def test_dm_create__local():
 
     clear_v1()
 
@@ -31,7 +31,7 @@ def te1st_dm_create__local():
     }}
 
 
-def te1st_white__dm_list():
+def test_white__dm_list():
 
     clear_v1()
 
@@ -53,10 +53,32 @@ def te1st_white__dm_list():
     assert dm == [{'dm_id': 1, 'name': 'nicholasstathakis, zeddyzarnacle'}]
 
 
-def te1st_white__dm_remove():
-
-    
-    dm_remove_v1(1, 1)
-
+def test_white__dm_remove():
 
     clear_v1()
+
+
+    dct_1 = auth_register_v1("test1@gmail.com", "password", "Nicholas", "Stathakis")
+    u_id_1 = dct_1['auth_user_id']
+
+    dct_2 = auth_register_v1("test2@gmail.com", "password", "Zeddy", "Zarnacle")
+    u_id_2 = dct_2['auth_user_id']
+
+    dict_dm_id = dm_create_v1(u_id_1, [u_id_2])
+
+    dm_id = dict_dm_id['dm_id']
+    
+
+
+    store = data_store.get()
+    dict_dms_before = store['dms']
+    
+    assert len(dict_dms_before) == 1
+
+    dm_remove_v1(u_id_1, dm_id)
+
+    store = data_store.get()
+    dict_dms_after = store['dms']
+    
+
+    assert len(dict_dms_after) == 0
