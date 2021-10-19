@@ -249,6 +249,57 @@ def test_dm_list__success_basic():
 #Remove an existing DM, so all members are no longer in the DM. This can only be done by the original creator of the DM.
 '''
 
+def test_dm_remove__success_basic():
+
+    #Clear
+
+    clear_http()
+
+    #Register two users
+
+    r1 = auth_register("test@gmail.com", "password123", "Nicholas", "Stathakis")
+    r2 = auth_register("somerandom@gmail.com", "password123", "Jayden", "Matthews")
+
+    # then call the function with user token and invalid_id
+
+    data1 = r1.json()
+    data2 = r2.json()
+
+
+    user_1_token = data1['token']
+    user_1_u_id = data1['auth_user_id']
+
+    user_2_token = data2['token']
+    user_2_u_id = data2['auth_user_id']
+
+    #Create dm
+
+    r = dm_create_wrapper(user_1_token, [user_2_u_id])
+
+    status_code = r.status_code
+    assert status_code == SUCCESS
+
+
+    response_message = json.loads(r.text)
+
+    dm_id = response_message['dm_id']
+
+    assert dm_id == 1
+
+    # make owner remove dm
+
+    # owner calls remove on their own dm
+    r = dm_remove_wrapper(user_1_token, dm_id)
+
+    status_code = r.status_code
+    response_body = json.loads(r.text)
+
+
+    assert response_body == {}
+    assert status_code == SUCCESS
+
+
+
 def test_dm_remove__error__dm_id_invalid():
 
     # TODO: Clear, 
@@ -313,18 +364,10 @@ def test_dm_remove__error__user_unauthorised():
 
     assert dm_id == 1
 
-
-    store = data_store.get()
-    dict_dms_before = store['dms']
-    print(dict_dms_before)
-    #assert dict_dms_before == {}
-
     # TODO: Get token of unauthorised u_id
 
     
     nr = dm_remove_wrapper(user_2_token, dm_id)
-
-    print(dict_dms_before)
 
     new_status_code = nr.status_code
 
