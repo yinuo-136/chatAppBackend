@@ -1,41 +1,8 @@
 from src.error import InputError
 from src.error import AccessError
 from src.data_store import data_store
-import json
-import jwt
-
-#############################################################################
-SECRET = 'h13balpaca'
-# helper function
-def data_get():
-    try:
-        data = json.load(open('database.json', 'r'))
-        data_store.set(data)
-    except Exception:
-        pass
-
-def data_save():
-    data = data_store.get()
-    with open('database.json', 'w') as FILE:
-        json.dump(data, FILE)
 
 
-def token_decode(token):
-    DECODE_TOKEN = jwt.decode(token, SECRET, algorithms=['HS256'])
-    u_id = DECODE_TOKEN['user_id']
-    session_id = DECODE_TOKEN['session_id']
-
-    data_get()
-    store = data_store.get()
-    if u_id not in store['user_details'].keys():
-        raise AccessError(description="Invalid Token Passed: user_id does not exist")
-    if session_id not in store['session_ids']:
-        raise AccessError(description='Invalid Token Passed: session_id does not exist')
- 
-    return [u_id, session_id]
-
-    
-#############################################################################
 def channels_list_v1(auth_user_id):
 
     store = data_store.get()
@@ -76,7 +43,6 @@ def channels_listall_v1(auth_user_id):
     return the list of channels that have been created.   
     '''
 
-    data_get()
     store = data_store.get()
     u_dict = store['user_details']
     # implement the user id validity check
@@ -116,8 +82,6 @@ def channels_create_v1(auth_user_id, name, is_public):
     Return Value:
     Returns a dictionary that contains channel_id that you create.
     '''
-
-    data_get()
     store = data_store.get()
     # implement the name validity check
     if len(name) < 1 or len(name) > 20:
@@ -127,11 +91,10 @@ def channels_create_v1(auth_user_id, name, is_public):
     c_id = len(store['channels']) + 1
     owner = [auth_user_id]
     members = [auth_user_id]
-    messages = {}
+    messages = []
     store['channels'].update({c_id : (name, is_public, owner, members, messages)})
-
-    data_save()
 
     return {
         'channel_id': c_id
     }
+

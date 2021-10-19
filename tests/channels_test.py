@@ -1,9 +1,21 @@
+import json
 import pytest
 import requests
-from channels_wrapper import BASE_URL, clear, user_sign_up
-
+from src.config import url
 #########################################################################################
+BASE_URL = url
 
+def clear():
+    requests.delete(f'{BASE_URL}/clear/v1')
+
+
+def user_sign_up(email, password, first, last):
+    payload = requests.post(f'{BASE_URL}/auth/register/v2', json= {'email': email,
+                                                            'password': password,
+                                                            'name_first': first,
+                                                            'name_last': last})
+    p = payload.json()
+    return p['token']
 ## channels/create/v2 tests:
 
 # channels/create/v2 feature 1: length of name is less than 1 or more than 20 characters, 
@@ -112,7 +124,7 @@ def test_listall_empty_channel():
     payload = requests.get(f'{BASE_URL}/channels/listall/v2', params={'token': token})
 
     p = payload.json()
-    assert p == {}
+    assert p == {'channels': []}
 
 
 #feature 2: if token that given in the parameter dose not exist, raise AccessError
@@ -122,7 +134,7 @@ def test_listall_sid_validity():
 
     # generate a token that doesn't exist.
     token = user_sign_up('test@gmail.com', 'password', 'First', 'Last')
-    requests.post(f'{BASE_URL}/auth/logout/v1', params={'token': token})
+    requests.post(f'{BASE_URL}/auth/logout/v1', json={'token': token})
 
     payload = requests.get(f'{BASE_URL}/channels/listall/v2', params={'token': token})
 
@@ -220,7 +232,7 @@ def test_leave_check_return():
     r = r_type.json()
 
     assert r == {}
-
+'''
 # feature 4: raise access error when the toke entered is invalid(u_id or session_id)
 def test_leave_uid_validity():
     clear()
@@ -241,14 +253,14 @@ def test_leave_uid_validity():
     token_2 = p2['token']
     u_id_2 = p2['auth_user_id']
     #make this user join the channel
-    requests.post(f'{BASE_URL}/channel/join/v2', json={'token': token_2, 'channel_id': p2['channel_id']})
+    requests.post(f'{BASE_URL}/channel/join/v2', json={'token': token_2, 'channel_id': p1['channel_id']})
     #remove token_2 user
     requests.post(f'{BASE_URL}/admin/user/remove/v1', json={'token': token_1, 'u_id':u_id_2 })
 
     r_type = requests.post(f'{BASE_URL}/channel/leave/v1', json={'token': token_2})
 
     assert r_type.status_code == 403
-
+'''
 def test_leave_sid_validity():
     clear()
     token = user_sign_up('test@gmail.com', 'password', 'First', 'Last')
@@ -263,13 +275,5 @@ def test_leave_sid_validity():
 
     assert r_type.status_code == 403
     
-'''
-#test user id validity check in list function
-def test_list_ui_validity():
-    clear_v1()
-    u_id = 12 
-    with pytest.raises(AccessError):
-        channels_list_v1(u_id)
-'''
     
 

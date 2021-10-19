@@ -9,5 +9,6 @@ def clear_v1():
     store['channels'] = {}
     store['global_permissions'] = {}
     store['session_ids'] = []
+    store['messages'] = {}
     data_store.set(store)
     return {}

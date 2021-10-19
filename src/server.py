@@ -6,10 +6,10 @@ from json import dumps
 from flask import Flask, request
 from flask_cors import CORS
 from src import config
-from src.channels import channels_listall_v1, token_decode, channels_create_v1
+from src.channel import channel_leave_v1
+from src.channels import channels_listall_v1, channels_create_v1
 from src.auth import auth_login_v1, auth_register_v1, auth_logout_v1, auth_invalidate_session, auth_store_session_id
 from src.user import user_details, list_all_users, user_set_email, user_set_handle, user_set_name
-from src.data_store import data_store
 from src.database import save_datastore, load_datastore
 from src.token import token_checker
 
@@ -100,7 +100,7 @@ def logout():
      
     auth_logout_v1(user_id)
     auth_invalidate_session(session_id)
-       
+  
     return dumps({})
     
  
@@ -201,27 +201,69 @@ def set_user_handle():
     return dumps({})
  
 
+
 @APP.route("/channels/create/v2", methods=['POST'])   
 def channels_create_v2():
+    #get the response from frontend
     resp = request.get_json()
+
     #get the dictionary from the response
     token = resp['token']
     name = resp['name']
     is_public = resp['is_public']
-    token_info = token_decode(token)
-    payload = channels_create_v1(token_info[0], name, is_public)
-    return dumps(payload)
+
+    #check the token validation
+    token_checker(token)
+    
+    #decode the token
+    payload = jwt.decode(token, config.SECRET, algorithms=["HS256"])
+    user_id = payload.get('user_id')
+
+    #persistence
+    save_datastore()
+
+    r = channels_create_v1(user_id, name, is_public)
+    return dumps(r)
+
 
 @APP.route("/channels/listall/v2", methods=['GET'])
 def channels_listall_v2():
-    resp = request.args.get('token')
-    token_info = token_decode(resp)
-    payload = channels_listall_v1(token_info[0])
-    return dumps(payload)
+    #get the token from frontend
+    token = request.args.get('token')
+
+    #check the token validation
+    token_checker(token)
+    
+    #decode the token
+    payload = jwt.decode(token, config.SECRET, algorithms=["HS256"])
+    user_id = payload.get('user_id')
+    r = channels_listall_v1(user_id)
+    return dumps(r)
+
+@APP.route("/channel/leave/v1", methods=['POST'])
+def channel_leave():
+    #get the info from frontend
+    resp = request.get_json()
+    token = resp['token']
+    channel_id = resp['channel_id']
+    
+    #check the token validation
+    token_checker(token)
+
+    #decode the token
+    payload = jwt.decode(token, config.SECRET, algorithms=["HS256"])
+    user_id = payload.get('user_id')
+
+    #call the function
+    r = channel_leave_v1(user_id,channel_id)
+    return dumps(r)
+
 
 @APP.route("/message/send/v1", methods=['POST'])
 def message_send_v1():
     return dumps({})
+
+
 #### NO NEED TO MODIFY BELOW THIS POINT
 
 if __name__ == "__main__":
