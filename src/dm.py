@@ -230,3 +230,17 @@ def dm_details_v1(auth_u_id, dm_id):
 
     return { 'name' : name,
              'members' : members }
+
+
+def dm_leave_v1(auth_u_id, dm_id):
+
+    #Input error when dm_id is INVALID
+
+
+    #AccessError when dmid is valid and authorised user is NOT member of DM
+
+
+    # we are gravy
+
+
+    return {}
