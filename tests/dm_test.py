@@ -538,3 +538,41 @@ def test_dm_details__fail__user_not_member__valid_dm_id():
     status_code = r.status_code
 
     assert status_code == ACCESS_ERROR_CODE
+
+
+
+##################################### END OF dm_details_v1 TESTS
+
+
+#################################### START OF dm_details_v1 TESTS
+
+'''
+
+Given a DM ID, the user is removed as a member of this DM. 
+
+The creator is allowed to leave and the DM will still exist if this happens. 
+
+This does not update the name of the DM.
+
+
+    
+Parameters:{ token, dm_id }
+Return Type:{}
+
+'''
+
+
+def test_dm_leave__success_basic():
+
+    #TODO: Clear
+
+    # Add two users
+
+    # Create a dm between them
+
+    # Make one user leave
+
+    # Check channel details to see if they are removed
+
+
+    return {}
