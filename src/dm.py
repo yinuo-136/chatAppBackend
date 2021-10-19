@@ -188,6 +188,42 @@ def dm_details_v1(auth_u_id, dm_id):
     Return Type:    { name, members }
     '''
 
+    #InputError when: dm_id does not refer to a valid DM
 
-    return { 'name' : 'PLACEHOLDER',
-             'members' : 'PLACEHOLDER'}
+    store = data_store.get()
+
+    all_dm_dict = store['dms']
+        
+    dm_exists = (dm_id in all_dm_dict.keys())
+    
+    if (dm_exists == False):
+        raise InputError("dm_id does not refer to a valid DM")
+
+    #AccessError when: dm_id is valid and the authorised user is not a member of the DM
+
+
+    specific_dm = all_dm_dict[dm_id]
+
+    all_members = specific_dm['u_ids']
+    
+    owner_id = specific_dm['owner_id'] #our owner id
+    all_members.append(owner_id)
+
+    #"dm_id" : {'name' : 'a, b, c', owner_id' : 1, 'u_ids': [2,3,4], 'messages' : {},}
+
+
+    user_is_member = (auth_u_id in all_members)
+
+
+    if (not user_is_member):
+        raise AccessError("dm_id is valid and the authorised user is not a member of the DM")
+
+    # continue on, yahoo! its-a-me, mario.
+
+
+    name = specific_dm['name']
+    members = all_members
+
+
+    return { 'name' : name,
+             'members' : members }
