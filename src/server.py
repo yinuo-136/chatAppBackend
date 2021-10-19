@@ -15,6 +15,8 @@ from src.token import token_checker
 
 
 
+from src.other import clear_v1
+
 def quit_gracefully(*args):
     '''For coverage'''
     exit(0)
@@ -37,6 +39,7 @@ APP.config['TRAP_HTTP_EXCEPTIONS'] = True
 APP.register_error_handler(Exception, defaultHandler)
 
 #### NO NEED TO MODIFY ABOVE THIS POINT, EXCEPT IMPORTS
+
 
 @APP.route("/auth/register/v2", methods=['POST'])
 def register():
@@ -132,6 +135,14 @@ def list_users():
     return dumps({
         'users' : users
     })
+
+# http hook for clearing the data store as per interface spec
+@APP.route("/clear/v1", methods=['DELETE'])
+def http_clear_req__delete():
+
+    clear_v1()
+
+    return {}
 
 @APP.route("/user/profile/setname/v1", methods=['PUT']) 
 #Parameters:{ token, name_first, name_last } Return Type:{}
