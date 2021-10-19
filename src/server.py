@@ -4,7 +4,7 @@ from json import dumps
 from flask import Flask, request
 from flask_cors import CORS
 from src import config
-from src.channels import token_decode, channels_create_v1
+from src.channels import channels_listall_v1, token_decode, channels_create_v1
 
 def quit_gracefully(*args):
     '''For coverage'''
@@ -41,7 +41,16 @@ def channels_create_v2():
     payload = channels_create_v1(token_info[0], name, is_public)
     return dumps(payload)
 
+@APP.route("/channels/listall/v2", methods=['GET'])
+def channels_listall_v2():
+    resp = request.args.get('token')
+    token_info = token_decode(resp)
+    payload = channels_listall_v1(token_info[0])
+    return dumps(payload)
 
+@APP.route("/message/send/v1", methods=['POST'])
+def message_send_v1():
+    return dumps({})
 #### NO NEED TO MODIFY BELOW THIS POINT
 
 if __name__ == "__main__":

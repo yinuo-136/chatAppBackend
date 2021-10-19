@@ -10,9 +10,9 @@ SECRET = 'h13balpaca'
 def data_get():
     try:
         data = json.load(open('database.json', 'r'))
+        data_store.set(data)
     except Exception:
-        data = data_store.get()
-    return data
+        pass
 
 def data_save():
     data = data_store.get()
@@ -25,7 +25,8 @@ def token_decode(token):
     u_id = DECODE_TOKEN['user_id']
     session_id = DECODE_TOKEN['session_id']
 
-    store = data_get()
+    data_get()
+    store = data_store.get()
     if u_id not in store['user_details'].keys():
         raise AccessError(description="Invalid Token Passed: user_id does not exist")
     if session_id not in store['session_ids']:
@@ -75,8 +76,8 @@ def channels_listall_v1(auth_user_id):
     return the list of channels that have been created.   
     '''
 
+    data_get()
     store = data_store.get()
-
     u_dict = store['user_details']
     # implement the user id validity check
     if auth_user_id not in u_dict.keys():
@@ -116,8 +117,8 @@ def channels_create_v1(auth_user_id, name, is_public):
     Returns a dictionary that contains channel_id that you create.
     '''
 
-    store = data_get()
-
+    data_get()
+    store = data_store.get()
     # implement the name validity check
     if len(name) < 1 or len(name) > 20:
         raise InputError(description="Invalid name is entered, needs to be a name between 1 and 20 characters!")

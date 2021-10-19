@@ -1,24 +1,9 @@
 import pytest
 import requests
-
-#######################################################################################
-# helper functions
-BASE_URL = 'http://127.0.0.1:8080'
-
-def clear():
-    requests.delete(f'{BASE_URL}/clear/v1')
-
-
-def user_sign_up(email, password, first, last):
-    payload = requests.post(f'{BASE_URL}/auth/register/v2', json= {'email': email,
-                                                            'password': password,
-                                                            'name_first': first,
-                                                            'name_last': last})
-    p = payload.json()
-    return p['token']
-
+from channels_wrapper import BASE_URL, clear, user_sign_up
 
 #########################################################################################
+
 ## channels/create/v2 tests:
 
 # channels/create/v2 feature 1: length of name is less than 1 or more than 20 characters, 
