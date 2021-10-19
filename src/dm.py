@@ -190,4 +190,4 @@ def dm_details_v1(auth_u_id, dm_id):
 
 
     return { 'name' : 'PLACEHOLDER',
-             'members' : 'PLACEHOLDER' }
+             'members' : 'PLACEHOLDER'}

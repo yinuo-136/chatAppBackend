@@ -7,7 +7,7 @@ from src.dm import dm_create_v1, dm_list_v1
 from src.auth import auth_register_v1
 from src.other import clear_v1
 
-from wrapper.dm_wrappers import dm_create_wrapper, dm_list_wrapper, dm_remove_wrapper
+from wrapper.dm_wrappers import dm_create_wrapper, dm_list_wrapper, dm_remove_wrapper, dm_details_wrapper
 from wrapper.auth_wrappers import auth_register, auth_login, auth_logout
 from wrapper.clear_wrapper import clear_http
 from src.data_store import data_store
@@ -432,6 +432,33 @@ def test_dm_details__success_basic():
     #Call dm_details_v1 and check output matches {name, members}
 
 
+    r = dm_details_wrapper(user_2_token, dm_id)
 
-    
-    assert 1 == 1
+    status_code = r.status_code
+
+    assert status_code == SUCCESS # should be 200 OK as the user is apart of the dm and is therefore authorised
+
+
+
+def test_dm_details__fail__dm_id_invalid():
+
+    #Clear
+
+    clear_http()
+
+    #Register one user
+
+
+    r1 = auth_register("test@gmail.com", "password123", "Nicholas", "Stathakis")
+
+    data1 = r1.json()
+
+
+    user_1_token = data1['token']
+    invalid_dm_id = 999
+
+    r = dm_details_wrapper(user_1_token, invalid_dm_id)
+
+    status_code = r.status_code
+
+    assert status_code == INPUT_ERROR_CODE # InputError as per interace spec.
