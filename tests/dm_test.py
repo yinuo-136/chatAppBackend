@@ -7,6 +7,7 @@ from src.dm import dm_create_v1, dm_list_v1
 from src.auth import auth_register_v1
 from src.other import clear_v1
 
+from wrapper.dm_wrappers import dm_create_wrapper
 from wrapper.auth_wrappers import auth_register, auth_login, auth_logout
 from wrapper.clear_wrapper import clear_http
 
@@ -75,37 +76,40 @@ def test_dm_create__fail__user_not_valid():
     data = r.json()
 
     my_user_token = data['token']
-    invalid_user_id = 99
+    invalid_user_id = [99]
 
-    print(my_user_token)
 
-    payload = {'token' : my_user_token, 
-        'u_ids' : [invalid_user_id]}
-
-    print(f"Sending payload: {payload}")
     
-    r = requests.post(BASE_URL + "dm/create/v1", json=payload)
+    r = dm_create_wrapper(my_user_token, invalid_user_id)
 
     status_code = r.status_code
-    print(status_code)
-    print(json.loads(r.text))
 
     assert status_code == INPUT_ERROR_CODE #input-error
 
 
 #successful dm creation
-def te1st_dm_create__success_basic():
+def test_dm_create__success_basic():
 
     # TODO: clear, register two users, then post
 
-    my_user_token = "xxx"
-    valid_other_id = 1
+    clear_http()
 
 
-    payload = {'token' : my_user_token, 'u_ids' : [valid_other_id]} 
-    payload = json.dumps(payload)
+    r1 = auth_register("test@gmail.com", "password123", "Nicholas", "Stathakis")
+    r2 = auth_register("somerandom@gmail.com", "password123", "Jayden", "Matthews")
 
-    r = requests.post(BASE_URL + "dm/create/v1", data=payload)
+    # then call the function with user token and invalid_id
+
+    data1 = r1.json()
+    data2 = r2.json()
+
+
+    my_user_token = data1['token']
+    valid_other_id = data2['auth_user_id']
+
+
+    
+    r = dm_create_wrapper(my_user_token, [valid_other_id])
 
     status_code = r.status_code
     response_dict = json.loads(r.text)
@@ -114,20 +118,32 @@ def te1st_dm_create__success_basic():
     assert response_dict == { 'dm_id' : 1 } # should start at 1
 
 
-def te1st_dm_create__success__double_dm():
+def test_dm_create__success__double_dm():
 
-    # TODO: clear, register two users
+    # TODO: clear, 
+    
+    clear_http()
 
+     
+    # register two users
+
+
+    r1 = auth_register("test@gmail.com", "password123", "Nicholas", "Stathakis")
+    r2 = auth_register("somerandom@gmail.com", "password123", "Jayden", "Matthews")
+
+    # then call the function with user token and invalid_id
+
+    data1 = r1.json()
+    data2 = r2.json()
+
+
+    my_user_token = data1['token']
+    valid_other_id = data2['auth_user_id']
 
     ############################ FIRST DM
 
-    my_user_token = "xxx"
-    valid_other_id = 1
 
-    payload = {'token' : my_user_token, 'u_ids' : [valid_other_id]} 
-    payload = json.dumps(payload)
-
-    r = requests.post(BASE_URL + "dm/create/v1", data=payload)
+    r = dm_create_wrapper(my_user_token, [valid_other_id])
 
     status_code = r.status_code
     response_dict = json.loads(r.text)
@@ -138,13 +154,15 @@ def te1st_dm_create__success__double_dm():
 
     ################################# SECOND DM
 
-    my_user_token = "yyy"
-    valid_other_id = 2
+    r1 = auth_register("iamdifferent@gmail.com", "password123", "Kill", "Bill")
+    # then call the function with user token and invalid_id
 
-    payload = {'token' : my_user_token, 'u_ids' : [valid_other_id]} 
-    payload = json.dumps(payload)
+    data1 = r1.json()
 
-    r = requests.post(BASE_URL + "dm/create/v1", data=payload)
+    third_id = data1['auth_user_id']
+
+    
+    r = dm_create_wrapper(my_user_token, [valid_other_id, third_id])
 
     status_code = r.status_code
     response_dict = json.loads(r.text)
