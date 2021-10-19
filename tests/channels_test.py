@@ -1,4 +1,3 @@
-import json
 import pytest
 import requests
 from src.config import url

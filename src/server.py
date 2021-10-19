@@ -8,6 +8,7 @@ from flask_cors import CORS
 from src import config
 from src.channel import channel_leave_v1
 from src.channels import channels_listall_v1, channels_create_v1
+from src.message import message_send_v1
 from src.auth import auth_login_v1, auth_register_v1, auth_logout_v1, auth_invalidate_session, auth_store_session_id
 from src.user import user_details, list_all_users, user_set_email, user_set_handle, user_set_name
 from src.database import save_datastore, load_datastore
@@ -260,8 +261,23 @@ def channel_leave():
 
 
 @APP.route("/message/send/v1", methods=['POST'])
-def message_send_v1():
-    return dumps({})
+def message_send():
+    resp = request.get_json()
+    token = resp['token']
+    channel_id = resp['channel_id']
+    message = resp['message']
+
+    #check the token validation
+    token_checker(token)
+
+    #decode the token
+    payload = jwt.decode(token, config.SECRET, algorithms=["HS256"])
+    user_id = payload.get('user_id')
+
+    #call the function
+    r = message_send_v1(user_id, channel_id, message)
+
+    return dumps(r)
 
 
 #### NO NEED TO MODIFY BELOW THIS POINT
