@@ -1,10 +1,14 @@
 import requests
 import json
+import jwt
 from requests.api import request
 from src import config
 from src.dm import dm_create_v1, dm_list_v1
 from src.auth import auth_register_v1
 from src.other import clear_v1
+
+from wrapper.auth_wrappers import auth_register, auth_login, auth_logout
+from wrapper.clear_wrapper import clear_http
 
 BASE_URL = config.url
 
@@ -24,7 +28,11 @@ SUCCESS = 200
     The name should be an alphabetically-sorted, comma-and-space-separated list of user handles, e.g. 'ahandle1, bhandle2, chandle3'.
     
     '''
-'''
+
+
+
+
+
 
 def test_dm_create__local():
 
@@ -43,27 +51,50 @@ def test_dm_create__local():
     assert dm_id == 1
 
 
+# r = auth_register("email@gmail.com", "password123", "Jayden", "Matthews")
+    
+#     resp = r.json()
+    
+#     assert type(resp['token']) is str
+#     assert resp['auth_user_id'] == 1
+    
+#     clear_http()
+
 #   InputError when: any u_id in u_ids does not refer to a valid user
 def test_dm_create__fail__user_not_valid():
 
-    #TODO: clear, register a user, then call the function with user token and invalid_id
+    #TODO: clear, 
+    
+    clear_http()
 
-    my_user_token = "xxx"
+    # register a user, 
+    
+    r = auth_register("test@gmail.com", "password123", "Nicholas", "Stathakis")
+    # then call the function with user token and invalid_id
+
+    data = r.json()
+
+    my_user_token = data['token']
     invalid_user_id = 99
 
+    print(my_user_token)
 
-    payload = {'token' : my_user_token, 'u_ids' : [invalid_user_id]} 
-    payload = json.dumps(payload)
+    payload = {'token' : my_user_token, 
+        'u_ids' : [invalid_user_id]}
 
-    r = requests.post(BASE_URL + "dm/create/v1", data=payload)
+    print(f"Sending payload: {payload}")
+    
+    r = requests.post(BASE_URL + "dm/create/v1", json=payload)
 
     status_code = r.status_code
+    print(status_code)
+    print(json.loads(r.text))
 
     assert status_code == INPUT_ERROR_CODE #input-error
 
 
 #successful dm creation
-def test_dm_create__success_basic():
+def te1st_dm_create__success_basic():
 
     # TODO: clear, register two users, then post
 
@@ -83,7 +114,7 @@ def test_dm_create__success_basic():
     assert response_dict == { 'dm_id' : 1 } # should start at 1
 
 
-def test_dm_create__success__double_dm():
+def te1st_dm_create__success__double_dm():
 
     # TODO: clear, register two users
 
@@ -128,7 +159,7 @@ def test_dm_create__success__double_dm():
 
 #################################### START OF dm_list_v1 TESTS
 
-def test_local__dm_list():
+def te1st_local__dm_list():
 
     clear_v1()
 
@@ -150,7 +181,7 @@ def test_local__dm_list():
     assert dm == [{'dm_id': 1, 'name': 'nicholasstathakis, zeddyzarnacle'}]
 
 
-def test_dm_list__success_basic():
+def te1st_dm_list__success_basic():
 
     # TODO: Clear, register two users, and create a dm between the two
 
@@ -178,7 +209,7 @@ def test_dm_list__success_basic():
 #Remove an existing DM, so all members are no longer in the DM. This can only be done by the original creator of the DM.
 '''
 
-def test_dm_remove__error__dm_id_invalid():
+def te1st_dm_remove__error__dm_id_invalid():
 
     # TODO: Clear, register one user, try remove a random channel
 
@@ -195,7 +226,7 @@ def test_dm_remove__error__dm_id_invalid():
     assert status_code == INPUT_ERROR_CODE
 
 
-def test_dm_remove__error__user_unauthorised():
+def te1st_dm_remove__error__user_unauthorised():
 
     # TODO: Clear, register TWO users
 
@@ -228,4 +259,4 @@ def test_dm_remove__error__user_unauthorised():
     status_code = r.status_code
 
     assert status_code == ACCESS_ERROR_CODE
-'''
+

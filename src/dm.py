@@ -177,7 +177,4 @@ def dm_remove_v1(u_id, dm_id):
     #print(all_dm_dict)
 
     
-
-    raise KeyError
-
     return {}

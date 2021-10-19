@@ -2,6 +2,7 @@ import sys
 import signal
 import uuid
 import jwt
+import json
 from json import dumps
 from flask import Flask, request
 from flask_cors import CORS
@@ -209,8 +210,8 @@ def dm_create_http():
     Return Type:{ dm_id }
     
     '''
-    data = request.get_json()
-
+    data = request.get_json(force=True)
+    
     token = data['token']
     u_ids = data['u_ids']
 
@@ -219,8 +220,7 @@ def dm_create_http():
     payload = jwt.decode(token, config.SECRET, algorithms=["HS256"])
     owner_u_id = payload.get('user_id')
 
-
-
+    
     dict_dm_id = dm_create_v1(owner_u_id, u_ids)
     dm_id = dict_dm_id['dm_id']
 

@@ -9,6 +9,8 @@ from src import config
 
 def test_basic_auth_register():
     
+    clear_http()
+
     r = auth_register("email@gmail.com", "password123", "Jayden", "Matthews")
     
     resp = r.json()
