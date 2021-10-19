@@ -37,3 +37,12 @@ def dm_details_wrapper(token, dm_id):
                 'dm_id' : dm_id } 
 
     return requests.get(config.url + "dm/details/v1", params=payload)
+
+
+def dm_leave_wrapper(token, dm_id):
+
+    payload = {'token' : token, 
+               'dm_id' : dm_id}
+
+    
+    return requests.post(config.url + "dm/leave/v1", json=payload)
