@@ -8,7 +8,7 @@ from flask import Flask, request
 from flask_cors import CORS
 from src.error import InputError
 from src import config
-from src.dm import dm_create_v1, dm_list_v1, dm_remove_v1
+from src.dm import dm_create_v1, dm_list_v1, dm_remove_v1, dm_details_v1
 from src.auth import auth_login_v1, auth_register_v1, auth_logout_v1, auth_invalidate_session, auth_store_session_id
 from src.user import user_details, list_all_users, user_set_email, user_set_handle, user_set_name
 from src.data_store import data_store
@@ -276,6 +276,34 @@ def dm_remove_http():
     
 
     return dumps( {} )
+
+
+
+@APP.route("/dm/details/v1", methods=['GET'])
+def dm_details_http():
+
+    '''
+    Parameters:     { token, dm_id }
+    Return Type:    { name, members }
+    '''
+
+    data = request.get_json(force=True)
+    
+    token = data['token']
+    dm_id = data['dm_id']
+
+    token_checker(token) # will raise an error if token is invalid
+
+
+    payload = jwt.decode(token, config.SECRET, algorithms=["HS256"])
+    owner_u_id = payload.get('user_id')
+
+    
+    payload = dm_details_v1(owner_u_id, dm_id)
+    
+
+    return dumps( payload )
+
 
 
 #### NO NEED TO MODIFY BELOW THIS POINT
