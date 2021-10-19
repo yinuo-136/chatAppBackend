@@ -300,6 +300,8 @@ def test_dm_remove__success_basic():
 
 
 
+
+
 def test_dm_remove__error__dm_id_invalid():
 
     # TODO: Clear, 
@@ -593,7 +595,18 @@ def test_dm_leave__success_basic():
 
     # Make one user leave
 
+    store = data_store.get()
+    my_dms = store['dms']
+    print(f"Before = {my_dms}")
+    
+    
     r = dm_leave_wrapper(user_2_token, dm_id)
+
+
+    store = data_store.get()
+    my_dms = store['dms']
+    print(f"After = {my_dms}")
+
 
     status_code = r.status_code
     response_body = json.loads(r.text)

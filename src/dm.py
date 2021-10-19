@@ -232,15 +232,75 @@ def dm_details_v1(auth_u_id, dm_id):
              'members' : members }
 
 
+
+
+
+
 def dm_leave_v1(auth_u_id, dm_id):
 
     #Input error when dm_id is INVALID
+
+    store = data_store.get()
+
+    all_dm_dict = store['dms']
+        
+    dm_exists = (dm_id in all_dm_dict.keys())
+    
+    if (dm_exists == False):
+        raise InputError("dm_id does not refer to a valid DM")
 
 
     #AccessError when dmid is valid and authorised user is NOT member of DM
 
 
+    specific_dm = all_dm_dict[dm_id]
+
+    all_members = specific_dm['u_ids']
+    
+    owner_id = specific_dm['owner_id'] #our owner id
+    all_members.append(owner_id)
+
+    user_is_member = (auth_u_id in all_members)
+
+
+    if (not user_is_member):
+        raise AccessError("dm_id is valid and the authorised user is not a member of the DM")
+
     # we are gravy
 
+    is_owner = (auth_u_id is owner_id)
 
+    
+
+    # STRUCTURE:
+    #       "dm_id" : {'name' : 'a, b, c', owner_id' : 1, 'u_ids': [2,3,4], 'messages' : {},}
+
+    # dict_dms.update({dm_id : {
+    #     'name' : dm_name,
+    #     'owner_id' : owner_id,
+    #     'u_ids' : members,
+    #     'messages' : messages,
+    # }})
+
+    dm_name = specific_dm['name']
+    owner_id = specific_dm['owner_id']
+    u_ids = specific_dm['u_ids']
+    messages = specific_dm['messages']
+
+    if (is_owner):
+        # remove them from the 'owner_id'
+        owner_id = None
+    else:
+        # remove them from 'u_ids'
+        u_ids.remove(auth_u_id)
+
+    store['dms'].update({ dm_id: {
+        'name' : dm_name + "!!!!",
+        'owner_id' : owner_id,
+        'u_ids' : u_ids,
+        'messages' : messages,
+    }})
+
+    data_store.set(store)
+    
     return {}
