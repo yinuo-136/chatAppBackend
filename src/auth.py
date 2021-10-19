@@ -1,11 +1,10 @@
 '''
 This file contains functions for registering a user and logging in a user.
 '''
-
+import hashlib
 import re
 from src.data_store import data_store
-from src.error import InputError
-from src.error import AccessError
+from src.error import InputError, AccessError
 
 def check_user_details(password, name_first, name_last):
     '''
@@ -57,7 +56,7 @@ def auth_login_v1(email, password):
         raise InputError("Email does not exist!")
 
     # if email in store['registered_users'].keys(), but password not matching, raise error
-    if password != store['registered_users'].get(email):
+    if hashlib.sha256(password.encode()).hexdigest() != store['registered_users'].get(email):
         raise InputError("Incorrect password!")
 
     store['logged_in_users'].append(store['user_ids'].get(email))
@@ -131,12 +130,31 @@ def auth_register_v1(email, password, name_first, name_last):
     else:
         store['global_permissions'].update({new_id: 2})
 
-
-    store['user_details'].update({new_id : (email, password, name_first, name_last, handle)})
-    store['registered_users'].update({email: password})
+    store['logged_in_users'].append(new_id)
+    store['user_details'].update({new_id : (email, hashlib.sha256(password.encode()).hexdigest(), name_first, name_last, handle)})
+    store['registered_users'].update({email: hashlib.sha256(password.encode()).hexdigest()})
     store['user_ids'].update({email: new_id})
 
 
     return {
         'auth_user_id': new_id,
     }
+    
+def auth_logout_v1(auth_user_id):
+    store = data_store.get()
+    
+    if auth_user_id not in store['logged_in_users']:
+        raise AccessError("You are already logged out")
+    else:
+        store['logged_in_users'].remove(auth_user_id)
+    
+def auth_store_session_id(session_id):
+    store = data_store.get()
+
+    store['session_ids'].append(session_id)
+   
+def auth_invalidate_session(session_id):
+    store = data_store.get()
+
+    store['session_ids'].remove(session_id)
+

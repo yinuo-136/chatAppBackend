@@ -6,6 +6,7 @@ from src.config import SECRET
 def token_checker(token):
     payload = jwt.decode(token, SECRET, algorithms=["HS256"])
     user_id = payload.get('user_id')
+    #session_id = payload.get('session_id')
     
     store = data_store.get()
     
@@ -18,3 +19,6 @@ def token_checker(token):
     # Session_id doesnt exist
     #if session_id not in store['session_ids']:
         #raise AccessError("Invalid Token Passed: session_id does not exist")
+        
+    
+        
