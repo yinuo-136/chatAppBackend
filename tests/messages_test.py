@@ -28,7 +28,7 @@ def send_message(token, channel_id, message):
     requests.post(f'{BASE_URL}/message/send/v1', json={'token': token,
                                                                 'channel_id': channel_id,
                                                                 'message': message})
-    
+   
 #########################################################################################
 ##message_send_v1 test
 #feature 1: raise input error when channel_id does not refer to a valid channel
@@ -162,7 +162,7 @@ def test_start_less_than_zero():
     token = user_sign_up('test@gmail.com', 'password', 'first', 'last')
     channel_id = user_create_channel(token, '12345', True)
 
-    payload = requests.get(f'{BASE_URL}/channel/messages/v2', params={'token': token,
+    payload = requests.get(f'{BASE_URL}/channel/messages/v2', params={'token': str(token),
                                                                 'channel_id': channel_id,
                                                                 'start': -20})
     
@@ -175,8 +175,10 @@ def test_messages_end_return():
 
     token = user_sign_up('test@gmail.com', 'password', 'first', 'last')
     channel_id = user_create_channel(token, '12345', True)
-    for i in range(20):
+    counter = 20
+    while (counter > 0):
         send_message(token, channel_id, 'hello')
+        counter -= 1
 
     payload = requests.get(f'{BASE_URL}/channel/messages/v2', params={'token': token,
                                                                 'channel_id': channel_id,
@@ -191,8 +193,10 @@ def test_messages_end_return_1():
 
     token = user_sign_up('test@gmail.com', 'password', 'first', 'last')
     channel_id = user_create_channel(token, '12345', True)
-    for i in range(100):
+    counter = 100
+    while (counter > 0):
         send_message(token, channel_id, 'hello')
+        counter -= 1
 
     payload = requests.get(f'{BASE_URL}/channel/messages/v2', params={'token': token,
                                                                 'channel_id': channel_id,

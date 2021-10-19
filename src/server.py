@@ -286,8 +286,8 @@ def message_send():
 def channel_message():
     #get the token from frontend
     token = request.args.get('token')
-    channel_id = request.args.get('channel_id')
-    start = request.args.get('start')
+    channel_id = int(request.args.get('channel_id'))
+    start = int(request.args.get('start'))
 
     #check the token validation
     token_checker(token)
