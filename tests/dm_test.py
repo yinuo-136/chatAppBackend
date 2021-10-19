@@ -7,7 +7,7 @@ from src.dm import dm_create_v1, dm_list_v1
 from src.auth import auth_register_v1
 from src.other import clear_v1
 
-from wrapper.dm_wrappers import dm_create_wrapper
+from wrapper.dm_wrappers import dm_create_wrapper, dm_list_wrapper
 from wrapper.auth_wrappers import auth_register, auth_login, auth_logout
 from wrapper.clear_wrapper import clear_http
 
@@ -177,7 +177,7 @@ def test_dm_create__success__double_dm():
 
 #################################### START OF dm_list_v1 TESTS
 
-def te1st_local__dm_list():
+def test_local__dm_list():
 
     clear_v1()
 
@@ -199,16 +199,36 @@ def te1st_local__dm_list():
     assert dm == [{'dm_id': 1, 'name': 'nicholasstathakis, zeddyzarnacle'}]
 
 
-def te1st_dm_list__success_basic():
+def test_dm_list__success_basic():
 
-    # TODO: Clear, register two users, and create a dm between the two
+    # TODO: Clear, 
+    
+    clear_http()
 
-    my_user_token = "xxx"
 
-    payload = {'token' : my_user_token} 
-    payload = json.dumps(payload)
+    # register two users, 
+    
+    r1 = auth_register("test@gmail.com", "password123", "Nicholas", "Stathakis")
+    r2 = auth_register("somerandom@gmail.com", "password123", "Zeddy", "Zarnacle")
 
-    r = requests.get(BASE_URL + "dm/list/v1", data=payload)
+    # then call the function with user token and invalid_id
+
+    data1 = r1.json()
+    data2 = r2.json()
+
+
+    my_user_token = data1['token']
+    valid_other_id = data2['auth_user_id']
+
+    # and create a dm between the two
+
+    dm_create_wrapper(my_user_token, [valid_other_id]) # note, we don't care about this, it is for later
+
+
+    # NOW, test the list functionality
+
+    
+    r = dm_list_wrapper(my_user_token)
 
     status_code = r.status_code
     response_dict = json.loads(r.text)

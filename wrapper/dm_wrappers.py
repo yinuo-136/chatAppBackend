@@ -12,3 +12,10 @@ def dm_create_wrapper(token, u_ids):
 
     
     return requests.post(config.url + "dm/create/v1", json=payload)
+
+
+def dm_list_wrapper(token):
+
+    payload = { 'token' : token } 
+
+    return requests.get(config.url + "dm/list/v1", params=payload)
