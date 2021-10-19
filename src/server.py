@@ -201,7 +201,7 @@ def set_user_handle():
 
 
 
-@APP.route("dm/create/v1", methods=['POST'])
+@APP.route("/dm/create/v1", methods=['POST'])
 def dm_create_http():
     '''
     
@@ -229,8 +229,8 @@ def dm_create_http():
 
 
 
-@APP.route("dm/list/v1", methods=['GET'])
-def dm_create_http():
+@APP.route("/dm/list/v1", methods=['GET'])
+def dm_list_http():
     '''
     
     Parameters:{ token }
