@@ -379,3 +379,59 @@ def test_dm_remove__error__user_unauthorised():
 
 
 #################################### START OF dm_details_v1 TESTS
+
+    ''' 
+    Given a DM with ID dm_id that the authorised user is a member of, provide basic details about the DM.
+    
+    Parameters:     { token, dm_id }
+    Return Type:    { name, members }
+    '''
+
+
+def test_dm_details__success_basic():
+
+    #Clear
+
+    clear_http()
+
+    #Register two users
+
+
+    r1 = auth_register("test@gmail.com", "password123", "Nicholas", "Stathakis")
+    r2 = auth_register("somerandom@gmail.com", "password123", "Jayden", "Matthews")
+
+    # then call the function with user token and invalid_id
+
+    data1 = r1.json()
+    data2 = r2.json()
+
+
+    user_1_token = data1['token']
+    user_1_u_id = data1['auth_user_id']
+
+    user_2_token = data2['token']
+    user_2_u_id = data2['auth_user_id']
+
+
+    #Create a dm between the two users
+
+
+    r = dm_create_wrapper(user_1_token, [user_2_u_id])
+
+    status_code = r.status_code
+    assert status_code == SUCCESS
+
+
+    response_message = json.loads(r.text)
+
+    dm_id = response_message['dm_id']
+
+    assert dm_id == 1
+
+
+    #Call dm_details_v1 and check output matches {name, members}
+
+
+
+    
+    assert 1 == 1
