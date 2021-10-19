@@ -6,7 +6,7 @@ from json import dumps
 from flask import Flask, request
 from flask_cors import CORS
 from src import config
-from src.channel import channel_leave_v1
+from src.channel import channel_leave_v1, channel_messages_v1
 from src.channels import channels_listall_v1, channels_create_v1
 from src.message import message_send_v1
 from src.auth import auth_login_v1, auth_register_v1, auth_logout_v1, auth_invalidate_session, auth_store_session_id
@@ -204,7 +204,7 @@ def set_user_handle():
 
 
 @APP.route("/channels/create/v2", methods=['POST'])   
-def channels_create_v2():
+def channels_create():
     #get the response from frontend
     resp = request.get_json()
 
@@ -227,7 +227,7 @@ def channels_create_v2():
 
 
 @APP.route("/channels/listall/v2", methods=['GET'])
-def channels_listall_v2():
+def channels_listall():
     #get the token from frontend
     token = request.args.get('token')
 
@@ -256,6 +256,7 @@ def channel_leave():
 
     #call the function
     r = channel_leave_v1(user_id,channel_id)
+    #persistence
     save_datastore()
     return dumps(r)
 
@@ -276,7 +277,27 @@ def message_send():
 
     #call the function
     r = message_send_v1(user_id, channel_id, message)
+    #persistence
     save_datastore()
+    return dumps(r)
+
+
+@APP.route("/channel/messages/v2", methods=['GET'])
+def channel_message():
+    #get the token from frontend
+    token = request.args.get('token')
+    channel_id = request.args.get('channel_id')
+    start = request.args.get('start')
+
+    #check the token validation
+    token_checker(token)
+
+    #decode the token
+    payload = jwt.decode(token, config.SECRET, algorithms=["HS256"])
+    user_id = payload.get('user_id')
+
+    #call the function
+    r = channel_messages_v1(user_id, channel_id, start)
     return dumps(r)
 
 
