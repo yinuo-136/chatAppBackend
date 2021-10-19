@@ -176,3 +176,18 @@ def dm_remove_v1(u_id, dm_id):
 
     
     return {}
+
+
+
+def dm_details_v1(auth_u_id, dm_id):
+
+    '''
+    Given a DM with ID dm_id that the authorised user is a member of, provide basic details about the DM.
+    
+    Parameters:     { token, dm_id }
+    Return Type:    { name, members }
+    '''
+
+
+    return { 'name' : 'PLACEHOLDER',
+             'members' : 'PLACEHOLDER' }

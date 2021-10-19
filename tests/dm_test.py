@@ -373,3 +373,9 @@ def test_dm_remove__error__user_unauthorised():
 
     assert new_status_code == ACCESS_ERROR_CODE
 
+
+
+##################################### END OF dm_remove_v1 TESTS
+
+
+#################################### START OF dm_details_v1 TESTS
