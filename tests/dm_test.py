@@ -462,3 +462,57 @@ def test_dm_details__fail__dm_id_invalid():
     status_code = r.status_code
 
     assert status_code == INPUT_ERROR_CODE # InputError as per interace spec.
+
+
+def test_dm_details__fail__user_not_member__valid_dm_id():
+
+    #clear
+
+    clear_http()
+
+    #register three users
+
+    r1 = auth_register("test@gmail.com", "password123", "Nicholas", "Stathakis")
+    r2 = auth_register("somerandom@gmail.com", "password123", "Jayden", "Matthews")
+    r3 = auth_register("iamslime@gmail.com", "password123", "Miles", "Wick")
+
+    # then call the function with user token and invalid_id
+
+    data1 = r1.json()
+    data2 = r2.json()
+    data3 = r3.json()
+
+
+    user_1_token = data1['token']
+    user_1_u_id = data1['auth_user_id']
+
+    user_2_token = data2['token']
+    user_2_u_id = data2['auth_user_id']
+
+    user_3_token = data3['token']
+    user_3_u_id = data3['auth_user_id']
+
+
+    #create chat between TWO only
+
+
+    r = dm_create_wrapper(user_1_token, [user_2_u_id])
+
+    status_code = r.status_code
+    assert status_code == SUCCESS
+
+
+    response_message = json.loads(r.text)
+
+    dm_id = response_message['dm_id']
+
+    assert dm_id == 1
+
+    # call dm_details_v1 with third members NOT in the dm with the correct dm id
+
+
+    r = dm_details_wrapper(user_3_token, dm_id)
+
+    status_code = r.status_code
+
+    assert status_code == ACCESS_ERROR_CODE
