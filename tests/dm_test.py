@@ -7,7 +7,7 @@ from src.dm import dm_create_v1, dm_list_v1
 from src.auth import auth_register_v1
 from src.other import clear_v1
 
-from wrapper.dm_wrappers import dm_create_wrapper, dm_list_wrapper
+from wrapper.dm_wrappers import dm_create_wrapper, dm_list_wrapper, dm_remove_wrapper
 from wrapper.auth_wrappers import auth_register, auth_login, auth_logout
 from wrapper.clear_wrapper import clear_http
 
@@ -247,17 +247,27 @@ def test_dm_list__success_basic():
 #Remove an existing DM, so all members are no longer in the DM. This can only be done by the original creator of the DM.
 '''
 
-def te1st_dm_remove__error__dm_id_invalid():
+def test_dm_remove__error__dm_id_invalid():
 
-    # TODO: Clear, register one user, try remove a random channel
+    # TODO: Clear, 
+    
+    clear_http()
+    
+    # register one user,
+    
+    r1 = auth_register("test@gmail.com", "password123", "Nicholas", "Stathakis")
 
-    my_user_token = "xxx"
+    data1 = r1.json()
+
+    my_user_token = data1['token']
+    
+    # try remove a invalid channel
+
     invalid_dm_id = 999
 
-    payload = {'token' : my_user_token, 'dm_id' : invalid_dm_id} 
-    payload = json.dumps(payload)
+    print(f"Tok = {my_user_token}, invalid_id = {invalid_dm_id}")
 
-    r = requests.delete(BASE_URL + "dm/remove/v1", data=payload)
+    r = dm_remove_wrapper(my_user_token, invalid_dm_id)
 
     status_code = r.status_code
 
