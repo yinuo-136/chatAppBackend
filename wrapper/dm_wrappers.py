@@ -26,4 +26,6 @@ def dm_remove_wrapper(token, dm_id):
     payload = { 'token' : token,
                 'dm_id' : dm_id } 
 
-    return requests.delete(config.url + "dm/remove/v1", params=payload)
+    headers = {'content-type': 'application/json'}
+
+    return requests.delete(config.url + "dm/remove/v1", data=json.dumps(payload), headers=headers)

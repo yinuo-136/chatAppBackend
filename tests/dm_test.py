@@ -10,6 +10,8 @@ from src.other import clear_v1
 from wrapper.dm_wrappers import dm_create_wrapper, dm_list_wrapper, dm_remove_wrapper
 from wrapper.auth_wrappers import auth_register, auth_login, auth_logout
 from wrapper.clear_wrapper import clear_http
+from src.data_store import data_store
+
 
 BASE_URL = config.url
 
@@ -274,37 +276,57 @@ def test_dm_remove__error__dm_id_invalid():
     assert status_code == INPUT_ERROR_CODE
 
 
-def te1st_dm_remove__error__user_unauthorised():
+def test_dm_remove__error__user_unauthorised():
 
-    # TODO: Clear, register TWO users
+    # TODO: Clear, 
+    
+    clear_http()
 
-    # CREATE DM
-    my_user_token = "xxx"
-    other_u_ids = [2]
 
-    payload = {'token' : my_user_token, 'u_ids' : other_u_ids} 
-    payload = json.dumps(payload)
+    # register TWO users
 
-    r = requests.post(BASE_URL + "dm/create/v1", data=payload)
+    r1 = auth_register("test@gmail.com", "password123", "Nicholas", "Stathakis")
+    r2 = auth_register("somerandom@gmail.com", "password123", "Jayden", "Matthews")
+
+    # then call the function with user token and invalid_id
+
+    data1 = r1.json()
+    data2 = r2.json()
+
+
+    user_1_token = data1['token']
+    user_1_u_id = data1['auth_user_id']
+
+    user_2_token = data2['token']
+    user_2_u_id = data2['auth_user_id']
+
+    
+    r = dm_create_wrapper(user_1_token, [user_2_u_id])
 
     status_code = r.status_code
+    assert status_code == SUCCESS
+
+
     response_message = json.loads(r.text)
 
     dm_id = response_message['dm_id']
 
+    assert dm_id == 1
 
-    unauthorised_u_id = other_u_ids[0]
+
+    store = data_store.get()
+    dict_dms_before = store['dms']
+    print(dict_dms_before)
+    #assert dict_dms_before == {}
 
     # TODO: Get token of unauthorised u_id
 
-    unauthorised_token = "yyy"
+    
+    nr = dm_remove_wrapper(user_2_token, dm_id)
 
-    payload = {'token' : unauthorised_token, 'dm_id' : dm_id} 
-    payload = json.dumps(payload)
+    print(dict_dms_before)
 
-    r = requests.delete(BASE_URL + "dm/remove/v1", data=payload)
+    new_status_code = nr.status_code
 
-    status_code = r.status_code
-
-    assert status_code == ACCESS_ERROR_CODE
+    assert new_status_code == ACCESS_ERROR_CODE
 

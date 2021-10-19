@@ -267,6 +267,7 @@ def dm_remove_http():
 
     token_checker(token) # will raise an error if token is invalid
 
+
     payload = jwt.decode(token, config.SECRET, algorithms=["HS256"])
     owner_u_id = payload.get('user_id')
 

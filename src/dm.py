@@ -75,6 +75,8 @@ def dm_create_v1(owner_u_id, u_ids):
         'messages' : messages,
     }})
 
+    data_store.set(store)
+
 
     # dummy code for `dm_id` return
     return { 'dm_id' : dm_id }
@@ -146,16 +148,12 @@ def dm_remove_v1(u_id, dm_id):
     store = data_store.get()
 
     all_dm_dict = store['dms']
-
-
-    dm_exists = False
-
-    for curr_dm_id in all_dm_dict.keys():
-        if (curr_dm_id is dm_id):
-            dm_exists = True
-
+        
+    dm_exists = (dm_id in all_dm_dict.keys())
+    
+        
     # if we are given a number larger than number of dms OR smaller than 1 (minimum valid dm num)
-    if (not dm_exists):
+    if (dm_exists == False):
         raise InputError("dm_id does not refer to a valid DM")
 
 
@@ -165,7 +163,7 @@ def dm_remove_v1(u_id, dm_id):
 
     owner_id = specific_dm['owner_id']
 
-    if (owner_id is not u_id):
+    if (owner_id != u_id):
         raise AccessError("dm_id is valid and the authorised user is not the original DM creator")
 
 
