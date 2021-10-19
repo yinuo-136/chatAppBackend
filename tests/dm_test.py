@@ -435,6 +435,28 @@ def test_dm_details__success_basic():
     r = dm_details_wrapper(user_2_token, dm_id)
 
     status_code = r.status_code
+    response_body = json.loads(r.text)
+
+    #r1 = auth_register("test@gmail.com", "password123", "Nicholas", "Stathakis")
+    #r2 = auth_register("somerandom@gmail.com", "password123", "Jayden", "Matthews")
+
+    assert response_body == { 'name' : "jaydenmatthews, nicholasstathakis",
+                              'members' : [
+                                  { 'u_id' : 2, 
+                                    'email' : "somerandom@gmail.com",
+                                    'name_first' : "Jayden",
+                                    'name_last' : "Matthews",
+                                    'handle_str' : "jaydenmatthews"
+                                },
+                                  { 'u_id' : 1, 
+                                    'email' : "test@gmail.com",
+                                    'name_first' : "Nicholas",
+                                    'name_last' : "Stathakis",
+                                    'handle_str' : "nicholasstathakis"
+                                }
+                                
+                              ] 
+                            }
 
     assert status_code == SUCCESS # should be 200 OK as the user is apart of the dm and is therefore authorised
 

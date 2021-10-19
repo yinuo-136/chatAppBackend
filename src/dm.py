@@ -1,6 +1,7 @@
 from src.error import InputError
 from src.error import AccessError
 from src.data_store import data_store
+from src.user import user_details
 
 # TODO(nick): this function. It is currently a stub.
 def dm_create_v1(owner_u_id, u_ids):
@@ -222,8 +223,10 @@ def dm_details_v1(auth_u_id, dm_id):
 
 
     name = specific_dm['name']
-    members = all_members
+    members = []
 
+    for u_id in all_members:
+        members.append(user_details(u_id)) #method taken from `user.py` which gets our `user` data structure
 
     return { 'name' : name,
              'members' : members }
