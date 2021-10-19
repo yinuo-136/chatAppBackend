@@ -4,9 +4,8 @@ import requests
 import uuid
 import json
 from wrapper.auth_wrappers import auth_register, auth_login, auth_logout
+from wrapper.clear_wrapper import clear_http
 from src import config
-
-# ADD CLEAR() TO EACH TEST
 
 def test_basic_auth_register():
     
@@ -17,8 +16,11 @@ def test_basic_auth_register():
     assert type(resp['token']) is str
     assert resp['auth_user_id'] == 1
     
+    clear_http()
+    
 def test_basic_auth_login_logout():
-
+    
+    auth_register("email@gmail.com", "password123", "Jayden", "Matthews")
     r = auth_login("email@gmail.com", "password123")
     
     resp = r.json()
@@ -26,10 +28,11 @@ def test_basic_auth_login_logout():
     assert type(resp['token']) is str
     assert resp['auth_user_id'] == 1
     
-    token = jwt.decode(resp['token'], config.SECRET, algorithms=["HS256"])
     
-    r1 = auth_logout(1, token['session_id'])
+    r1 = auth_logout(resp['token'])
      
     assert r1.json() == {}
+    
+    clear_http()
     
     

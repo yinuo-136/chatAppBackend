@@ -17,14 +17,7 @@ def auth_login(email, password):
 
     return requests.post(config.url + "auth/login/v2", json = payload)
     
-def auth_logout(user_id, session_id):
-    
-    pretoken = {
-        'user_id' : user_id,
-        'session_id' : session_id
-    }
-    
-    token = jwt.encode(pretoken, config.SECRET, algorithm = 'HS256')
+def auth_logout(token):
     
     payload = {'token' : token}
     
