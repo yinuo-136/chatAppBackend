@@ -24,7 +24,7 @@ SUCCESS = 200
     The name should be an alphabetically-sorted, comma-and-space-separated list of user handles, e.g. 'ahandle1, bhandle2, chandle3'.
     
     '''
-
+'''
 
 def test_dm_create__local():
 
@@ -175,7 +175,7 @@ def test_dm_list__success_basic():
 #################################### START OF dm_remove_v1 TESTS
 
 '''
-Remove an existing DM, so all members are no longer in the DM. This can only be done by the original creator of the DM.
+#Remove an existing DM, so all members are no longer in the DM. This can only be done by the original creator of the DM.
 '''
 
 def test_dm_remove__error__dm_id_invalid():
@@ -228,3 +228,4 @@ def test_dm_remove__error__user_unauthorised():
     status_code = r.status_code
 
     assert status_code == ACCESS_ERROR_CODE
+'''

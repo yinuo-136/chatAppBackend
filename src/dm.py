@@ -172,6 +172,10 @@ def dm_remove_v1(u_id, dm_id):
 
     # proceed to goods
 
+    #print(all_dm_dict)
+    all_dm_dict.pop(dm_id) # remove this entry from the dm dict
+    #print(all_dm_dict)
 
+    raise KeyError
 
     return {}

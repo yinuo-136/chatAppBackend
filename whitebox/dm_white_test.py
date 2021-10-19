@@ -56,7 +56,7 @@ def test_white__dm_list():
 def test_white__dm_remove():
 
     
-    dm_remove_v1(2, 1)
+    dm_remove_v1(1, 1)
 
 
     clear_v1()
