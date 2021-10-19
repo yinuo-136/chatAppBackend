@@ -7,7 +7,7 @@ from src.dm import dm_create_v1, dm_list_v1
 from src.auth import auth_register_v1
 from src.other import clear_v1
 
-from wrapper.dm_wrappers import dm_create_wrapper, dm_list_wrapper, dm_remove_wrapper, dm_details_wrapper
+from wrapper.dm_wrappers import dm_create_wrapper, dm_list_wrapper, dm_remove_wrapper, dm_details_wrapper, dm_leave_wrapper
 from wrapper.auth_wrappers import auth_register, auth_login, auth_logout
 from wrapper.clear_wrapper import clear_http
 from src.data_store import data_store
@@ -566,13 +566,40 @@ def test_dm_leave__success_basic():
 
     #TODO: Clear
 
+    clear_http()
+
     # Add two users
+
+    r1 = auth_register("test@gmail.com", "password123", "Nicholas", "Stathakis")
+    r2 = auth_register("somerandom@gmail.com", "password123", "Jayden", "Matthews")
+
+    data1 = r1.json()
+    data2 = r2.json()
+
+    user_1_token = data1['token']
+    user_1_u_id = data1['auth_user_id']
+
+    user_2_token = data2['token']
+    user_2_u_id = data2['auth_user_id']
+
 
     # Create a dm between them
 
+    r = dm_create_wrapper(user_1_token, [user_2_u_id])
+
+    response_message = json.loads(r.text)
+    dm_id = response_message['dm_id']
+    assert dm_id == 1
+
     # Make one user leave
 
+    r = dm_leave_wrapper(user_2_token, dm_id)
+
+    status_code = r.status_code
+    response_body = json.loads(r.text)
+
+
+
+    assert status_code == SUCCESS
+    assert response_body == {}
     # Check channel details to see if they are removed
-
-
-    return {}
