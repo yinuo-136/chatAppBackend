@@ -19,3 +19,11 @@ def dm_list_wrapper(token):
     payload = { 'token' : token } 
 
     return requests.get(config.url + "dm/list/v1", params=payload)
+
+
+def dm_remove_wrapper(token, dm_id):
+
+    payload = { 'token' : token,
+                'dm_id' : dm_id } 
+
+    return requests.delete(config.url + "dm/remove/v1", params=payload)
