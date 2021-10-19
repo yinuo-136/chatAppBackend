@@ -6,6 +6,8 @@ from flask_cors import CORS
 from src.error import InputError
 from src import config
 
+from src.other import clear_v1
+
 def quit_gracefully(*args):
     '''For coverage'''
     exit(0)
@@ -29,15 +31,13 @@ APP.register_error_handler(Exception, defaultHandler)
 
 #### NO NEED TO MODIFY ABOVE THIS POINT, EXCEPT IMPORTS
 
-# Example
-@APP.route("/echo", methods=['GET'])
-def echo():
-    data = request.args.get('data')
-    if data == 'echo':
-   	    raise InputError(description='Cannot echo "echo"')
-    return dumps({
-        'data': data
-    })
+# http hook for clearing the data store as per interface spec
+@APP.route("/clear/v1", methods=['DELETE'])
+def http_clear_req__delete():
+
+    clear_v1()
+
+    return {}
 
 #### NO NEED TO MODIFY BELOW THIS POINT
 
