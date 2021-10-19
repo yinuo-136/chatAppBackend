@@ -245,6 +245,9 @@ def channel_join_v1(auth_user_id, channel_id):
 
     return {}
 
+
+
+
 def channel_leave_v1(user_id, channel_id):
     store = data_store.get()
 

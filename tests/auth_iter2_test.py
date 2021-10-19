@@ -8,7 +8,7 @@ from wrapper.clear_wrapper import clear_http
 from src import config
 
 def test_basic_auth_register():
-    
+    clear_http()
     r = auth_register("email@gmail.com", "password123", "Jayden", "Matthews")
     
     resp = r.json()
@@ -16,10 +16,10 @@ def test_basic_auth_register():
     assert type(resp['token']) is str
     assert resp['auth_user_id'] == 1
     
-    clear_http()
+    
     
 def test_basic_auth_login_logout():
-    
+    clear_http()
     auth_register("email@gmail.com", "password123", "Jayden", "Matthews")
     r = auth_login("email@gmail.com", "password123")
     
@@ -33,6 +33,6 @@ def test_basic_auth_login_logout():
      
     assert r1.json() == {}
     
-    clear_http()
+    
     
     
