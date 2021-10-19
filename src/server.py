@@ -220,10 +220,9 @@ def channels_create_v2():
     payload = jwt.decode(token, config.SECRET, algorithms=["HS256"])
     user_id = payload.get('user_id')
 
+    r = channels_create_v1(user_id, name, is_public)
     #persistence
     save_datastore()
-
-    r = channels_create_v1(user_id, name, is_public)
     return dumps(r)
 
 
@@ -257,6 +256,7 @@ def channel_leave():
 
     #call the function
     r = channel_leave_v1(user_id,channel_id)
+    save_datastore()
     return dumps(r)
 
 
@@ -276,7 +276,7 @@ def message_send():
 
     #call the function
     r = message_send_v1(user_id, channel_id, message)
-
+    save_datastore()
     return dumps(r)
 
 
