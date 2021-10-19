@@ -295,7 +295,7 @@ def dm_leave_v1(auth_u_id, dm_id):
         u_ids.remove(auth_u_id)
 
     store['dms'].update({ dm_id: {
-        'name' : dm_name + "!!!!",
+        'name' : dm_name,
         'owner_id' : owner_id,
         'u_ids' : u_ids,
         'messages' : messages,
