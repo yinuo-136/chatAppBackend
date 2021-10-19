@@ -286,11 +286,9 @@ def dm_details_http():
     Parameters:     { token, dm_id }
     Return Type:    { name, members }
     '''
-
-    data = request.get_json(force=True)
+    token = request.args.get('token')
+    dm_id = int(request.args.get('dm_id'))
     
-    token = data['token']
-    dm_id = data['dm_id']
 
     token_checker(token) # will raise an error if token is invalid
 
