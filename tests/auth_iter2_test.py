@@ -3,7 +3,7 @@ import jwt
 import requests
 import uuid
 import json
-from tests.auth_wrappers import auth_register, auth_login, auth_logout
+from wrapper.auth_wrappers import auth_register, auth_login, auth_logout
 from src import config
 
 # ADD CLEAR() TO EACH TEST

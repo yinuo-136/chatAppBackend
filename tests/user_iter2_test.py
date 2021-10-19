@@ -2,7 +2,7 @@ import pytest
 import requests
 import json
 from src import config
-from tests.user_wrappers import user_profile, set_email, set_handle, set_name
+from wrapper.user_wrappers import user_profile, set_email, set_handle, set_name
 
 def test_basic_user_profile():
     
