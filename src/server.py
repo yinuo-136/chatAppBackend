@@ -339,7 +339,7 @@ def message_senddm():
     save_datastore()
     return dumps(r)
 
-@APP.route("message/edit/v1", methods=['PUT'])
+@APP.route("/message/edit/v1", methods=['PUT'])
 def message_edit():
     resp = request.get_json()
     token = resp['token']
