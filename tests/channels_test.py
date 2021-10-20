@@ -1,72 +1,113 @@
 import pytest
-
-from src.channels import channels_create_v1, channels_listall_v1, channels_list_v1
-from src.auth import auth_register_v1
-from src.error import AccessError, InputError
-from src.other import clear_v1
-
+import requests
+from src.config import url
 #########################################################################################
+BASE_URL = url
 
-## channels_create_v1 tests:
+def clear():
+    requests.delete(f'{BASE_URL}/clear/v1')
 
-# channels_create_v1 feature 1: length of name is less than 1 or more than 20 characters, 
-# if it fails the rule, raise an InputError.
-def test_user_name_validity():
 
-    clear_v1()
+def user_sign_up(email, password, first, last):
+    payload = requests.post(f'{BASE_URL}/auth/register/v2', json= {'email': email,
+                                                            'password': password,
+                                                            'name_first': first,
+                                                            'name_last': last})
+    p = payload.json()
+    return p['token']
+## channels/create/v2 tests:
 
-    u_dict = auth_register_v1("test@gmail.com", "password", "First", "Last")
-    u_id = u_dict['auth_user_id']
+# channels/create/v2 feature 1: length of name is less than 1 or more than 20 characters, 
+# if it fails the rule, raise an InputError(error code 400).
+def test_create_name_validity_1():
+
+    clear()
+
+    token = user_sign_up('test@gmail.com', 'password', 'First', 'Last')
+
+    payload = requests.post(f'{BASE_URL}/channels/create/v2', json={'token': token,
+                                                            'name': '',
+                                                            'is_public': True})
 
     #check if the error raises if length of the name is less than 1
-    with pytest.raises(InputError):
-        channels_create_v1(u_id, "", False)
+    assert payload.status_code == 400
+
+
+def test_create_name_validity_2(): 
     
-    #chcek if the error raises if length of the name is more than 20
-    with pytest.raises(InputError):
-        channels_create_v1(u_id, "a" * 21, False) 
+    clear()
+
+    token = user_sign_up('test@gmail.com', 'password', 'First', 'Last')
+
+    payload = requests.post(f'{BASE_URL}/channels/create/v2', json={'token': token,
+                                                            'name': 'a'*50,
+                                                            'is_public': True})
+
+    #check if the error raises if length of the name is less than 20
+    assert payload.status_code == 400
 
 
-# channels_create_v1 feature 2: if the user didn't input the correct u_id（not exist), raise an 
+# channels_create_v1 feature 2: if the user didn't input the correct u_id or session_id（not exist), raise an 
 # AccessError.
-def test_uid_validity():
+def test_create_s_id_validity():
 
-    clear_v1()
+    clear()
 
-    # a random number that doesn't exist.
-    u_id = 12
+    # generate a token that doesn't exist.
+    token = user_sign_up('test@gmail.com', 'password', 'First', 'Last')
+    requests.post(f'{BASE_URL}/auth/logout/v1', json={'token': token})
 
-    with pytest.raises(AccessError):
-        channels_create_v1(u_id, "correct_name", False)
+    payload = requests.post(f'{BASE_URL}/channels/create/v2', json={'token': token,
+                                                            'name': 'correct_name',
+                                                            'is_public': True})
+    assert payload.status_code == 403
 
-# channels_create_v1 feature 3: if both InputError(caused by name) and AccessError(caused by u_id)
+def test_create_uid_validity():
+    clear()
+    #generate a token that the user_id is removed.
+    token = user_sign_up('test@gmail.com', 'password', 'First', 'Last')
+    #clear again to make the u_id invalid
+    clear()
+
+    payload = requests.post(f'{BASE_URL}/channels/create/v2', json={'token': token,
+                                                            'name': 'correct_name',
+                                                            'is_public': True})
+    assert payload.status_code == 403
+
+# channels_create_v1 feature 3: if both InputError(caused by name) and AccessError(caused by u_id or seesion_id)
 #  should've raised, raised AccessError
 def test_which_error_raised():
     
-    clear_v1()
+    clear()
 
-    u_id = 12
+    token = user_sign_up('test@gmail.com', 'password', 'First', 'Last')
+    requests.post(f'{BASE_URL}/auth/logout/v1', json={'token': token})
 
-    with pytest.raises(AccessError):
-        channels_create_v1(u_id,"", False)
+    payload = requests.post(f'{BASE_URL}/channels/create/v2', json={'token': token,
+                                                            'name': '',
+                                                            'is_public': True})
+    assert payload.status_code == 403
     
-    with pytest.raises(AccessError):
-        channels_create_v1(u_id, "a" * 38, False)
 
 
 # channels_create_v1 feature 4:  eachtime the channel_id that created by the function should
 #  be unique.
-def test_channel_id_unique():
+def test_create_id_unique():
 
-    clear_v1()
+    clear()
 
-    u_dict = auth_register_v1("test@gmail.com", "password", "First", "Last")
-    u_id = u_dict['auth_user_id']
-    c_dict_1 = channels_create_v1(u_id, "correct_name", False)
-    c_dict_2 = channels_create_v1(u_id, "correct_name_1", False)
-    c_id_1 = c_dict_1['channel_id']
-    c_id_2 = c_dict_2['channel_id']
-    assert c_id_1 != c_id_2
+    token = user_sign_up('test@gmail.com', 'password', 'First', 'Last')
+
+    payload_1 = requests.post(f'{BASE_URL}/channels/create/v2', json={'token': token,
+                                                            'name': 'correct1',
+                                                            'is_public': True})
+
+    payload_2 = requests.post(f'{BASE_URL}/channels/create/v2', json={'token': token,
+                                                            'name': 'correct2',
+                                                            'is_public': True})
+    p1 = payload_1.json()
+    p2 = payload_2.json()
+    assert p1['channel_id'] != p2['channel_id'] 
 
 ###################################################################################
 
@@ -75,77 +116,163 @@ def test_channel_id_unique():
 #feature 1: if there is no channels that has been created, return an empty list
 def test_listall_empty_channel():
 
-    clear_v1()
+    clear()
 
-    u_dict = auth_register_v1("test@gmail.com", "password", "First", "Last")
-    u_id = u_dict['auth_user_id']
+    token = user_sign_up('test@gmail.com', 'password', 'First', 'Last')
 
-    all_list = channels_listall_v1(u_id)
-    assert all_list == {'channels': []}
+    payload = requests.get(f'{BASE_URL}/channels/listall/v2', params={'token': token})
+
+    p = payload.json()
+    assert p == {'channels': []}
 
 
-#feature 2: if user id that given in the parameter dose not exist, raise AccessError
+#feature 2: if token that given in the parameter dose not exist, raise AccessError
+def test_listall_sid_validity():
+
+    clear()
+
+    # generate a token that doesn't exist.
+    token = user_sign_up('test@gmail.com', 'password', 'First', 'Last')
+    requests.post(f'{BASE_URL}/auth/logout/v1', json={'token': token})
+
+    payload = requests.get(f'{BASE_URL}/channels/listall/v2', params={'token': token})
+
+    assert payload.status_code == 403
+
 def test_listall_uid_validity():
+    clear()
+    #generate a token that the user_id is removed.
+    token = user_sign_up('test@gmail.com', 'password', 'First', 'Last')
 
-    clear_v1()
+    #clear again to make the u_id invalid
+    clear()
 
-    u_id = 12 
+    payload = requests.get(f'{BASE_URL}/channels/listall/v2', params={'token': token})
 
-    with pytest.raises(AccessError):
-        channels_listall_v1(u_id)
-
+    assert payload.status_code == 403
 
 #feature 3: test the general functionality of the listall function
 def test_listall_general():
 
-    clear_v1()
+    clear()
 
-    u_dict_1 = auth_register_v1("test_1@gmail.com", "password", "First", "Last")
-    u_id_1 = u_dict_1['auth_user_id']
+    token = user_sign_up('test@gmail.com', 'password', 'First', 'Last')
+    #create a channel via the token that generated by user_register
+    payload_1 = requests.post(f'{BASE_URL}/channels/create/v2', json={'token': token,
+                                                            'name': 'correct1',
+                                                            'is_public': True})
+    #create another channel by the same person
+    payload_2 = requests.post(f'{BASE_URL}/channels/create/v2', json={'token': token,
+                                                            'name': 'correct2',
+                                                            'is_public': True})
+    p1 = payload_1.json()
+    p2 = payload_2.json()
 
-    u_dict_2 = auth_register_v1("test_2@gmail.com", "password", "First", "Last")
-    u_id_2 = u_dict_2['auth_user_id']
+    payload_3 = requests.get(f'{BASE_URL}/channels/listall/v2', params={'token': token})
+    p3 = payload_3.json()
 
-    c_dict_1 = channels_create_v1(u_id_1, 'name_1', False)
-    c_dict_2 = channels_create_v1(u_id_2, 'name_2', True)
+    assert p3 == {'channels': [
+                                {'channel_id': p1['channel_id'],
+                                        'name': 'correct1',
+                                },
+                                {'channel_id': p2['channel_id'],
+                                    'name': 'correct2',
+                                }
+                            ],
+                 }
 
-    c_id_1 = c_dict_1['channel_id']
-    c_id_2 = c_dict_2['channel_id']
+###########################################################################################
 
-    assert channels_listall_v1(u_id_1) == {
-                                        'channels': [
-                                            {'channel_id': c_id_1,
-                                             'name': 'name_1',
-                                            },
-                                            {'channel_id': c_id_2,
-                                             'name': 'name_2',
-                                            }
-                                         ],
-                                    }
+## channel/leave/v1
+
+# feature 1: raise access error when channel_id is valid and the authorised user is not a member of the channel
+def test_leave_not_member():
+
+    clear()
+
+    token_1 = user_sign_up('test1@gmail.com', 'password1', 'First1', 'Last1')
+    token_2 = user_sign_up('test2@gmail.com', 'password2', 'First2', 'Last2')
+    payload = requests.post(f'{BASE_URL}/channels/create/v2', json={'token': token_1,
+                                                            'name': 'correct1',
+                                                            'is_public': True})
+    p = payload.json()
     
-    assert channels_listall_v1(u_id_2) == {
-                                        'channels': [
-                                            {'channel_id': c_id_1,
-                                             'name': 'name_1',
-                                            },
-                                            {'channel_id': c_id_2,
-                                             'name': 'name_2',
-                                            }
-                                         ],
-                                    }
+    r_type = requests.post(f'{BASE_URL}/channel/leave/v1', json={'token': token_2, 'channel_id': p['channel_id']})
+
+    assert r_type.status_code == 403
 
 
-#test user id validity check in list function
-def test_list_ui_validity():
-    clear_v1()
-    u_id = 12 
-    with pytest.raises(AccessError):
-        channels_list_v1(u_id)
+# feature 2: raise input error when channel_id does not refer to a valid channel
+def test_leave_channel_invalid():
+
+    clear()
+
+    token = user_sign_up('test2@gmail.com', 'password2', 'First2', 'Last2')
+    #a random invalid channel id
+    c_id = 100
+    
+    r_type = requests.post(f'{BASE_URL}/channel/leave/v1', json={'token': token, 'channel_id': c_id})
+
+    assert r_type.status_code == 400
 
 
+#feature 3: after successfully call the function, the return type should be an empty dict
+def test_leave_check_return():
 
+    clear()
 
-############################################################
+    token = user_sign_up('test1@gmail.com', 'password1', 'First1', 'Last1')
+    payload = requests.post(f'{BASE_URL}/channels/create/v2', json={'token': token,
+                                                            'name': 'correct1',
+                                                            'is_public': True})
+    p = payload.json()
+    
+    r_type = requests.post(f'{BASE_URL}/channel/leave/v1', json={'token': token, 'channel_id': p['channel_id']})
+    r = r_type.json()
 
+    assert r == {}
+'''
+# feature 4: raise access error when the toke entered is invalid(u_id or session_id)
+def test_leave_uid_validity():
+    clear()
+    #register a user
+    token_1 = user_sign_up('test@gmail.com', 'password', 'First', 'Last')
+    
+    #use the token to create a channel
+    payload_1 = requests.post(f'{BASE_URL}/channels/create/v2', json={'token': token_1,
+                                                            'name': 'correct1',
+                                                            'is_public': True})
+    p1 = payload_1.json()
+    #create another user
+    payload_2 = requests.post(f'{BASE_URL}/auth/register/v2', json= {'email': 'test2@gmail.com',
+                                                            'password': 'password2',
+                                                            'name_first': 'first2',
+                                                            'name_last': 'last2'})
+    p2 = payload_2.json()
+    token_2 = p2['token']
+    u_id_2 = p2['auth_user_id']
+    #make this user join the channel
+    requests.post(f'{BASE_URL}/channel/join/v2', json={'token': token_2, 'channel_id': p1['channel_id']})
+    #remove token_2 user
+    requests.post(f'{BASE_URL}/admin/user/remove/v1', json={'token': token_1, 'u_id':u_id_2 })
+
+    r_type = requests.post(f'{BASE_URL}/channel/leave/v1', json={'token': token_2})
+
+    assert r_type.status_code == 403
+'''
+def test_leave_sid_validity():
+    clear()
+    token = user_sign_up('test@gmail.com', 'password', 'First', 'Last')
+    payload = requests.post(f'{BASE_URL}/channels/create/v2', json={'token': token,
+                                                            'name': 'correct1',
+                                                            'is_public': True})
+    p = payload.json()
+
+    requests.post(f'{BASE_URL}/auth/logout/v1', json={'token': token})
+
+    r_type = requests.post(f'{BASE_URL}/channel/leave/v1', json={'token': token, 'channel_id': p['channel_id']})
+
+    assert r_type.status_code == 403
+    
     
 

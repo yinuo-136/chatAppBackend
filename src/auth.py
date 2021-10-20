@@ -1,11 +1,10 @@
 '''
 This file contains functions for registering a user and logging in a user.
 '''
-
+import hashlib
 import re
 from src.data_store import data_store
-from src.error import InputError
-from src.error import AccessError
+from src.error import InputError, AccessError
 
 def check_user_details(password, name_first, name_last):
     '''
@@ -26,14 +25,14 @@ def check_user_details(password, name_first, name_last):
 
     #error checking for password
     if len(password) < 6:
-        raise InputError()
+        raise InputError("Password is less than 6 characters!")
 
     #error checking for name
     if len(name_first) > 50 or len(name_first) < 1:
-        raise InputError()
+        raise InputError("First Name must be between 1 and 50 characters!")
 
     if len(name_last) > 50 or len(name_last) < 1:
-        raise InputError()
+        raise InputError("Last Name must be between 1 and 50 characters!")
 
 def auth_login_v1(email, password):
     '''
@@ -54,11 +53,11 @@ def auth_login_v1(email, password):
     store = data_store.get()
     # if email not in store['registered_users'].keys() raise error
     if email not in store['registered_users'].keys():
-        raise InputError()
+        raise InputError("Email does not exist!")
 
     # if email in store['registered_users'].keys(), but password not matching, raise error
-    if password != store['registered_users'].get(email):
-        raise InputError()
+    if hashlib.sha256(password.encode()).hexdigest() != store['registered_users'].get(email):
+        raise InputError("Incorrect password!")
 
     store['logged_in_users'].append(store['user_ids'].get(email))
 
@@ -90,11 +89,11 @@ def auth_register_v1(email, password, name_first, name_last):
     regex = r'^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}$'
 
     if re.fullmatch(regex, email) is None:
-        raise InputError()
+        raise InputError("Non-valid email format!")
 
     #implement error checking for duplicate
     if email in store['registered_users'].keys():
-        raise AccessError()
+        raise InputError("A user with that email already exists")
 
 
     #error checking for password and user name
@@ -131,12 +130,31 @@ def auth_register_v1(email, password, name_first, name_last):
     else:
         store['global_permissions'].update({new_id: 2})
 
-
-    store['user_details'].update({new_id : (email, password, name_first, name_last, handle)})
-    store['registered_users'].update({email: password})
+    store['logged_in_users'].append(new_id)
+    store['user_details'].update({new_id : (email, hashlib.sha256(password.encode()).hexdigest(), name_first, name_last, handle)})
+    store['registered_users'].update({email: hashlib.sha256(password.encode()).hexdigest()})
     store['user_ids'].update({email: new_id})
 
 
     return {
         'auth_user_id': new_id,
     }
+    
+def auth_logout_v1(auth_user_id):
+    store = data_store.get()
+    
+    if auth_user_id not in store['logged_in_users']:
+        raise AccessError("You are already logged out")
+    else:
+        store['logged_in_users'].remove(auth_user_id)
+    
+def auth_store_session_id(session_id):
+    store = data_store.get()
+
+    store['session_ids'].append(session_id)
+   
+def auth_invalidate_session(session_id):
+    store = data_store.get()
+
+    store['session_ids'].remove(session_id)
+
