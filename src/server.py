@@ -9,7 +9,7 @@ from src.channel import channel_details_v1
 from src import config
 from src.channel import channel_leave_v1, channel_messages_v1
 from src.channels import channels_listall_v1, channels_create_v1
-from src.message import message_send_v1, message_senddm_v1
+from src.message import message_send_v1, message_senddm_v1, message_edit_v1
 from src.auth import auth_login_v1, auth_register_v1, auth_logout_v1, auth_invalidate_session, auth_store_session_id
 from src.user import user_details, list_all_users, user_set_email, user_set_handle, user_set_name
 from src.database import save_datastore, load_datastore
@@ -335,7 +335,30 @@ def message_senddm():
     user_id = payload.get('user_id')
 
     r = message_senddm_v1(user_id, dm_id, message)
+    #persistence
+    save_datastore()
     return dumps(r)
+
+@APP.route("message/edit/v1", methods=['PUT'])
+def message_edit():
+    resp = request.get_json()
+    token = resp['token']
+    message_id = resp['message_id']
+    message = resp['message']
+
+    #Token Validation
+    token_checker(token)
+
+    payload = jwt.decode(token, config.SECRET, algorithms=["HS256"])
+    user_id = payload.get('user_id')
+
+    r = message_edit_v1(user_id, message_id, message)
+    #persistence
+    save_datastore()
+    return dumps(r)
+
+	
+
 #### NO NEED TO MODIFY BELOW THIS POINT
 
 if __name__ == "__main__":
