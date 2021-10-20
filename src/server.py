@@ -2,19 +2,18 @@ import sys
 import signal
 import uuid
 import jwt
+import json
 from json import dumps
 from flask import Flask, request
 from flask_cors import CORS
 from src.error import InputError
 from src import config
+from src.dm import dm_create_v1, dm_list_v1, dm_remove_v1, dm_details_v1, dm_leave_v1, dm_messages_v1
 from src.auth import auth_login_v1, auth_register_v1, auth_logout_v1, auth_invalidate_session, auth_store_session_id
 from src.user import user_details, list_all_users, user_set_email, user_set_handle, user_set_name
 from src.data_store import data_store
 from src.database import save_datastore, load_datastore
 from src.token import token_checker
-
-
-
 from src.other import clear_v1
 
 def quit_gracefully(*args):
@@ -200,6 +199,160 @@ def set_user_handle():
     
     return dumps({})
  
+
+
+
+@APP.route("/dm/create/v1", methods=['POST'])
+def dm_create_http():
+    '''
+    
+    Parameters:{ token, u_ids }
+    Return Type:{ dm_id }
+    
+    '''
+    data = request.get_json(force=True)
+    
+    token = data['token']
+    u_ids = data['u_ids']
+
+    token_checker(token) # will raise an error if token is invalid
+
+    payload = jwt.decode(token, config.SECRET, algorithms=["HS256"])
+    owner_u_id = payload.get('user_id')
+
+    
+    dict_dm_id = dm_create_v1(owner_u_id, u_ids)
+    dm_id = dict_dm_id['dm_id']
+
+    return dumps({ 'dm_id' : dm_id })
+
+
+
+
+
+@APP.route("/dm/list/v1", methods=['GET'])
+def dm_list_http():
+    '''
+    
+    Parameters:{ token }
+    Return Type:{ dms }
+    
+    '''
+    token = request.args.get('token')
+
+    token_checker(token) # will raise an error if token is invalid
+
+    payload = jwt.decode(token, config.SECRET, algorithms=["HS256"])
+    member_u_id = payload.get('user_id')
+
+
+    dict_dms = dm_list_v1(member_u_id)
+    dms = dict_dms['dms']
+
+    return dumps({ 'dms' : dms })
+
+
+@APP.route("/dm/remove/v1", methods=['DELETE'])
+def dm_remove_http():
+
+    '''
+    Parameters:         { token, dm_id }
+    Return Type:        {}
+    '''
+
+    data = request.get_json(force=True)
+    
+    token = data['token']
+    dm_id = data['dm_id']
+
+    token_checker(token) # will raise an error if token is invalid
+
+
+    payload = jwt.decode(token, config.SECRET, algorithms=["HS256"])
+    owner_u_id = payload.get('user_id')
+
+    
+    dm_remove_v1(owner_u_id, dm_id)
+    
+
+    return dumps( {} )
+
+
+
+@APP.route("/dm/details/v1", methods=['GET'])
+def dm_details_http():
+
+    '''
+    Parameters:     { token, dm_id }
+    Return Type:    { name, members }
+    '''
+    token = request.args.get('token')
+    dm_id = int(request.args.get('dm_id'))
+    
+
+    token_checker(token) # will raise an error if token is invalid
+
+
+    payload = jwt.decode(token, config.SECRET, algorithms=["HS256"])
+    owner_u_id = payload.get('user_id')
+
+    
+    payload = dm_details_v1(owner_u_id, dm_id)
+    
+
+    return dumps( payload )
+
+
+
+@APP.route("/dm/leave/v1", methods=['POST'])
+def dm_leave_http():
+    '''
+    
+    Parameters:     { token, dm_id }
+    Return Type:    {}
+    
+    '''
+    data = request.get_json(force=True)
+    
+    token = data['token']
+    dm_id = data['dm_id']
+
+    token_checker(token) # will raise an error if token is invalid
+
+    payload = jwt.decode(token, config.SECRET, algorithms=["HS256"])
+    auth_u_id = payload.get('user_id')
+
+    
+    dm_leave_v1(auth_u_id, dm_id)
+
+    return dumps( {} )
+
+
+
+@APP.route("/dm/messages/v1", methods=['GET'])
+def dm_messages_http():
+
+    '''
+    Parameters:     { token, dm_id, start }
+    Return Type:    { messages, start, end }
+    '''
+
+    token = request.args.get('token')
+    dm_id = int(request.args.get('dm_id'))
+    start = int(request.args.get('start'))
+
+    token_checker(token) # will raise an error if token is invalid
+
+
+    payload = jwt.decode(token, config.SECRET, algorithms=["HS256"])
+    auth_u_id = payload.get('user_id')
+
+    
+    payload = dm_messages_v1(auth_u_id, dm_id, start)
+    
+
+    return dumps( payload )
+
 
 #### NO NEED TO MODIFY BELOW THIS POINT
 
