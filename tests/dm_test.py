@@ -546,7 +546,7 @@ def test_dm_details__fail__user_not_member__valid_dm_id():
 ##################################### END OF dm_details_v1 TESTS
 
 
-#################################### START OF dm_details_v1 TESTS
+#################################### START OF dm_leave_v1 TESTS
 
 '''
 
@@ -616,3 +616,27 @@ def test_dm_leave__success_basic():
     assert status_code == SUCCESS
     assert response_body == {}
     # Check channel details to see if they are removed
+
+
+
+##################################### END OF dm_leave_v1 TESTS
+
+
+#################################### START OF dm_messages_v1 TESTS
+
+
+def test_dm_messages__success__basic():
+
+    #TODO: Clear
+
+    clear_http()
+
+    # Register two users
+
+    # Make a dm
+
+    # Request messages for this dm
+
+    # should be empty {}
+
+    pass
