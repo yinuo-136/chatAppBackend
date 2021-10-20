@@ -6,11 +6,10 @@ from json import dumps
 from flask import Flask, request
 from flask_cors import CORS
 from src.channel import channel_details_v1
-from src.error import InputError
 from src import config
 from src.channel import channel_leave_v1, channel_messages_v1
 from src.channels import channels_listall_v1, channels_create_v1
-from src.message import message_send_v1
+from src.message import message_send_v1, message_senddm_v1
 from src.auth import auth_login_v1, auth_register_v1, auth_logout_v1, auth_invalidate_session, auth_store_session_id
 from src.user import user_details, list_all_users, user_set_email, user_set_handle, user_set_name
 from src.database import save_datastore, load_datastore
@@ -307,10 +306,9 @@ def channel_message():
 #Parameters:{ token, channel_id }
 #Return Type:{ name, is_public, ownder_members, all_members }
 def channel_details():
-    data = request.get_json()
+    token = request.args.get('token')
 
-    token = data['token']
-    channel_id = data['channel_id']
+    channel_id = int(request.args.get('channel_id'))
 
     #Token Validation
     token_checker(token)
@@ -322,6 +320,22 @@ def channel_details():
 
     return dumps(details)
  
+@APP.route("/message/senddm/v1", methods=['POST'])
+def message_senddm():
+    resp = request.get_json()
+
+    token = resp['token']
+    dm_id = resp['dm_id']
+    message = resp['message']
+
+    #Token Validation
+    token_checker(token)
+
+    payload = jwt.decode(token, config.SECRET, algorithms=["HS256"])
+    user_id = payload.get('user_id')
+
+    r = message_senddm_v1(user_id, dm_id, message)
+    return dumps(r)
 #### NO NEED TO MODIFY BELOW THIS POINT
 
 if __name__ == "__main__":

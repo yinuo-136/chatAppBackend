@@ -34,6 +34,7 @@ initial_object = {
     'global_permissions' : {},
     'session_ids': [],
     'messages': {},
+    'dms': {}
 }
 ## YOU SHOULD MODIFY THIS OBJECT ABOVE
 
