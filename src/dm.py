@@ -304,3 +304,22 @@ def dm_leave_v1(auth_u_id, dm_id):
     data_store.set(store)
     
     return {}
+
+
+
+def dm_messages_v1(auth_u_id, dm_id, start):
+
+    '''
+    Given a DM with ID dm_id that the authorised user is a member of, return up to 50 messages between index "start" and "start + 50". 
+    
+    Message with index 0 is the most recent message in the DM. 
+    
+    This function returns a new index "end" which is the value of "start + 50", or, if this function has returned the least recent messages in the DM, 
+    returns -1 in "end" to indicate there are no more messages to load after this return.
+    
+    '''
+
+
+    return { 'messages' : [],
+             'start' : 1,
+             'end' : -1, }

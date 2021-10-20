@@ -7,7 +7,7 @@ from src.dm import dm_create_v1, dm_list_v1
 from src.auth import auth_register_v1
 from src.other import clear_v1
 
-from wrapper.dm_wrappers import dm_create_wrapper, dm_list_wrapper, dm_remove_wrapper, dm_details_wrapper, dm_leave_wrapper
+from wrapper.dm_wrappers import dm_create_wrapper, dm_list_wrapper, dm_remove_wrapper, dm_details_wrapper, dm_leave_wrapper, dm_messages_wrapper
 from wrapper.auth_wrappers import auth_register, auth_login, auth_logout
 from wrapper.clear_wrapper import clear_http
 from src.data_store import data_store
@@ -267,9 +267,7 @@ def test_dm_remove__success_basic():
 
 
     user_1_token = data1['token']
-    user_1_u_id = data1['auth_user_id']
 
-    user_2_token = data2['token']
     user_2_u_id = data2['auth_user_id']
 
     #Create dm
@@ -348,7 +346,6 @@ def test_dm_remove__error__user_unauthorised():
 
 
     user_1_token = data1['token']
-    user_1_u_id = data1['auth_user_id']
 
     user_2_token = data2['token']
     user_2_u_id = data2['auth_user_id']
@@ -409,7 +406,6 @@ def test_dm_details__success_basic():
 
 
     user_1_token = data1['token']
-    user_1_u_id = data1['auth_user_id']
 
     user_2_token = data2['token']
     user_2_u_id = data2['auth_user_id']
@@ -508,13 +504,10 @@ def test_dm_details__fail__user_not_member__valid_dm_id():
 
 
     user_1_token = data1['token']
-    user_1_u_id = data1['auth_user_id']
 
-    user_2_token = data2['token']
     user_2_u_id = data2['auth_user_id']
 
     user_3_token = data3['token']
-    user_3_u_id = data3['auth_user_id']
 
 
     #create chat between TWO only
@@ -579,7 +572,6 @@ def test_dm_leave__success_basic():
     data2 = r2.json()
 
     user_1_token = data1['token']
-    user_1_u_id = data1['auth_user_id']
 
     user_2_token = data2['token']
     user_2_u_id = data2['auth_user_id']
