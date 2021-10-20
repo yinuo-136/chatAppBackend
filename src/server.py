@@ -8,7 +8,7 @@ from flask import Flask, request
 from flask_cors import CORS
 from src.error import InputError
 from src import config
-from src.dm import dm_create_v1, dm_list_v1, dm_remove_v1, dm_details_v1, dm_leave_v1
+from src.dm import dm_create_v1, dm_list_v1, dm_remove_v1, dm_details_v1, dm_leave_v1, dm_messages_v1
 from src.auth import auth_login_v1, auth_register_v1, auth_logout_v1, auth_invalidate_session, auth_store_session_id
 from src.user import user_details, list_all_users, user_set_email, user_set_handle, user_set_name
 from src.data_store import data_store
@@ -326,6 +326,32 @@ def dm_leave_http():
     dm_leave_v1(auth_u_id, dm_id)
 
     return dumps( {} )
+
+
+
+@APP.route("/dm/messages/v1", methods=['GET'])
+def dm_messages_http():
+
+    '''
+    Parameters:     { token, dm_id, start }
+    Return Type:    { messages, start, end }
+    '''
+
+    token = request.args.get('token')
+    dm_id = int(request.args.get('dm_id'))
+    start = int(request.args.get('start'))
+
+    token_checker(token) # will raise an error if token is invalid
+
+
+    payload = jwt.decode(token, config.SECRET, algorithms=["HS256"])
+    auth_u_id = payload.get('user_id')
+
+    
+    payload = dm_messages_v1(auth_u_id, dm_id, start)
+    
+
+    return dumps( payload )
 
 
 #### NO NEED TO MODIFY BELOW THIS POINT
