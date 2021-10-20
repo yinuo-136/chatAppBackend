@@ -62,12 +62,12 @@ def dm_create_v1(owner_u_id, u_ids):
     dm_name = ', '.join(all_user_handles)
     owner_id = owner_u_id
     members = u_ids
-    messages = {}
+    messages = []
 
     #print(f"Dm Name: \'{dm_name}\'")
 
     # STRUCTURE:
-    #       "dm_id" : {'name' : 'a, b, c', owner_id' : 1, 'u_ids': [2,3,4], 'messages' : {},}
+    #       "dm_id" : {'name' : 'a, b, c', owner_id' : 1, 'u_ids': [2,3,4], 'messages' : []],}
 
     dict_dms.update({dm_id : {
         'name' : dm_name,
@@ -273,7 +273,7 @@ def dm_leave_v1(auth_u_id, dm_id):
     
 
     # STRUCTURE:
-    #       "dm_id" : {'name' : 'a, b, c', owner_id' : 1, 'u_ids': [2,3,4], 'messages' : {},}
+    #       "dm_id" : {'name' : 'a, b, c', owner_id' : 1, 'u_ids': [2,3,4], 'messages' : [],}
 
     # dict_dms.update({dm_id : {
     #     'name' : dm_name,
@@ -319,6 +319,24 @@ def dm_messages_v1(auth_u_id, dm_id, start):
     
     '''
 
+    # InputError when dm_id does not refer to valid DM
+
+    store = data_store.get()
+
+    all_dm_dict = store['dms']
+        
+    dm_exists = (dm_id in all_dm_dict.keys())
+    
+    if (dm_exists == False):
+        raise InputError("dm_id does not refer to a valid DM")
+
+
+    #InputError when start is greater than total number of messages in the channel
+
+    specific_dm = all_dm_dict[dm_id]
+
+    specific_messages = specific_dm['messages']
+    
 
     return { 'messages' : [],
              'start' : 1,
