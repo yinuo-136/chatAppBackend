@@ -52,7 +52,7 @@ def message_senddm_v1(user_id, dm_id, message):
         raise InputError(description='dm_id does not refer to a valid DM')
     
     dm_info = dm_dict[dm_id]
-    if user_id not in dm_info['u_ids'] and user_id not in dm_info['owner_id']:
+    if user_id not in dm_info['u_ids'] and user_id != dm_info['owner_id']:
         raise AccessError(description='the authorised user is not a member of the DM')
     
     if len(message) < 1 or len(message) > 1000:
@@ -89,7 +89,7 @@ def message_edit_v1(user_id, message_id, message):
         raise InputError(description="message_id does not exist")
     m_location = m_dict[message_id][3]
     
-    if m_location[0] == 'channels':
+    if m_location[0] == 'channel':
         c_info = store['channels'][m_location[1]]
         #check whether u_id is in the channel
         if user_id not in c_info[3]:
@@ -117,13 +117,12 @@ def message_edit_v1(user_id, message_id, message):
         raise InputError(description="length of message is over 1000 characters")
     #if message is an empty string, delete the message
     if message == '':
-        if m_location[0] == 'channels':
+        if m_location[0] == 'channel':
             c_info = store['channels'][m_location[1]]
             c_info[4].remove(message_id)
         else: 
             dm_info = store['dms'][m_location[1]]
             dm_info['messages'].remove(message_id)
-        m_dict.pop(message_id)
     else:
         m_dict[message_id][1] = message  
     
