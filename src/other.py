@@ -11,6 +11,7 @@ def clear_v1():
     store['global_permissions'] = {}
     store['session_ids'] = []
     store['dms'] = {}
-
+    store['messages'] = []
+    
     data_store.set(store)
     return {}
