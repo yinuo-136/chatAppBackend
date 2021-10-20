@@ -7,7 +7,9 @@ from wrapper.user_wrappers import user_profile, set_email, set_handle, set_name
 from wrapper.clear_wrapper import clear_http
 
 def test_basic_user_profile():
+    
     clear_http()
+
     auth_register("email@gmail.com", "password123", "Jayden", "Matthews")
     
     r = user_profile(1)

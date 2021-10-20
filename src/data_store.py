@@ -32,9 +32,9 @@ initial_object = {
     'user_details' : {},
     'channels' : {},
     'global_permissions' : {},
-    'session_ids': [],
-    'messages': {},
-    'dms': {}
+    'session_ids' : [],
+    'dms' : {},
+    'messages' : {},
 }
 ## YOU SHOULD MODIFY THIS OBJECT ABOVE
 
