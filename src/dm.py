@@ -336,7 +336,28 @@ def dm_messages_v1(auth_u_id, dm_id, start):
     specific_dm = all_dm_dict[dm_id]
 
     specific_messages = specific_dm['messages']
+
+    num_msgs = len(specific_messages)
+
+    if (start > num_msgs):
+        raise InputError("start is greater than the total number of messages in the channel")
+
+    # AccessError when dm_id is valif and auth user is not member of DM
+
+
+    all_members = specific_dm['u_ids']
     
+    owner_id = specific_dm['owner_id'] #our owner id
+    all_members.append(owner_id)
+
+    user_is_member = (auth_u_id in all_members)
+
+
+    if (not user_is_member):
+        raise AccessError("dm_id is valid and the authorised user is not a member of the DM")
+
+
+    # we are good to go my man
 
     return { 'messages' : [],
              'start' : 1,
