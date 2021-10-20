@@ -5,6 +5,7 @@ import jwt
 from json import dumps
 from flask import Flask, request
 from flask_cors import CORS
+from src.channel import channel_details_v1
 from src.error import InputError
 from src import config
 from src.auth import auth_login_v1, auth_register_v1, auth_logout_v1, auth_invalidate_session, auth_store_session_id
@@ -199,8 +200,26 @@ def set_user_handle():
     user_set_handle(user_id, handle_str)
     
     return dumps({})
- 
 
+@APP.route("/channel/details/v2", methods=['GET'])
+#Parameters:{ token, channel_id }
+#Return Type:{ name, is_public, ownder_members, all_members }
+def channel_details():
+    data = request.get_json()
+
+    token = data['token']
+    channel_id = data['channel_id']
+
+    #Token Validation
+    token_checker(token)
+
+    payload = jwt.decode(token, config.SECRET, algorithms=["HS256"])
+    user_id = payload.get('user_id')
+
+    details = channel_details_v1(user_id, channel_id)
+
+    return dumps(details)
+ 
 #### NO NEED TO MODIFY BELOW THIS POINT
 
 if __name__ == "__main__":
