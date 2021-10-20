@@ -264,7 +264,7 @@ def test_message_senddm_not_a_member():
     assert payload.status_code == 403
 
 #feature 5: two message id should be unique
-def test_message_send_id_unique():
+def test_message_senddm_id_unique():
     clear()
     token_1 = user_sign_up('test@gmail.com', 'password', 'first', 'last')
     data_2 = auth_register('test2@gmail.com', 'password2', 'first2', 'last2')
