@@ -31,7 +31,7 @@ def test_basic_set_name():
     r1 = auth_register("email@gmail.com", "password123", "Jayden", "Matthews")
     token = r1.json()['token']
 
-    r2 = set_name(1, 'newfirst', 'newlast')
+    r2 = set_name(token, 'newfirst', 'newlast')
     assert r2.json() == {}
     
     r3 = user_profile(token, 1)
