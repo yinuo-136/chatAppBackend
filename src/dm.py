@@ -319,6 +319,13 @@ def dm_messages_v1(auth_u_id, dm_id, start):
     
     '''
 
+    #InputError when any of: dm_id does not refer to a valid DM
+        
+        
+    #Input Error when: start is greater than the total number of messages in the channel
+      
+    
+    # AccessError when: dm_id is valid and the authorised user is not a member of the DM
 
     return { 'messages' : [],
              'start' : 1,
