@@ -320,12 +320,44 @@ def dm_messages_v1(auth_u_id, dm_id, start):
     '''
 
     #InputError when any of: dm_id does not refer to a valid DM
+    
+    store = data_store.get()
+
+    all_dm_dict = store['dms']
         
+    dm_exists = (dm_id in all_dm_dict.keys())
+    
+    if (dm_exists == False):
+        raise InputError("dm_id does not refer to a valid DM")
         
     #Input Error when: start is greater than the total number of messages in the channel
-      
+    
+
+    specific_dm = all_dm_dict[dm_id]
+
+    all_messages = specific_dm['messages']
+    num_msgs = len(all_messages)
+
+    # index 0 is the first message, therefore start = 0 will have len 1. thus there are no msgs applicable if start > len(msgs) - 1
+    if (start > num_msgs - 1):
+        raise InputError("start is greater than the total number of messages in the channel")
+
+
     
     # AccessError when: dm_id is valid and the authorised user is not a member of the DM
+
+
+    all_members = specific_dm['u_ids']
+    
+    owner_id = specific_dm['owner_id'] #our owner id
+    all_members.append(owner_id)
+
+    user_is_member = (auth_u_id in all_members)
+
+
+    if (not user_is_member):
+        raise AccessError("dm_id is valid and the authorised user is not a member of the DM")
+
 
     return { 'messages' : [],
              'start' : 1,
