@@ -760,3 +760,81 @@ def test_dm_messages__fail__dm_id_invalid():
     status_code = r.status_code
 
     assert status_code == INPUT_ERROR_CODE
+
+
+def test_dm_messages__fail__start_greater_than_total():
+
+    # Clear
+
+    clear_http()
+
+
+    # Add two users
+
+    r1 = auth_register("test@gmail.com", "password123", "Nicholas", "Stathakis")
+    r2 = auth_register("somerandom@gmail.com", "password123", "Jayden", "Matthews")
+
+    data1 = r1.json()
+    data2 = r2.json()
+
+    user_1_token = data1['token']
+
+    user_2_token = data2['token']
+    user_2_u_id = data2['auth_user_id']
+
+
+    # Create a dm between them
+
+    r = dm_create_wrapper(user_1_token, [user_2_u_id])
+
+    response_message = json.loads(r.text)
+    dm_id = response_message['dm_id']
+    assert dm_id == 1
+
+    # Try call dm_messages_v1 with no messages sent
+
+    r = dm_messages_wrapper(user_2_token, dm_id, 1)
+
+    status_code = r.status_code
+
+    assert status_code == INPUT_ERROR_CODE
+
+
+
+def test_dm_messages__fail__user_not_member():
+
+    # Clear
+
+    clear_http()
+
+    # register 3 users
+
+    r1 = auth_register("test@gmail.com", "password123", "Nicholas", "Stathakis")
+    r2 = auth_register("somerandom@gmail.com", "password123", "Jayden", "Matthews")
+    r3 = auth_register("iamslime@gmail.com", "password123", "Miles", "Wick")
+
+    data1 = r1.json()
+    data2 = r2.json()
+    data3 = r3.json()
+
+
+    user_1_token = data1['token']
+    user_2_u_id = data2['auth_user_id']
+    user_3_token = data3['token']
+
+    # Create dm between two
+
+    r = dm_create_wrapper(user_1_token, [user_2_u_id])
+
+    response_body = json.loads(r.text)
+    dm_id = response_body['dm_id']
+
+    # Make third person request messages
+
+    r = dm_messages_wrapper(user_3_token, dm_id, 0)
+
+    status_code = r.status_code
+
+    # Raise Access Error
+
+    assert status_code == ACCESS_ERROR_CODE
