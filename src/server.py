@@ -8,8 +8,8 @@ from flask_cors import CORS
 from src.channel import channel_details_v1
 from src import config
 from src.dm import dm_create_v1, dm_list_v1, dm_remove_v1, dm_details_v1, dm_leave_v1, dm_messages_v1
-from src.channel import channel_leave_v1, channel_messages_v1
-from src.channels import channels_listall_v1, channels_create_v1
+from src.channel import channel_leave_v1, channel_messages_v1, channel_invite_v1, channel_join_v1
+from src.channels import channels_listall_v1, channels_create_v1, channels_list_v1
 from src.message import message_send_v1, message_senddm_v1, message_edit_v1, message_remove_v1
 from src.auth import auth_login_v1, auth_register_v1, auth_logout_v1, auth_invalidate_session, auth_store_session_id
 from src.user import user_details, list_all_users, user_set_email, user_set_handle, user_set_name
@@ -544,15 +544,14 @@ def list_channel():
     token = request.args.get('token')
     #token validation
     token_checker(token)
-    #decode token
-    payload = jwt.decode(token, config.SECRET, algorithms=["HS256"])
-    user_id = payload.get('user_id')
-    r = channels_list_v1('user_id')
+   
+    r = channels_list_v1()
     return dumps(r)
 
 @APP.route("channel/invite/v2", methods=['POST'])
 def channel_invite():
     data = request.get_json()
+    token = request.args.get('token')
     #Token Validation
     token_checker(data['token'])
     payload = jwt.decode(token, config.SECRET, algorithms=["HS256"])
@@ -566,6 +565,7 @@ def channel_invite():
 @APP.route("channel/join/v2", methods=['POST'])
 def channel_join():
     data = request.get_json()
+    token = request.args.get('token')
     #Token Validation
     token_checker(data['token'])
     payload = jwt.decode(token, config.SECRET, algorithms=["HS256"])
