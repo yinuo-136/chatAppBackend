@@ -194,7 +194,7 @@ def set_user_handle():
     user_set_handle(user_id, handle_str)
     
     return dumps({})
-    
+'''   
 @APP.route("/admin/user/remove/v1", methods=['DELETE'])
 def admin_user_remove():
     data = request.get_json()
@@ -230,7 +230,7 @@ def admin_permission_change():
     #admin_permission_change(auth_user_id, u_id, permission_id)
     
     return dumps({})
-
+'''
 #### NO NEED TO MODIFY BELOW THIS POINT
 
 if __name__ == "__main__":
