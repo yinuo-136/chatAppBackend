@@ -2,6 +2,8 @@ from src.error import InputError
 from src.error import AccessError
 from src.data_store import data_store
 from src.user import user_details
+from itertools import islice
+
 
 # TODO(nick): this function. It is currently a stub.
 def dm_create_v1(owner_u_id, u_ids):
@@ -91,14 +93,7 @@ def dm_list_v1(member_id):
     Returns the list of DMs that the user is a member of.
     '''
 
-    store = data_store.get()
-
-    all_u_ids = store['user_details']
-    
-    #InputError when: any u_id in u_ids does not refer to a valid user
-    # ASSUMPTION: we raise an ACCESS ERROR
-    if member_id not in all_u_ids.keys():
-        raise AccessError("User ID does not exist") 
+    store = data_store.get()    
 
 
     all_dm_dict = store['dms']
@@ -119,7 +114,7 @@ def dm_list_v1(member_id):
         # if user is owner, add this to the return dms dict
         if member_id is owner_id:
             is_apart_of_dm = True
-
+    
         # if user is a member of u_ids, add this to return dms dict
         if member_id in u_ids:
             is_apart_of_dm = True
@@ -319,7 +314,84 @@ def dm_messages_v1(auth_u_id, dm_id, start):
     
     '''
 
+    #InputError when any of: dm_id does not refer to a valid DM
+    
+    store = data_store.get()
 
-    return { 'messages' : [],
-             'start' : 1,
-             'end' : -1, }
+    all_dm_dict = store['dms']
+        
+    dm_exists = (dm_id in all_dm_dict.keys())
+    
+    if (dm_exists == False):
+        raise InputError("dm_id does not refer to a valid DM")
+            
+
+    # AccessError when: dm_id is valid and the authorised user is not a member of the DM
+
+    specific_dm = all_dm_dict[dm_id]
+
+
+    all_members = specific_dm['u_ids']
+    
+    owner_id = specific_dm['owner_id'] #our owner id
+    all_members.append(owner_id)
+
+    user_is_member = (auth_u_id in all_members)
+
+
+    if (not user_is_member):
+        raise AccessError("dm_id is valid and the authorised user is not a member of the DM")
+
+
+    #Input Error when: start is greater than the total number of messages in the channel
+
+    dm_messages = specific_dm['messages']
+    num_msgs = len(dm_messages)
+
+    # index 0 is the first message, therefore start = 0 will have len 1. thus there are no msgs applicable if start > len(msgs) - 1
+    if (start > num_msgs - 1):
+        raise InputError("start is greater than the total number of messages in the channel")
+
+
+    
+    
+
+
+    # lets get to the implementation
+
+    store_messages = store['messages'] # a dict {}
+    # and we have dm_messages = []
+
+
+    # reverse so most recent are at index 0 (since they are appended instead of insert 0)
+    #set end as an invalid number first
+    m_list = list(islice(reversed(dm_messages), start, start + 50))
+
+    end = -1
+
+    if num_msgs > start + 50:
+        end = start + 50
+
+
+    messages = []
+    for m_id in m_list:
+
+
+        message_id = m_id
+        u_id = store_messages[m_id][0]
+        message = store_messages[m_id][1]
+        time_created = store_messages[m_id][2]
+
+
+        messages.append({
+                'message_id': message_id,
+                'u_id': u_id,
+                'message': message,
+                'time_created': time_created
+            })    
+
+
+
+    return { 'messages' : messages,
+             'start' : start,
+             'end' : end, }

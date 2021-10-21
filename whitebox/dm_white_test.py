@@ -31,7 +31,7 @@ def test_dm_create__local():
         'name' : 'nicholasstathakis, zeddyzarnacle',
         'owner_id' : 1,
         'u_ids' : [2],
-        'messages' : {},
+        'messages' : [],
     }}
 
 
