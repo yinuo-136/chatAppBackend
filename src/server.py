@@ -5,11 +5,14 @@ import jwt
 from json import dumps
 from flask import Flask, request
 from flask_cors import CORS
-from src.error import InputError
+from src.channel import channel_details_v1
 from src import config
+from src.dm import dm_create_v1, dm_list_v1, dm_remove_v1, dm_details_v1, dm_leave_v1, dm_messages_v1
+from src.channel import channel_leave_v1, channel_messages_v1
+from src.channels import channels_listall_v1, channels_create_v1
+from src.message import message_send_v1, message_senddm_v1, message_edit_v1
 from src.auth import auth_login_v1, auth_register_v1, auth_logout_v1, auth_invalidate_session, auth_store_session_id
 from src.user import user_details, list_all_users, user_set_email, user_set_handle, user_set_name
-from src.data_store import data_store
 from src.database import save_datastore, load_datastore
 from src.token import token_checker
 from src.other import clear_v1
@@ -97,7 +100,7 @@ def logout():
      
     auth_logout_v1(user_id)
     auth_invalidate_session(session_id)
-       
+  
     return dumps({})
     
  
@@ -194,6 +197,7 @@ def set_user_handle():
     user_set_handle(user_id, handle_str)
     
     return dumps({})
+
 '''   
 @APP.route("/admin/user/remove/v1", methods=['DELETE'])
 def admin_user_remove():
@@ -213,7 +217,314 @@ def admin_user_remove():
     #admin_user_remove(auth_user_id, u_id)
     
     return dumps({})
+'''
 
+@APP.route("/channels/create/v2", methods=['POST'])   
+def channels_create():
+    #get the response from frontend
+    resp = request.get_json()
+
+    #get the dictionary from the response
+    token = resp['token']
+    name = resp['name']
+    is_public = resp['is_public']
+
+    #check the token validation
+    token_checker(token)
+    
+    #decode the token
+    payload = jwt.decode(token, config.SECRET, algorithms=["HS256"])
+    user_id = payload.get('user_id')
+
+    r = channels_create_v1(user_id, name, is_public)
+    #persistence
+    save_datastore()
+    return dumps(r)
+
+
+@APP.route("/channels/listall/v2", methods=['GET'])
+def channels_listall():
+    #get the token from frontend
+    token = request.args.get('token')
+
+    #check the token validation
+    token_checker(token)
+    
+    #decode the token
+    payload = jwt.decode(token, config.SECRET, algorithms=["HS256"])
+    user_id = payload.get('user_id')
+    r = channels_listall_v1(user_id)
+    return dumps(r)
+
+@APP.route("/channel/leave/v1", methods=['POST'])
+def channel_leave():
+    #get the info from frontend
+    resp = request.get_json()
+    token = resp['token']
+    channel_id = resp['channel_id']
+    
+    #check the token validation
+    token_checker(token)
+
+    #decode the token
+    payload = jwt.decode(token, config.SECRET, algorithms=["HS256"])
+    user_id = payload.get('user_id')
+
+    #call the function
+    r = channel_leave_v1(user_id,channel_id)
+    #persistence
+    save_datastore()
+    return dumps(r)
+
+
+@APP.route("/message/send/v1", methods=['POST'])
+def message_send():
+    resp = request.get_json()
+    token = resp['token']
+    channel_id = resp['channel_id']
+    message = resp['message']
+
+    #check the token validation
+    token_checker(token)
+
+    #decode the token
+    payload = jwt.decode(token, config.SECRET, algorithms=["HS256"])
+    user_id = payload.get('user_id')
+
+    #call the function
+    r = message_send_v1(user_id, channel_id, message)
+    #persistence
+    save_datastore()
+    return dumps(r)
+
+
+@APP.route("/channel/messages/v2", methods=['GET'])
+def channel_message():
+    #get the token from frontend
+    token = request.args.get('token')
+    channel_id = int(request.args.get('channel_id'))
+    start = int(request.args.get('start'))
+
+    #check the token validation
+    token_checker(token)
+
+    #decode the token
+    payload = jwt.decode(token, config.SECRET, algorithms=["HS256"])
+    user_id = payload.get('user_id')
+
+    #call the function
+    r = channel_messages_v1(user_id, channel_id, start)
+    return dumps(r)
+
+
+@APP.route("/channel/details/v2", methods=['GET'])
+#Parameters:{ token, channel_id }
+#Return Type:{ name, is_public, ownder_members, all_members }
+def channel_details():
+    token = request.args.get('token')
+
+    channel_id = int(request.args.get('channel_id'))
+
+    #Token Validation
+    token_checker(token)
+
+    payload = jwt.decode(token, config.SECRET, algorithms=["HS256"])
+    user_id = payload.get('user_id')
+
+    details = channel_details_v1(user_id, channel_id)
+
+    return dumps(details)
+ 
+@APP.route("/message/senddm/v1", methods=['POST'])
+def message_senddm():
+    resp = request.get_json()
+
+    token = resp['token']
+    dm_id = resp['dm_id']
+    message = resp['message']
+
+    #Token Validation
+    token_checker(token)
+
+    payload = jwt.decode(token, config.SECRET, algorithms=["HS256"])
+    user_id = payload.get('user_id')
+
+    r = message_senddm_v1(user_id, dm_id, message)
+    #persistence
+    save_datastore()
+    return dumps(r)
+
+@APP.route("/message/edit/v1", methods=['PUT'])
+def message_edit():
+    resp = request.get_json()
+    token = resp['token']
+    message_id = resp['message_id']
+    message = resp['message']
+
+    #Token Validation
+    token_checker(token)
+
+    payload = jwt.decode(token, config.SECRET, algorithms=["HS256"])
+    user_id = payload.get('user_id')
+
+    r = message_edit_v1(user_id, message_id, message)
+    #persistence
+    save_datastore()
+    return dumps(r)
+
+	
+@APP.route("/dm/create/v1", methods=['POST'])
+def dm_create_http():
+    '''
+    
+    Parameters:{ token, u_ids }
+    Return Type:{ dm_id }
+    
+    '''
+    data = request.get_json(force=True)
+    
+    token = data['token']
+    u_ids = data['u_ids']
+
+    token_checker(token) # will raise an error if token is invalid
+
+    payload = jwt.decode(token, config.SECRET, algorithms=["HS256"])
+    owner_u_id = payload.get('user_id')
+
+    
+    dict_dm_id = dm_create_v1(owner_u_id, u_ids)
+    dm_id = dict_dm_id['dm_id']
+
+    return dumps({ 'dm_id' : dm_id })
+
+
+
+
+
+@APP.route("/dm/list/v1", methods=['GET'])
+def dm_list_http():
+    '''
+    
+    Parameters:{ token }
+    Return Type:{ dms }
+    
+    '''
+    token = request.args.get('token')
+
+    token_checker(token) # will raise an error if token is invalid
+
+    payload = jwt.decode(token, config.SECRET, algorithms=["HS256"])
+    member_u_id = payload.get('user_id')
+
+
+    dict_dms = dm_list_v1(member_u_id)
+    dms = dict_dms['dms']
+
+    return dumps({ 'dms' : dms })
+
+
+@APP.route("/dm/remove/v1", methods=['DELETE'])
+def dm_remove_http():
+
+    '''
+    Parameters:         { token, dm_id }
+    Return Type:        {}
+    '''
+
+    data = request.get_json(force=True)
+    
+    token = data['token']
+    dm_id = data['dm_id']
+
+    token_checker(token) # will raise an error if token is invalid
+
+
+    payload = jwt.decode(token, config.SECRET, algorithms=["HS256"])
+    owner_u_id = payload.get('user_id')
+
+    
+    dm_remove_v1(owner_u_id, dm_id)
+    
+
+    return dumps( {} )
+
+
+
+@APP.route("/dm/details/v1", methods=['GET'])
+def dm_details_http():
+
+    '''
+    Parameters:     { token, dm_id }
+    Return Type:    { name, members }
+    '''
+    token = request.args.get('token')
+    dm_id = int(request.args.get('dm_id'))
+    
+
+    token_checker(token) # will raise an error if token is invalid
+
+
+    payload = jwt.decode(token, config.SECRET, algorithms=["HS256"])
+    owner_u_id = payload.get('user_id')
+
+    
+    payload = dm_details_v1(owner_u_id, dm_id)
+    
+
+    return dumps( payload )
+
+
+
+@APP.route("/dm/leave/v1", methods=['POST'])
+def dm_leave_http():
+    '''
+    
+    Parameters:     { token, dm_id }
+    Return Type:    {}
+    
+    '''
+    data = request.get_json(force=True)
+    
+    token = data['token']
+    dm_id = data['dm_id']
+
+    token_checker(token) # will raise an error if token is invalid
+
+    payload = jwt.decode(token, config.SECRET, algorithms=["HS256"])
+    auth_u_id = payload.get('user_id')
+
+    
+    dm_leave_v1(auth_u_id, dm_id)
+
+    return dumps( {} )
+
+
+
+@APP.route("/dm/messages/v1", methods=['GET'])
+def dm_messages_http():
+
+    '''
+    Parameters:     { token, dm_id, start }
+    Return Type:    { messages, start, end }
+    '''
+
+    token = request.args.get('token')
+    dm_id = int(request.args.get('dm_id'))
+    start = int(request.args.get('start'))
+
+    token_checker(token) # will raise an error if token is invalid
+
+
+    payload = jwt.decode(token, config.SECRET, algorithms=["HS256"])
+    auth_u_id = payload.get('user_id')
+
+    
+    payload = dm_messages_v1(auth_u_id, dm_id, start)
+    
+
+    return dumps( payload )
+
+'''
 @APP.route("/admin/userpermission/change/v1", methods=['POST'])
 def admin_permission_change():
     data = request.get_json()

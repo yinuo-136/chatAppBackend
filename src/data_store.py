@@ -33,6 +33,8 @@ initial_object = {
     'channels' : {},
     'global_permissions' : {},
     'session_ids' : [],
+    'dms' : {},
+    'messages' : {},
 }
 ## YOU SHOULD MODIFY THIS OBJECT ABOVE
 

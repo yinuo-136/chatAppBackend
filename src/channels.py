@@ -4,13 +4,14 @@ from src.data_store import data_store
 
 
 def channels_list_v1(auth_user_id):
-    
+
     store = data_store.get()
     u_dict = store['user_details']
-    
+
     #user id validity check
     if auth_user_id not in u_dict.keys():
     	raise AccessError("the user id you entered does not exist") 
+
 
     list_dict = []
     channel_list = store['channels']
@@ -43,7 +44,6 @@ def channels_listall_v1(auth_user_id):
     '''
 
     store = data_store.get()
-
     u_dict = store['user_details']
     # implement the user id validity check
     if auth_user_id not in u_dict.keys():
@@ -82,25 +82,19 @@ def channels_create_v1(auth_user_id, name, is_public):
     Return Value:
     Returns a dictionary that contains channel_id that you create.
     '''
-
     store = data_store.get()
-
-    u_dict = store['user_details']
-    # implement the user id validity check
-    if auth_user_id not in u_dict.keys():
-        raise AccessError("the user id you entered does not exist")
-
     # implement the name validity check
     if len(name) < 1 or len(name) > 20:
-        raise InputError("Invalid name is entered, needs to be a name between 1 and 20 characters!")
+        raise InputError(description="Invalid name is entered, needs to be a name between 1 and 20 characters!")
     
     #store channel information into date_store
     c_id = len(store['channels']) + 1
     owner = [auth_user_id]
     members = [auth_user_id]
-    messages = {}
+    messages = []
     store['channels'].update({c_id : (name, is_public, owner, members, messages)})
-        
+
     return {
-        'channel_id': c_id,
+        'channel_id': c_id
     }
+

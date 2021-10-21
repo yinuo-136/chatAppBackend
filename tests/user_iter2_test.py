@@ -15,9 +15,6 @@ def test_basic_user_profile():
     
     r = auth_register("email@gmail.com", "password123", "Jayden", "Matthews")
     token = r.json()['token']
-
-    
-    print(data_store.get())
     
     r1 = user_profile(token, 1)
     
@@ -29,18 +26,15 @@ def test_basic_user_profile():
                         'handle_str' : 'jaydenmatthews'}
     }
     
-  
 def test_basic_set_name():
     clear_http()
-        
-    r = auth_register("email@gmail.com", "password123", "Jayden", "Matthews")
-    token = r.json()['token']
-        
-    r1 = set_name(token, 'newfirst', 'newlast')
-    assert r1.json() == {}
+    auth_register("email@gmail.com", "password123", "Jayden", "Matthews")
     
-    r2 = user_profile(token, 1)
-    assert r2.json() == {'user' : {
+    r = set_name(1, 'newfirst', 'newlast')
+    assert r.json() == {}
+    
+    r1 = user_profile(1)
+    assert r1.json() == {'user' : {
                         'u_id' : 1,
                         'email' : 'email@gmail.com',
                         'name_first' : 'newfirst',
@@ -48,6 +42,7 @@ def test_basic_set_name():
                         'handle_str' : 'jaydenmatthews'}
     }
     
+
 
 def test_basic_set_email():
     clear_http()
@@ -66,9 +61,12 @@ def test_basic_set_email():
                         'name_last' : 'Matthews',
                         'handle_str' : 'jaydenmatthews'}
     }
+  
         
 def test_basic_set_handle():
     clear_http()
+    auth_register("email@gmail.com", "password123", "Jayden", "Matthews")
+
     
     r = auth_register("email@gmail.com", "password123", "Jayden", "Matthews")
     token = r.json()['token']
@@ -193,3 +191,4 @@ def test_duplicate_set_handle():
     
     r1 = set_handle(token, 'nickstath')
     assert r1.status_code == INPUT_ERROR
+
