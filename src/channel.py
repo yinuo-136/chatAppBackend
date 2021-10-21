@@ -241,8 +241,6 @@ def channel_join_v1(auth_user_id, channel_id):
     return {}
 
 
-
-
 def channel_leave_v1(user_id, channel_id):
     store = data_store.get()
 
@@ -254,9 +252,9 @@ def channel_leave_v1(user_id, channel_id):
     if user_id not in channel_info[3]:
         raise AccessError(description='the authorised user is not a member of the channel')
 
-    channel_info[3].remove(user_id) 
-    
     if user_id in channel_info[2]:
         channel_info[2].remove(user_id)
 
+    channel_info[3].remove(user_id) 
+    
     return {}

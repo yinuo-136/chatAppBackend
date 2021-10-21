@@ -2,7 +2,7 @@ import pytest
 import requests
 from wrapper.channels_wrappers import clear, user_sign_up, user_create_channel
 from wrapper.message_wrappers import send_message, senddm_message, edit_message, show_messages
-from wrapper.dm_wrappers import dm_create_wrapper
+from wrapper.dm_wrappers import dm_create_wrapper, dm_messages_wrapper
 from wrapper.auth_wrappers import auth_register
 from src.config import url
 
@@ -284,10 +284,8 @@ def test_message_senddm_id_unique():
 
 ################################################################################################################
 ##message_edit_v1
-#feature 1 : raise AccessError when the token is invalid
-#TO DO
 
-#feature 2: raise input error when length of message is over 1000 characters
+#feature 1: raise input error when length of message is over 1000 characters
 def test_message_edit_over_1000():
     clear()
     token = user_sign_up('test@gmail.com', 'password', 'first', 'last')
@@ -299,7 +297,7 @@ def test_message_edit_over_1000():
 
     assert payload.status_code == 400
 
-#feature 3: raise input error when message id does not exist
+#feature 2: raise input error when message id does not exist
 def test_message_edit_id_invalid():
     clear()
     token = user_sign_up('test@gmail.com', 'password', 'first', 'last')
@@ -309,7 +307,7 @@ def test_message_edit_id_invalid():
 
     assert payload.status_code == 400
 
-#feature 4: raise input error when m_id is not valid in channel/DM that the user has joined
+#feature 3: raise input error when m_id is not valid in channel/DM that the user has joined
 def test_messsage_edit_channel_not_join():
     clear()
     token_1 = user_sign_up('test1@gmail.com', 'password1', 'first1', 'last1')
@@ -342,14 +340,39 @@ def test_message_edit_dm_not_join():
 
     assert payload.status_code == 400
 
-#feature 5: raise access error when the message wasn't sent by the authorised user making this 
+#feature 4: raise access error when the message wasn't sent by the authorised user making this 
 # request and the authorised user does not have owner permissions in the channel/DM
 '''
 def test_message_edit_channel_no_permission():
    To Do
 '''
-#feature 6:  If the new message is an empty string, the message is deleted.
-def test_message_edit_empty_string():
+def test_message_edit_dm_no_permission():
+    clear()
+    token_1 = user_sign_up('test@gmail.com', 'password', 'first', 'last')
+    data_2 = auth_register('test2@gmail.com', 'password2', 'first2', 'last2')
+    data_3 = auth_register('test3@gmail.com', 'password3', 'first3', 'last3')
+
+
+    data_2 = data_2.json()
+    data_3 = data_3.json()
+
+    token_2 = data_2['token']
+    token_3 = data_3['token']
+    u_id_2 = data_2['auth_user_id']
+    u_id_3 = data_3['auth_user_id']
+    
+    r = dm_create_wrapper(token_1, [u_id_2, u_id_3])
+    r = r.json()
+    dm_id = r['dm_id']
+
+    m_id = senddm_message(token_2, dm_id, 'hello')
+
+    payload = edit_message(token_3, m_id, 'b')
+
+    assert payload.status_code == 403
+
+#feature 5:  If the new message is an empty string, the message is deleted.
+def test_message_edit__channel_empty_string():
     clear()
     token_1 = user_sign_up('test1@gmail.com', 'password1', 'first1', 'last1')
 
@@ -361,7 +384,26 @@ def test_message_edit_empty_string():
     edit_message(token_1, m_id_1, '')
 
     assert show_messages(token_1, channel_id, 0) == ['hello2']
-#feature 7: test the success case
+
+def test_message_edit__dm_empty_string():
+    clear()
+    token_1 = user_sign_up('test@gmail.com', 'password', 'first', 'last')
+    data_2 = auth_register('test2@gmail.com', 'password2', 'first2', 'last2')
+
+    data = data_2.json()
+    u_id_2 = data['auth_user_id']
+    
+    r = dm_create_wrapper(token_1, [u_id_2])
+    r = r.json()
+    dm_id = r['dm_id']
+
+    m_id_1 = senddm_message(token_1, dm_id, 'hello')
+    senddm_message(token_1, dm_id, 'hello2')
+    payload = edit_message(token_1, m_id_1, '')
+
+    assert payload.status_code == 200
+
+#feature 6: test the success case
 def test_message_edit_success():
     clear()
     token_1 = user_sign_up('test1@gmail.com', 'password1', 'first1', 'last1')
