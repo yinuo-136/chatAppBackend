@@ -699,7 +699,6 @@ def test_dm_messages__success__basic():
 
     user_1_token = data1['token']
 
-    user_2_token = data2['token']
     user_2_u_id = data2['auth_user_id']
 
 
@@ -736,3 +735,28 @@ def test_dm_messages__success__basic():
     assert content == 'hello1'
     assert start == 0
     assert end == -1
+
+
+
+def test_dm_messages__fail__dm_id_invalid():
+
+    #Clear
+
+    clear_http()
+
+
+    # Register one user
+
+    r1 = auth_register("test@gmail.com", "password123", "Nicholas", "Stathakis")    
+    data1 = r1.json()
+    
+    user_1_token = data1['token']
+    invalid_dm_id = 99
+
+    # try to get messages for invalid dm id
+
+    r = dm_messages_wrapper(user_1_token, invalid_dm_id, 0)
+
+    status_code = r.status_code
+
+    assert status_code == INPUT_ERROR_CODE
