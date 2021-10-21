@@ -559,7 +559,7 @@ def channel_invite():
     payload = jwt.decode(token, config.SECRET, algorithms=["HS256"])
     user_id = payload.get('user_id')
     channel_invite_v1(user_id, channel_id, u_id)
-    dumps({})
+    return dumps({})
 	
 @APP.route("channel/join/v2", methods=['POST'])
 def channel_join():
