@@ -28,13 +28,14 @@ def test_basic_user_profile():
     
 def test_basic_set_name():
     clear_http()
-    auth_register("email@gmail.com", "password123", "Jayden", "Matthews")
+    r1 = auth_register("email@gmail.com", "password123", "Jayden", "Matthews")
+    token = r.json()['token']
+
+    r2 = set_name(1, 'newfirst', 'newlast')
+    assert r2.json() == {}
     
-    r = set_name(1, 'newfirst', 'newlast')
-    assert r.json() == {}
-    
-    r1 = user_profile(1)
-    assert r1.json() == {'user' : {
+    r3 = user_profile(token, 1)
+    assert r3.json() == {'user' : {
                         'u_id' : 1,
                         'email' : 'email@gmail.com',
                         'name_first' : 'newfirst',
@@ -65,8 +66,6 @@ def test_basic_set_email():
         
 def test_basic_set_handle():
     clear_http()
-    auth_register("email@gmail.com", "password123", "Jayden", "Matthews")
-
     
     r = auth_register("email@gmail.com", "password123", "Jayden", "Matthews")
     token = r.json()['token']
