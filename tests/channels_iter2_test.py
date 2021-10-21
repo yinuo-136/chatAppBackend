@@ -221,8 +221,9 @@ def test_leave_check_return():
     r = r_type.json()
 
     assert r == {}
-'''
+
 # feature 4: raise access error when the toke entered is invalid(u_id or session_id)
+'''
 def test_leave_uid_validity():
     clear()
     #register a user
@@ -250,6 +251,7 @@ def test_leave_uid_validity():
 
     assert r_type.status_code == 403
 '''
+
 def test_leave_sid_validity():
     clear()
     token = user_sign_up('test@gmail.com', 'password', 'First', 'Last')
@@ -263,6 +265,4 @@ def test_leave_sid_validity():
     r_type = requests.post(f'{BASE_URL}/channel/leave/v1', json={'token': token, 'channel_id': p['channel_id']})
 
     assert r_type.status_code == 403
-    
-    
 
