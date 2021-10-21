@@ -331,22 +331,11 @@ def dm_messages_v1(auth_u_id, dm_id, start):
     
     if (dm_exists == False):
         raise InputError("dm_id does not refer to a valid DM")
-        
-    #Input Error when: start is greater than the total number of messages in the channel
-    
+            
+
+    # AccessError when: dm_id is valid and the authorised user is not a member of the DM
 
     specific_dm = all_dm_dict[dm_id]
-
-    dm_messages = specific_dm['messages']
-    num_msgs = len(dm_messages)
-
-    # index 0 is the first message, therefore start = 0 will have len 1. thus there are no msgs applicable if start > len(msgs) - 1
-    if (start > num_msgs - 1):
-        raise InputError("start is greater than the total number of messages in the channel")
-
-
-    
-    # AccessError when: dm_id is valid and the authorised user is not a member of the DM
 
 
     all_members = specific_dm['u_ids']
@@ -359,6 +348,20 @@ def dm_messages_v1(auth_u_id, dm_id, start):
 
     if (not user_is_member):
         raise AccessError("dm_id is valid and the authorised user is not a member of the DM")
+
+
+    #Input Error when: start is greater than the total number of messages in the channel
+
+    dm_messages = specific_dm['messages']
+    num_msgs = len(dm_messages)
+
+    # index 0 is the first message, therefore start = 0 will have len 1. thus there are no msgs applicable if start > len(msgs) - 1
+    if (start > num_msgs - 1):
+        raise InputError("start is greater than the total number of messages in the channel")
+
+
+    
+    
 
 
     # lets get to the implementation
@@ -380,7 +383,7 @@ def dm_messages_v1(auth_u_id, dm_id, start):
     messages = []
     for m_id in m_list:
 
-        
+
         message_id = m_id
         u_id = store_messages[m_id][0]
         message = store_messages[m_id][1]
