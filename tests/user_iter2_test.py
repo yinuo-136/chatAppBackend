@@ -29,7 +29,7 @@ def test_basic_user_profile():
 def test_basic_set_name():
     clear_http()
     r1 = auth_register("email@gmail.com", "password123", "Jayden", "Matthews")
-    token = r.json()['token']
+    token = r1.json()['token']
 
     r2 = set_name(1, 'newfirst', 'newlast')
     assert r2.json() == {}
