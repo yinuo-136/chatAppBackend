@@ -2,6 +2,8 @@ from src.error import InputError
 from src.error import AccessError
 from src.data_store import data_store
 from src.user import user_details
+from itertools import islice
+
 
 # TODO(nick): this function. It is currently a stub.
 def dm_create_v1(owner_u_id, u_ids):
@@ -335,8 +337,8 @@ def dm_messages_v1(auth_u_id, dm_id, start):
 
     specific_dm = all_dm_dict[dm_id]
 
-    all_messages = specific_dm['messages']
-    num_msgs = len(all_messages)
+    dm_messages = specific_dm['messages']
+    num_msgs = len(dm_messages)
 
     # index 0 is the first message, therefore start = 0 will have len 1. thus there are no msgs applicable if start > len(msgs) - 1
     if (start > num_msgs - 1):
@@ -359,6 +361,41 @@ def dm_messages_v1(auth_u_id, dm_id, start):
         raise AccessError("dm_id is valid and the authorised user is not a member of the DM")
 
 
-    return { 'messages' : [],
-             'start' : 1,
-             'end' : -1, }
+    # lets get to the implementation
+
+    store_messages = store['messages'] # a dict {}
+    # and we have dm_messages = []
+
+
+    # reverse so most recent are at index 0 (since they are appended instead of insert 0)
+    #set end as an invalid number first
+    m_list = list(islice(reversed(dm_messages), start, start + 50))
+
+    end = -1
+
+    if num_msgs > start + 50:
+        end = start + 50
+
+
+    messages = []
+    for m_id in m_list:
+
+        
+        message_id = m_id
+        u_id = store_messages[m_id][0]
+        message = store_messages[m_id][1]
+        time_created = store_messages[m_id][2]
+
+
+        messages.append({
+                'message_id': message_id,
+                'u_id': u_id,
+                'message': message,
+                'time_created': time_created
+            })    
+
+
+
+    return { 'messages' : messages,
+             'start' : start,
+             'end' : end, }
