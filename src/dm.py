@@ -62,7 +62,7 @@ def dm_create_v1(owner_u_id, u_ids):
     dm_name = ', '.join(all_user_handles)
     owner_id = owner_u_id
     members = u_ids
-    messages = {}
+    messages = []
 
     #print(f"Dm Name: \'{dm_name}\'")
 

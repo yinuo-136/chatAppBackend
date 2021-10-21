@@ -22,10 +22,10 @@ def test_basic_user_profile():
                         'handle_str' : 'jaydenmatthews'}
     }
     
-    clear_http()
+    
     
 def test_basic_set_name():
-    
+    clear_http()
     auth_register("email@gmail.com", "password123", "Jayden", "Matthews")
     
     r = set_name(1, 'newfirst', 'newlast')
@@ -40,10 +40,10 @@ def test_basic_set_name():
                         'handle_str' : 'jaydenmatthews'}
     }
     
-    clear_http()
+    
 
 def test_basic_set_email():
-
+    clear_http()
     auth_register("email@gmail.com", "password123", "Jayden", "Matthews")    
     
     r = set_email(1, 'new@email.com')
@@ -58,10 +58,10 @@ def test_basic_set_email():
                         'handle_str' : 'jaydenmatthews'}
     }
     
-    clear_http()
+    
         
 def test_basic_set_handle():
-
+    clear_http()
     auth_register("email@gmail.com", "password123", "Jayden", "Matthews")
     
     r = set_handle(1, 'newhandlestr')
@@ -76,4 +76,4 @@ def test_basic_set_handle():
                         'handle_str' : 'newhandlestr'}
     }
     
-    clear_http()
+    
