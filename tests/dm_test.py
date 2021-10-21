@@ -1,3 +1,4 @@
+from typing import Any
 import requests
 import json
 import jwt
@@ -9,6 +10,7 @@ from src.other import clear_v1
 
 from wrapper.dm_wrappers import dm_create_wrapper, dm_list_wrapper, dm_remove_wrapper, dm_details_wrapper, dm_leave_wrapper, dm_messages_wrapper
 from wrapper.auth_wrappers import auth_register, auth_login, auth_logout
+from wrapper.message_wrappers import senddm_message
 from wrapper.clear_wrapper import clear_http
 from src.data_store import data_store
 
@@ -625,10 +627,49 @@ def test_dm_messages__success__basic():
 
     # Register two users
 
+
+    r1 = auth_register("test@gmail.com", "password123", "Nicholas", "Stathakis")
+    r2 = auth_register("somerandom@gmail.com", "password123", "Jayden", "Matthews")
+
+    data1 = r1.json()
+    data2 = r2.json()
+
+    user_1_token = data1['token']
+
+    user_2_token = data2['token']
+    user_2_u_id = data2['auth_user_id']
+
+
     # Make a dm
+
+    r = dm_create_wrapper(user_1_token, [user_2_u_id])
+
+    response_message = json.loads(r.text)
+    dm_id = response_message['dm_id']
+    assert dm_id == 1
+
+
+    # send one message
+
+    senddm_message(user_1_token, dm_id, 'hello1')
+
 
     # Request messages for this dm
 
-    # should be empty {}
 
-    pass
+    r = dm_messages_wrapper(user_1_token, dm_id, 0)
+
+    status_code = r.status_code
+    response = json.loads(r.text)
+
+    assert status_code == SUCCESS
+
+    messages = response['messages']
+    content = messages[0]['message']
+    start = int(response['start'])
+    end = int(response['end'])
+
+    assert len(messages) == 1
+    assert content == 'hello1'
+    assert start == 0
+    assert end == -1
