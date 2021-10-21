@@ -613,6 +613,69 @@ def test_dm_leave__success_basic():
 
 
 
+def test_dm_leave__fail__dm_id_invalid():
+
+    # Clear
+
+    clear_http()
+
+    # Register a user
+
+    r1 = auth_register("test@gmail.com", "password123", "Nicholas", "Stathakis")    
+    data1 = r1.json()
+    
+    user_1_token = data1['token']
+    invalid_dm_id = 99
+
+    # Leave with invalid ID
+
+    r = dm_leave_wrapper(user_1_token, invalid_dm_id)
+
+    status_code = r.status_code
+
+    assert status_code == INPUT_ERROR_CODE
+
+
+
+def test_dm_leave__fail__user_not_member():
+
+    #Clear
+
+    clear_http()
+
+    #Register three users
+
+    r1 = auth_register("test@gmail.com", "password123", "Nicholas", "Stathakis")
+    r2 = auth_register("somerandom@gmail.com", "password123", "Jayden", "Matthews")
+    r3 = auth_register("iamslime@gmail.com", "password123", "Miles", "Wick")
+
+    data1 = r1.json()
+    data2 = r2.json()
+    data3 = r3.json()
+
+
+    user_1_token = data1['token']
+    user_2_u_id = data2['auth_user_id']
+    user_3_token = data3['token']
+
+    # Create dm between two
+
+    r = dm_create_wrapper(user_1_token, [user_2_u_id])
+
+    response_body = json.loads(r.text)
+    dm_id = response_body['dm_id']
+
+    # Third user try leave that dm
+
+    r = dm_leave_wrapper(user_3_token, dm_id)
+
+    status_code = r.status_code
+
+    assert status_code == ACCESS_ERROR_CODE
+
+    # Assert status code is ACCESS ERROR
+
+
 ##################################### END OF dm_leave_v1 TESTS
 
 
