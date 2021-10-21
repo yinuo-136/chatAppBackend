@@ -551,28 +551,26 @@ def list_channel():
 @APP.route("channel/invite/v2", methods=['POST'])
 def channel_invite():
     data = request.get_json()
-    token = request.args.get('token')
+    token = data['token']
+    channel_id = data['channel_id']
+    u_id = data['u_id']
     #Token Validation
-    token_checker(data['token'])
+    token_checker(token)
     payload = jwt.decode(token, config.SECRET, algorithms=["HS256"])
-    u_id = payload.get('user_id')
-    channel_id = payload.get('channel_id')
-    r = channel_invite_v1(token, channel_id, u_id)
-    #persistence
-    save_datastore()
+    user_id = payload.get('user_id')
+    r = channel_invite_v1(user_id, channel_id, u_id)
     return dumps(r)
 	
 @APP.route("channel/join/v2", methods=['POST'])
 def channel_join():
     data = request.get_json()
-    token = request.args.get('token')
+    token = data('token')
+    channel_id = data['channel_id']
     #Token Validation
-    token_checker(data['token'])
+    token_checker(token)
     payload = jwt.decode(token, config.SECRET, algorithms=["HS256"])
-    channel_id = payload.get('channel_id')
-    r = channel_join_v1(token, channel_id)
-    #persistence
-    save_datastore()
+    user_id = payload.get('user_id')
+    r = channel_join_v1(user_id, channel_id)
     return dumps(r)
 
 '''
