@@ -12,7 +12,6 @@ from src.user import user_details, list_all_users, user_set_email, user_set_hand
 from src.data_store import data_store
 from src.database import save_datastore, load_datastore
 from src.token import token_checker
-from src.admin import admin_permission_change, admin_user_remove
 from src.other import clear_v1
 
 def quit_gracefully(*args):
