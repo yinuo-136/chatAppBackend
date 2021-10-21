@@ -210,7 +210,7 @@ def admin_user_remove():
     
     auth_invalidate_session(session_id)
     
-    admin_user_remove(auth_user_id, u_id)
+    #admin_user_remove(auth_user_id, u_id)
     
     return dumps({})
 
@@ -227,7 +227,7 @@ def admin_permission_change():
     payload = jwt.decode(token, config.SECRET, algorithms=["HS256"])
     auth_user_id = payload.get('user_id')
     
-    admin_permission_change(auth_user_id, u_id, permission_id)
+    #admin_permission_change(auth_user_id, u_id, permission_id)
     
     return dumps({})
 
