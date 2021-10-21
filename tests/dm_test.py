@@ -307,7 +307,6 @@ def test_dm_list__success__basic_user__additional_dms():
     user_2_token = data2['token']
     user_2_id = data2['auth_user_id']
 
-    user_3_token = data3['token']
     user_3_id = data3['auth_user_id']
 
     # create two dms (1->2), (2->3)
@@ -837,6 +836,7 @@ def test_dm_messages__success__basic_more_than_fifty_messages():
     # send one message
 
     for x in range(51):
+        x
         senddm_message(user_1_token, dm_id, 'this is spam')
     
 
