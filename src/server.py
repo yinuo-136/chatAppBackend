@@ -558,8 +558,8 @@ def channel_invite():
     token_checker(token)
     payload = jwt.decode(token, config.SECRET, algorithms=["HS256"])
     user_id = payload.get('user_id')
-    r = channel_invite_v1(user_id, channel_id, u_id)
-    return dumps(r)
+    channel_invite_v1(user_id, channel_id, u_id)
+    dumps({})
 	
 @APP.route("channel/join/v2", methods=['POST'])
 def channel_join():
@@ -570,8 +570,8 @@ def channel_join():
     token_checker(token)
     payload = jwt.decode(token, config.SECRET, algorithms=["HS256"])
     user_id = payload.get('user_id')
-    r = channel_join_v1(user_id, channel_id)
-    return dumps(r)
+    channel_join_v1(user_id, channel_id)
+    return dumps({})
 
 '''
 @APP.route("/admin/userpermission/change/v1", methods=['POST'])
