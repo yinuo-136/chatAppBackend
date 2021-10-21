@@ -93,14 +93,7 @@ def dm_list_v1(member_id):
     Returns the list of DMs that the user is a member of.
     '''
 
-    store = data_store.get()
-
-    all_u_ids = store['user_details']
-    
-    #InputError when: any u_id in u_ids does not refer to a valid user
-    # ASSUMPTION: we raise an ACCESS ERROR
-    if member_id not in all_u_ids.keys():
-        raise AccessError("User ID does not exist") 
+    store = data_store.get()    
 
 
     all_dm_dict = store['dms']
@@ -121,7 +114,7 @@ def dm_list_v1(member_id):
         # if user is owner, add this to the return dms dict
         if member_id is owner_id:
             is_apart_of_dm = True
-
+    
         # if user is a member of u_ids, add this to return dms dict
         if member_id in u_ids:
             is_apart_of_dm = True
