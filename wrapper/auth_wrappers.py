@@ -1,6 +1,5 @@
 import pytest
 import requests
-import jwt
 import json
 from src import config
 
