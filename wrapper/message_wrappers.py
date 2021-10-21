@@ -31,3 +31,19 @@ def show_messages(token, channel_id, start):
     for p_info in p_list:
         temp.append(p_info['message'])
     return temp
+
+def show_dm_messages(token, dm_id, start):
+    payload = requests.get(f'{BASE_URL}/dm/messages/v1', params={'token': token,
+                                                                'dm_id': dm_id,
+                                                                'start': start})
+    p = payload.json()
+    p_list = p['messages']
+    temp = []
+    for p_info in p_list:
+        temp.append(p_info['message'])
+    return temp
+
+def remove_messages(token, message_id):
+    payload = requests.delete(f'{BASE_URL}/message/remove/v1', json={'token': token,
+                                                    'message_id': message_id})
+    return payload
