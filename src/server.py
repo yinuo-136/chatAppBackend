@@ -540,40 +540,40 @@ def dm_messages_http():
     
 @APP.route("channels/list/v2", methods=['GET'])
 def list_channel():
-	#Token implemented 
-	token = request.args.get('token')
-	#token validation
-	token_checker(token)
-	#decode token
-	payload = jwt.decode(token, config.SECRET, algorithms=["HS256"])
-	user_id = payload.get('user_id')
-	r = channels_list_v1('user_id')
-	return dumps(r)
+    #Token implemented 
+    token = request.args.get('token')
+    #token validation
+    token_checker(token)
+    #decode token
+    payload = jwt.decode(token, config.SECRET, algorithms=["HS256"])
+    user_id = payload.get('user_id')
+    r = channels_list_v1('user_id')
+    return dumps(r)
 
 @APP.route("channel/invite/v2", methods=['POST'])
 def channel_invite():
-	data = request.get_json()
-	#Token Validation
-	token_checker(data['token'])
-	payload = jwt.decode(token, config.SECRET, algorithms=["HS256"])
-	u_id = payload.get('user_id')
-	channel_id = payload.get('channel_id')
-	r = channel_invite_v1(token, channel_id, u_id)
-	#persistence
-    	save_datastore()
-	return dumps(r)
+    data = request.get_json()
+    #Token Validation
+    token_checker(data['token'])
+    payload = jwt.decode(token, config.SECRET, algorithms=["HS256"])
+    u_id = payload.get('user_id')
+    channel_id = payload.get('channel_id')
+    r = channel_invite_v1(token, channel_id, u_id)
+    #persistence
+    save_datastore()
+    return dumps(r)
 	
 @APP.route("channel/join/v2", methods=['POST'])
 def channel_join():
-	data = request.get_json()
-	#Token Validation
-	token_checker(data['token'])
-	payload = jwt.decode(token, config.SECRET, algorithms=["HS256"])
-	channel_id = payload.get('channel_id')
-	r = channel_join_v1(token, channel_id)
-	#persistence
-    	save_datastore()
-	return dumps(r)
+    data = request.get_json()
+    #Token Validation
+    token_checker(data['token'])
+    payload = jwt.decode(token, config.SECRET, algorithms=["HS256"])
+    channel_id = payload.get('channel_id')
+    r = channel_join_v1(token, channel_id)
+    #persistence
+    save_datastore()
+    return dumps(r)
 
 '''
 @APP.route("/admin/userpermission/change/v1", methods=['POST'])
