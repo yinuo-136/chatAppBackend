@@ -422,7 +422,7 @@ def test_message_edit_success():
 ############################################################################################
 ##message_remove_v1 tests
 #feature 1: raise input error when message id does not exist
-def test_message_edit_id_invalid():
+def test_message_remove_id_invalid():
     clear()
     token = user_sign_up('test@gmail.com', 'password', 'first', 'last')
     m_id = 12
