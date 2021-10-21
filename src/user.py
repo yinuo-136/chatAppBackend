@@ -23,7 +23,7 @@ def list_all_users():
     store = data_store.get()
     users = []
     
-    for u_id, user in store['user_details']:
+    for u_id, user in store['user_details'].items():
         users.append({
         'u_id' : u_id,
         'email' : user[0],

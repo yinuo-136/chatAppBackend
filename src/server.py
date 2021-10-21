@@ -15,9 +15,6 @@ from src.auth import auth_login_v1, auth_register_v1, auth_logout_v1, auth_inval
 from src.user import user_details, list_all_users, user_set_email, user_set_handle, user_set_name
 from src.database import save_datastore, load_datastore
 from src.token import token_checker
-
-
-
 from src.other import clear_v1
 
 def quit_gracefully(*args):
@@ -64,7 +61,7 @@ def register():
     token = jwt.encode(payload, config.SECRET, algorithm = 'HS256')
     
     #Persistence
-    save_datastore()
+    #save_datastore()
     
     return dumps({'token' : token, 'auth_user_id' : user_id})
 
@@ -111,14 +108,12 @@ def logout():
 #Parameters:{ token, u_id }Return Type:{ user }
 def profile():
     token = request.args.get('token')
+    u_id = int(request.args.get('u_id'))
     
     #Token Validation
-    token_checker(token)
+    token_checker(token) 
     
-    payload = jwt.decode(token, config.SECRET, algorithms=["HS256"])
-    user_id = payload.get('user_id')
-    
-    user = user_details(user_id)    
+    user = user_details(u_id)    
     
     return dumps({
         'user' : user
@@ -145,7 +140,7 @@ def http_clear_req__delete():
 
     clear_v1()
 
-    return {}
+    return dumps({})
 
 @APP.route("/user/profile/setname/v1", methods=['PUT']) 
 #Parameters:{ token, name_first, name_last } Return Type:{}
@@ -203,7 +198,26 @@ def set_user_handle():
     
     return dumps({})
 
-
+'''   
+@APP.route("/admin/user/remove/v1", methods=['DELETE'])
+def admin_user_remove():
+    data = request.get_json()
+    
+    token = data['token']
+    u_id = data['u_id']
+    
+    token_checker(token)
+    
+    payload = jwt.decode(token, config.SECRET, algorithms=["HS256"])
+    auth_user_id = payload.get('user_id')
+    session_id = payload.get('session_id')
+    
+    auth_invalidate_session(session_id)
+    
+    #admin_user_remove(auth_user_id, u_id)
+    
+    return dumps({})
+'''
 
 @APP.route("/channels/create/v2", methods=['POST'])   
 def channels_create():
@@ -524,9 +538,27 @@ def dm_messages_http():
 
     return dumps( payload )
 
+'''
+@APP.route("/admin/userpermission/change/v1", methods=['POST'])
+def admin_permission_change():
+    data = request.get_json()
+    
+    token = data['token']
+    u_id = data['u_id']
+    permission_id = data['permission_id']
+    
+    token_checker(token)
+    
+    payload = jwt.decode(token, config.SECRET, algorithms=["HS256"])
+    auth_user_id = payload.get('user_id')
+    
+    #admin_permission_change(auth_user_id, u_id, permission_id)
+    
+    return dumps({})
+'''
 #### NO NEED TO MODIFY BELOW THIS POINT
 
 if __name__ == "__main__":
-    load_datastore()
+    #load_datastore()
     signal.signal(signal.SIGINT, quit_gracefully) # For coverage
     APP.run(port=config.port) # Do not edit this port

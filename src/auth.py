@@ -122,7 +122,7 @@ def auth_register_v1(email, password, name_first, name_last):
 
 
     # Storing Details in Datastore
-    new_id = len(store['registered_users']) + 1
+    new_id = len(store['user_details']) + 1
 
     #implementation of global permissions (1 for Owner, 2 for Member)
     if len(store['registered_users'].keys()) == 0:
@@ -135,7 +135,8 @@ def auth_register_v1(email, password, name_first, name_last):
     store['registered_users'].update({email: hashlib.sha256(password.encode()).hexdigest()})
     store['user_ids'].update({email: new_id})
 
-
+    data_store.set(store)
+    
     return {
         'auth_user_id': new_id,
     }
@@ -143,10 +144,7 @@ def auth_register_v1(email, password, name_first, name_last):
 def auth_logout_v1(auth_user_id):
     store = data_store.get()
     
-    if auth_user_id not in store['logged_in_users']:
-        raise AccessError("You are already logged out")
-    else:
-        store['logged_in_users'].remove(auth_user_id)
+    store['logged_in_users'].remove(auth_user_id)
     
 def auth_store_session_id(session_id):
     store = data_store.get()
