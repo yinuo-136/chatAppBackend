@@ -12,8 +12,6 @@ from wrapper.dm_wrappers import dm_create_wrapper, dm_list_wrapper, dm_remove_wr
 from wrapper.auth_wrappers import auth_register
 from wrapper.message_wrappers import senddm_message
 from wrapper.clear_wrapper import clear_http
-from src.data_store import data_store
-
 
 BASE_URL = config.url
 
@@ -646,7 +644,7 @@ Return Type:{}
 '''
 
 
-def test_dm_leave__success_basic():
+def test_dm_leave__success__basic_member():
 
     #TODO: Clear
 
@@ -675,18 +673,10 @@ def test_dm_leave__success_basic():
     assert dm_id == 1
 
     # Make one user leave
-
-    store = data_store.get()
-    my_dms = store['dms']
-    print(f"Before = {my_dms}")
     
     
     r = dm_leave_wrapper(user_2_token, dm_id)
 
-
-    store = data_store.get()
-    my_dms = store['dms']
-    print(f"After = {my_dms}")
 
 
     status_code = r.status_code
@@ -697,6 +687,52 @@ def test_dm_leave__success_basic():
     assert status_code == SUCCESS
     assert response_body == {}
     # Check channel details to see if they are removed
+
+
+
+def test_dm_leave__success__basic_owner():
+
+    #TODO: Clear
+
+    clear_http()
+
+    # Add two users
+
+    r1 = auth_register("test@gmail.com", "password123", "Nicholas", "Stathakis")
+    r2 = auth_register("somerandom@gmail.com", "password123", "Jayden", "Matthews")
+
+    data1 = r1.json()
+    data2 = r2.json()
+
+    user_1_token = data1['token']
+
+    user_2_u_id = data2['auth_user_id']
+
+
+    # Create a dm between them
+
+    r = dm_create_wrapper(user_1_token, [user_2_u_id])
+
+    response_message = json.loads(r.text)
+    dm_id = response_message['dm_id']
+    assert dm_id == 1
+
+    # Make one user leave
+    
+    
+    r = dm_leave_wrapper(user_1_token, dm_id)
+
+
+
+    status_code = r.status_code
+    response_body = json.loads(r.text)
+
+
+
+    assert status_code == SUCCESS
+    assert response_body == {}
+    # Check channel details to see if they are removed
+
 
 
 
@@ -769,7 +805,63 @@ def test_dm_leave__fail__user_not_member():
 #################################### START OF dm_messages_v1 TESTS
 
 
-def test_dm_messages__success__basic():
+def test_dm_messages__success__basic_more_than_fifty_messages():
+
+    #TODO: Clear
+
+    clear_http()
+
+    # Register two users
+
+
+    r1 = auth_register("test@gmail.com", "password123", "Nicholas", "Stathakis")
+    r2 = auth_register("somerandom@gmail.com", "password123", "Jayden", "Matthews")
+
+    data1 = r1.json()
+    data2 = r2.json()
+
+    user_1_token = data1['token']
+
+    user_2_u_id = data2['auth_user_id']
+
+
+    # Make a dm
+
+    r = dm_create_wrapper(user_1_token, [user_2_u_id])
+
+    response_message = json.loads(r.text)
+    dm_id = response_message['dm_id']
+    assert dm_id == 1
+
+
+    # send one message
+
+    for x in range(51):
+        senddm_message(user_1_token, dm_id, 'this is spam')
+    
+
+    # Request messages for this dm
+
+
+    r = dm_messages_wrapper(user_1_token, dm_id, 0)
+
+    status_code = r.status_code
+    response = json.loads(r.text)
+
+    assert status_code == SUCCESS
+
+    messages = response['messages']
+    start = int(response['start'])
+    end = int(response['end'])
+
+    assert len(messages) == 50
+    assert start == 0
+    assert end == 50
+
+
+
+
+def test_dm_messages__success__basic_one_message():
 
     #TODO: Clear
 
@@ -822,6 +914,7 @@ def test_dm_messages__success__basic():
     assert content == 'hello1'
     assert start == 0
     assert end == -1
+
 
 
 
