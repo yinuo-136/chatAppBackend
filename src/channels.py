@@ -29,7 +29,7 @@ def channels_list_v1(auth_user_id):
     	'channels':list_dict  
     }
 
-def channels_listall_v1(auth_user_id):
+def channels_listall_v1():
     '''
     <this function checks the auth_user_id then return errors or the list
     of channels that have been created>
@@ -44,10 +44,6 @@ def channels_listall_v1(auth_user_id):
     '''
 
     store = data_store.get()
-    u_dict = store['user_details']
-    # implement the user id validity check
-    if auth_user_id not in u_dict.keys():
-        raise AccessError("the user id you entered does not exist")
 
     #implement the return list_all dictionary
     all_list = []

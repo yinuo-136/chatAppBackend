@@ -235,11 +235,8 @@ def channels_listall():
 
     #check the token validation
     token_checker(token)
-    
-    #decode the token
-    payload = jwt.decode(token, config.SECRET, algorithms=["HS256"])
-    user_id = payload.get('user_id')
-    r = channels_listall_v1(user_id)
+
+    r = channels_listall_v1()
     return dumps(r)
 
 @APP.route("/channel/leave/v1", methods=['POST'])
