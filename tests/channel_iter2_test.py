@@ -228,7 +228,7 @@ def test_invalid_uid_add():
     token1 = r1.json()['token']
     c_id = user_create_channel(token1, "channel1" , True)
     
-    r2 = auth_register("test2@gmail.com", "password123", "New", "Person")
+    auth_register("test2@gmail.com", "password123", "New", "Person")
     
     r3 = channel_addowner(token1, c_id, 123)
     assert r3.status_code == INPUT_ERROR
