@@ -22,3 +22,8 @@ def user_create_channel(token, name, is_public):
                                                             'is_public': is_public})
     p = payload.json()
     return p['channel_id']
+    
+def channels_list(token):
+    payload = {'token' : token}
+    
+    return requests.get(f'{BASE_URL}/channels/list/v2', params = payload)
