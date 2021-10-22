@@ -39,7 +39,7 @@ def test_channel_inv_channelid_invaild():
     u_id = data['auth_user_id']
     invalid_channel = 999
     r1 = channel_invite(user_token, invalid_channel, u_id)
-    assert r1.status_code == 400
+    assert r1.status_code == 404
 
 def test_channel_join_channelid_invaild():
     clear_http()
@@ -48,7 +48,7 @@ def test_channel_join_channelid_invaild():
     user_token = data['token']
     invalid_channel = 999
     r1 = channel_join(user_token, invalid_channel)
-    assert r1.status_code == 400
+    assert r1.status_code == 404
    
 def test_channel_inv_user_id_invalid():
     clear_http()
@@ -58,7 +58,7 @@ def test_channel_inv_user_id_invalid():
     invalid_uid = 999
     channel = data['channel_id']
     r1 = channel_invite(user_token, channel, invalid_uid)
-    assert r1.status_code == 400
+    assert r1.status_code == 404
 
 def test_channel_inv_uid_already_member():
     clear_http()
@@ -69,7 +69,7 @@ def test_channel_inv_uid_already_member():
     u_id = data['auth_user_id']
     c_id = user_create_channel(user_token, channel, False)
     r1 = channel_invite(user_token, c_id, u_id)
-    assert r1.status_code == 400
+    assert r1.status_code == 404
     #user_create_channel("token", "PublicChannel1", FALSE)
     
 
