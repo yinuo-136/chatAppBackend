@@ -48,7 +48,7 @@ def register():
     
     #Session_id Generator
     session_id = str(uuid.uuid4())
-    auth_store_session_id(session_id)
+    auth_store_session_id(user_id, session_id)
     
     payload = {
         'user_id' : user_id, 
@@ -73,7 +73,7 @@ def login():
     
     #Session_id Generator
     session_id = str(uuid.uuid4())
-    auth_store_session_id(session_id)
+    auth_store_session_id(user_id, session_id)
     
     payload = {
         'user_id' : user_id, 
@@ -97,7 +97,7 @@ def logout():
     session_id = payload.get('session_id')
      
     auth_logout_v1(user_id)
-    auth_invalidate_session(session_id)
+    auth_invalidate_session(user_id, session_id)
        
     return dumps({})
     
@@ -197,7 +197,7 @@ def set_user_handle():
     return dumps({})
     
 @APP.route("/admin/user/remove/v1", methods=['DELETE'])
-def admin_user_remove():
+def admin_remove_user():
     data = request.get_json()
     
     token = data['token']
@@ -209,14 +209,14 @@ def admin_user_remove():
     auth_user_id = payload.get('user_id')
     session_id = payload.get('session_id')
     
-    auth_invalidate_session(session_id)
-    
     admin_user_remove(auth_user_id, u_id)
+    
+    auth_invalidate_session(u_id, session_id)
     
     return dumps({})
 
 @APP.route("/admin/userpermission/change/v1", methods=['POST'])
-def admin_permission_change():
+def admin_change_permissions():
     data = request.get_json()
     
     token = data['token']

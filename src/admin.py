@@ -54,6 +54,7 @@ def admin_user_remove(auth_user_id, u_id):
     for message in store['messages'].values():
         if message[0] == u_id:
             message[1] = 'Removed user'
+    
 
     # Change users name_first and name_last
     user = store['user_details'].get(u_id)
@@ -67,6 +68,8 @@ def admin_user_remove(auth_user_id, u_id):
     # Change users name_first and name_last, remove handle and email
     store['user_details'].update({u_id : ("", user[1], 'Removed', 'user', "")})
     
+    data_store.set(store)
+    
     
 def admin_permission_change(auth_user_id, u_id, permission_id):
     store = data_store.get()
@@ -77,11 +80,13 @@ def admin_permission_change(auth_user_id, u_id, permission_id):
     if store['global_permissions'].get(auth_user_id) != 1:
         raise AccessError("You are not authorised to change user permissions!")
     
-    if store['global_permissions'].get(u_id) == 1 and is_only_global_owner():
+    if store['global_permissions'].get(u_id) == 1 and is_only_global_owner() and permission_id == 2:
         raise InputError("Cannot demote the only global owner!")
         
-    if permission_id != 1 or permission_id != 2:
+    if permission_id != 1 and permission_id != 2:
         raise InputError("Permission id must be either 1 or 2")
         
     store['global_permissions'].update({u_id : permission_id})
+    
+    data_store.set(store)
     

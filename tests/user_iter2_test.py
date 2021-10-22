@@ -15,7 +15,6 @@ def test_basic_user_profile():
     
     r = auth_register("email@gmail.com", "password123", "Jayden", "Matthews")
     token = r.json()['token']
-    user_id = r.json()['auth_user_id']
     
     print(data_store.get())
     
