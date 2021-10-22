@@ -567,7 +567,7 @@ def channel_invite():
 @APP.route("channel/join/v2", methods=['POST'])
 def channel_join():
     data = request.get_json()
-    token = data('token')
+    token = data['token']
     channel_id = data['channel_id']
     #Token Validation
     token_checker(token)
