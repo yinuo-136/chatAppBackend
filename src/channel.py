@@ -266,7 +266,7 @@ def channel_addowner_v1(auth_user_id, channel_id, u_id):
     if channel_id not in store['channels'].keys():
         raise InputError("channel_id does not refer to a valid channel")
 
-    #check if auth_user_id is valid
+    #check if u_id is valid
     if u_id not in store['user_details'].keys():
         raise InputError("u_id is invalid")
 
@@ -283,8 +283,8 @@ def channel_addowner_v1(auth_user_id, channel_id, u_id):
     if auth_user_id not in channel[2]:
         raise AccessError("User is not an owner of this channel")
 
-    owners = channel[2]
-    owners.append(u_id)
+    channel[2].append(u_id)
+    channel[3].append(u_id)
 
     return {}
 
@@ -295,7 +295,7 @@ def channel_removeowner_v1(auth_user_id, channel_id, u_id):
     if channel_id not in store['channels'].keys():
         raise InputError("channel_id does not refer to a valid channel")
 
-    #check if auth_user_id is valid
+    #check if u_id is valid
     if u_id not in store['user_details'].keys():
         raise InputError("u_id is invalid")
 
@@ -305,14 +305,14 @@ def channel_removeowner_v1(auth_user_id, channel_id, u_id):
         raise InputError("User is not an owner of the channel")
 
     #check if u_id refers to a user who is currently the only owner
-    if u_id in channel[2] and len(channel) == 1:
+    if u_id in channel[2] and len(channel[2]) == 1:
         raise InputError("User is currently the only owner of the channel")
 
     #channel_id is valid and user does not have owner permissions in channel
     if auth_user_id not in channel[2]:
         raise AccessError("User is not an owner of this channel")
 
-    owners = channel[2]
-    owners.remove(u_id)
+    channel[2].remove(u_id)
+    channel[3].remove(u_id)
 
     return {}
