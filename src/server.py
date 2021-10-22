@@ -538,7 +538,7 @@ def dm_messages_http():
 
     return dumps( payload )
     
-@APP.route("channels/list/v2", methods=['GET'])
+@APP.route("/channels/list/v2", methods=['GET'])
 def list_channel():
     #Token implemented 
     token = request.args.get('token')
@@ -551,7 +551,7 @@ def list_channel():
     r = channels_list_v1(user_id)
     return dumps(r)
 
-@APP.route("channel/invite/v2", methods=['POST'])
+@APP.route("/channel/invite/v2", methods=['POST'])
 def channel_invite():
     data = request.get_json()
     token = data['token']
@@ -564,7 +564,7 @@ def channel_invite():
     channel_invite_v1(user_id, channel_id, u_id)
     return dumps({})
 	
-@APP.route("channel/join/v2", methods=['POST'])
+@APP.route("/channel/join/v2", methods=['POST'])
 def channel_join():
     data = request.get_json()
     token = data['token']
