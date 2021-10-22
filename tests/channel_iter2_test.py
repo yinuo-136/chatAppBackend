@@ -12,7 +12,7 @@ from wrapper.clear_wrapper import clear_http
 @pytest.fixture
 def channel_setup_register_user():
     clear_http()
-    r = auth_register("test1@gmail.com", "password123", "John", "Smith")
+    #r = auth_register("test1@gmail.com", "password123", "John", "Smith")
     
 
 @pytest.fixture
