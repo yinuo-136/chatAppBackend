@@ -31,13 +31,13 @@ def test_basic_channel_details():
     clear_http()
     
     
-def test_channel_inv_channelid_invaild()
+def test_channel_inv_channelid_invaild():
     clear_http()
     r = auth_register("test1@gmail.com", "password123", "John", "Smith")
     data = r.json()
     user_token = data['token']
     u_id = data['auth_user_id']
     invalid_channel = 999
-    with pytest.raises(InputError):
-        channel_invite(user_token, invalid_channel, u_id)
+    r1 = channel_invite(user_token, invalid_channel, u_id)
+    assert r1.status_code == 400
     
