@@ -5,11 +5,10 @@ import jwt
 from json import dumps
 from flask import Flask, request
 from flask_cors import CORS
-from src.channel import channel_details_v1
 from src import config
 from src.dm import dm_create_v1, dm_list_v1, dm_remove_v1, dm_details_v1, dm_leave_v1, dm_messages_v1
-from src.channel import channel_leave_v1, channel_messages_v1
-from src.channels import channels_listall_v1, channels_create_v1
+from src.channel import channel_leave_v1, channel_messages_v1, channel_addowner_v1, channel_details_v1, channel_removeowner_v1, channel_invite_v1, channel_join_v1
+from src.channels import channels_listall_v1, channels_create_v1, channels_list_v1
 from src.message import message_send_v1, message_senddm_v1, message_edit_v1, message_remove_v1
 from src.auth import auth_login_v1, auth_register_v1, auth_logout_v1, auth_invalidate_session, auth_store_session_id
 from src.user import user_details, list_all_users, user_set_email, user_set_handle, user_set_name
@@ -330,9 +329,50 @@ def channel_details():
     user_id = payload.get('user_id')
 
     details = channel_details_v1(user_id, channel_id)
+    save_datastore()
 
     return dumps(details)
- 
+
+@APP.route("/channel/addowner/v1", methods=['POST'])
+#Parameters:{ token, channel_id, u_id } Return Type:{}
+def channel_addowner():
+    data = request.get_json()
+
+    token = data['token']
+    channel_id = int(data['channel_id'])
+    u_id = int(data['u_id'])
+
+    #Token Validation
+    token_checker(token)
+
+    payload = jwt.decode(token, config.SECRET, algorithms=["HS256"])
+    user_id = payload.get('user_id')
+
+    r = channel_addowner_v1(user_id, channel_id, u_id)
+    save_datastore()
+
+    return dumps(r)
+
+@APP.route("/channel/removeowner/v1", methods=['POST'])
+#Parameters:{ token, channel_id, u_id } Return Type:{}
+def channel_removeowner():
+    data = request.get_json()
+
+    token = data['token']
+    channel_id = int(data['channel_id'])
+    u_id = int(data['u_id'])
+
+    #Token Validation
+    token_checker(token)
+
+    payload = jwt.decode(token, config.SECRET, algorithms=["HS256"])
+    user_id = payload.get('user_id')    
+
+    r = channel_removeowner_v1(user_id, channel_id, u_id)
+    save_datastore()
+    
+    return dumps(r)
+
 @APP.route("/message/senddm/v1", methods=['POST'])
 def message_senddm():
     resp = request.get_json()
@@ -538,6 +578,44 @@ def dm_messages_http():
     
 
     return dumps( payload )
+    
+@APP.route("/channels/list/v2", methods=['GET'])
+def list_channel():
+    #Token implemented 
+    token = request.args.get('token')
+    #token validation
+    token_checker(token)
+
+    payload = jwt.decode(token, config.SECRET, algorithms=["HS256"])
+    user_id = payload.get('user_id')
+   
+    r = channels_list_v1(user_id)
+    return dumps(r)
+
+@APP.route("/channel/invite/v2", methods=['POST'])
+def channel_invite():
+    data = request.get_json()
+    token = data['token']
+    channel_id = data['channel_id']
+    u_id = data['u_id']
+    #Token Validation
+    token_checker(token)
+    payload = jwt.decode(token, config.SECRET, algorithms=["HS256"])
+    user_id = payload.get('user_id')
+    channel_invite_v1(user_id, channel_id, u_id)
+    return dumps({})
+	
+@APP.route("/channel/join/v2", methods=['POST'])
+def channel_join():
+    data = request.get_json()
+    token = data['token']
+    channel_id = data['channel_id']
+    #Token Validation
+    token_checker(token)
+    payload = jwt.decode(token, config.SECRET, algorithms=["HS256"])
+    user_id = payload.get('user_id')
+    channel_join_v1(user_id, channel_id)
+    return dumps({})
 
 
 @APP.route("/admin/userpermission/change/v1", methods=['POST'])

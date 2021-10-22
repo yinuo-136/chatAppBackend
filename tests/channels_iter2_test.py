@@ -265,4 +265,29 @@ def test_leave_sid_validity():
     r_type = requests.post(f'{BASE_URL}/channel/leave/v1', json={'token': token, 'channel_id': p['channel_id']})
 
     assert r_type.status_code == 403
+    
+    
+def test_list_sid_validity():
+
+    clear()
+
+    # generate a token that doesn't exist.
+    token = user_sign_up('test@gmail.com', 'password', 'First', 'Last')
+    requests.post(f'{BASE_URL}/auth/logout/v1', json={'token': token})
+
+    payload = requests.get(f'{BASE_URL}/channels/list/v2', params={'token': token})
+
+    assert payload.status_code == 403
+    
+def test_list_uid_validity():
+    clear()
+    #generate a token that the user_id is removed.
+    token = user_sign_up('test@gmail.com', 'password', 'First', 'Last')
+
+    #clear again to make the u_id invalid
+    clear()
+
+    payload = requests.get(f'{BASE_URL}/channels/list/v2', params={'token': token})
+
+    assert payload.status_code == 403
 
