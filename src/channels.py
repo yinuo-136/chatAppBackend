@@ -3,7 +3,7 @@ from src.error import AccessError
 from src.data_store import data_store
 
 
-def channels_list_v1():
+def channels_list_v1(auth_user_id):
 
     store = data_store.get()
     u_dict = store['user_details']
