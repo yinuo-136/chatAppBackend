@@ -2,7 +2,7 @@ import pytest
 import requests
 import json
 from src import config
-<<<<<<< tests/channel_iter2_test.py
+
 from src import channel
 from src.server import channel_addowner
 from wrapper.auth_wrappers import auth_register, auth_login, auth_logout
