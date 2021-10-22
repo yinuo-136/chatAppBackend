@@ -258,3 +258,43 @@ def channel_leave_v1(user_id, channel_id):
     channel_info[3].remove(user_id) 
     
     return {}
+
+def channel_addowner_v1(token, channel_id, u_id):
+    store = data_store.get()
+
+    #check if channel_id refers to a valid channel
+    if channel_id not in store['channels'].keys():
+        raise InputError("channel_id does not refer to a valid channel")
+
+    #check if auth_user_id is valid
+    if u_id not in store['user_details'].keys():
+        raise InputError("u_id is invalid")
+    
+    #check if u_id is not a member of channel
+
+
+    #check if u_id is already an owner to the channel
+
+
+    #
+
+
+    return {}
+
+def channel_removeowner_v1(token, channel_id, u_id):
+    store = data_store.get()
+
+    #check if channel_id refers to a valid channel
+    if channel_id not in store['channels'].keys():
+        raise InputError("channel_id does not refer to a valid channel")
+
+    #check if auth_user_id is valid
+    if u_id not in store['user_details'].keys():
+        raise InputError("u_id is invalid")
+
+    #check if u_id is not an owner of the channel
+
+
+    #check if u_id refers to a user who is currently the owner
+
+    return {}
