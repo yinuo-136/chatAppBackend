@@ -24,15 +24,19 @@ def list_all_users():
     users = []
     
     for u_id, user in store['user_details'].items():
-        users.append({
-        'u_id' : u_id,
-        'email' : user[0],
-        'name_first' : user[2],
-        'name_last' : user[3],
-        'handle_str' : user[4]
-    })
+        if user[0] == "" and user[4] == "" and user[2] == 'Removed' and user[3] == 'user':
+            continue
+        else:
+            users.append({
+                'u_id' : u_id,
+                'email' : user[0],
+                'name_first' : user[2],
+                'name_last' : user[3],
+                'handle_str' : user[4]
+            })
     
     return users
+
 
 def user_set_name(u_id, name_first, name_last):
     if len(name_first) < 1 or len(name_first) > 50:

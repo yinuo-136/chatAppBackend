@@ -146,13 +146,25 @@ def auth_logout_v1(auth_user_id):
     
     store['logged_in_users'].remove(auth_user_id)
     
-def auth_store_session_id(session_id):
+def auth_store_session_id(u_id, session_id):
     store = data_store.get()
 
-    store['session_ids'].append(session_id)
+    store['session_ids'].append((u_id, session_id))
    
-def auth_invalidate_session(session_id):
+def auth_invalidate_session(u_id, session_id):
+    '''tup = [('hi', 'bye'), ('one', 'two')]
+    tup_dict = dict(tup) # {'hi': 'bye', 'one': 'two'}
+    tup_dict.pop('hi')
+    tup = tuple(tup_dict.items()) # (('one', 'two'),)'''
+
     store = data_store.get()
 
-    store['session_ids'].remove(session_id)
+    sessions = store['session_ids']
+    
+    sessions_dict = dict(sessions)
+    sessions_dict.pop(u_id)
+    
+    store['session_ids'] = list(tuple(sessions_dict.items()))
+    
+    data_store.set(store)
 
