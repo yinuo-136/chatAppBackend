@@ -25,7 +25,7 @@ def test_promote_permission():
     
     # This should work as 'Nick' who is now a global owner, removes 'jayden'
     r4 = admin_remove(token1, 1)
-    assert r2.json() == {}
+    assert r4.json() == {}
     
 def test_demote_permission():
     clear_http()
@@ -41,7 +41,7 @@ def test_demote_permission():
     
     # This should work as 'Nick' who is now a global owner, demotes 'jayden'
     r4 = admin_permission(token1, 1, 2)
-    assert r2.json() == {}
+    assert r4.json() == {}
 
 #def test_channel_removal():
 #def test_dm_removal():
