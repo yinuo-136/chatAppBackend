@@ -267,7 +267,7 @@ def test_auth_user_notowner_add():
 
 '''
 
-=======
+
 
 ACCESS_ERROR = 403
 INPUT_ERROR = 400
@@ -468,5 +468,5 @@ def test_basic_channel_list():
                                     'name': 'channelname3'
                                 }
     ]}
->>>>>>> tests/channel_iter2_test.py
+
 
