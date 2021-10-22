@@ -51,7 +51,7 @@ Channel Add Owner:
         channel_id is valid and the authorised user does not have owner permissions in the channel
 '''
 
-<<<<<<< tests/channel_iter2_test.py
+
 def test_basic_channel_details():
     clear_http()
     r1 = auth_register("test1@gmail.com", "password123", "Namey", "Name")
