@@ -67,8 +67,8 @@ def test_channel_inv_uid_already_member():
     user_token = data['token']
     channel = data['channel_id']
     u_id = data['auth_user_id']
-    c_id = user_create_channel(user_token, channel, FALSE)
-    r1 = channel_invite(
+    c_id = user_create_channel(user_token, channel, False)
+    r1 = channel_invite(user_token, c_id, u_id)
     assert r1.status_code == 400
     #user_create_channel("token", "PublicChannel1", FALSE)
     
