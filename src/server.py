@@ -544,8 +544,11 @@ def list_channel():
     token = request.args.get('token')
     #token validation
     token_checker(token)
+
+    payload = jwt.decode(token, config.SECRET, algorithms=["HS256"])
+    user_id = payload.get('user_id')
    
-    r = channels_list_v1()
+    r = channels_list_v1(user_id)
     return dumps(r)
 
 @APP.route("channel/invite/v2", methods=['POST'])
