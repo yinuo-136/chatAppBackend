@@ -47,7 +47,7 @@ def test_invalid_channel_id_join():
     r1 = auth_register("test1@gmail.com", "password123", "John", "Smith")
     token = r1.json()['token']
     
-    c_id = user_create_channel(token, "channelname", True)
+    user_create_channel(token, "channelname", True)
     
     r2 = auth_register("test2@gmail.com", "password123", "Johnny", "Sins")
     token1 = r2.json()['token']
@@ -114,7 +114,7 @@ def test_invalid_channel_id_invite():
     r1 = auth_register("test1@gmail.com", "password123", "John", "Smith")
     token = r1.json()['token']
     
-    c_id = user_create_channel(token, "channelname", False)
+    user_create_channel(token, "channelname", False)
     
     r2 = auth_register("test2@gmail.com", "password123", "Johnny", "Sins")
     u_id = r2.json()['auth_user_id']
@@ -133,7 +133,7 @@ def test_invalid_uid_invite():
     
     c_id = user_create_channel(token, "channelname", False)
     
-    r2 = auth_register("test2@gmail.com", "password123", "Johnny", "Sins")
+    auth_register("test2@gmail.com", "password123", "Johnny", "Sins")
 
     #Should fail due to invalid user id
     r3 = channel_invite(token, c_id, 123)
@@ -169,7 +169,6 @@ def test_auth_user_not_member_join():
     
     r2 = auth_register("test2@gmail.com", "password123", "Johnny", "Sins")
     token1 = r2.json()['token']
-    u_id = r2.json()['auth_user_id']
     
     r4 = auth_register("test3@gmail.com", "password123", "Nick", "Stath")
     u_id1 = r4.json()['auth_user_id']
@@ -192,7 +191,7 @@ def test_basic_channel_list():
     r2 = auth_register("test2@gmail.com", "password123", "Johnny", "Sins")
     token1 = r2.json()['token']
     
-    c_id4 = user_create_channel(token1, "channelname4", False)
+    user_create_channel(token1, "channelname4", False)
     
     #Should list channelname1, channelname2, channelname3
     r3 = channels_list(token)
