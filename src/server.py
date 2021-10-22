@@ -328,6 +328,7 @@ def channel_details():
     user_id = payload.get('user_id')
 
     details = channel_details_v1(user_id, channel_id)
+    save_datastore()
 
     return dumps(details)
 
@@ -347,6 +348,7 @@ def channel_addowner():
     user_id = payload.get('user_id')
 
     r = channel_addowner_v1(user_id, channel_id, u_id)
+    save_datastore()
 
     return dumps(r)
 
@@ -366,7 +368,8 @@ def channel_removeowner():
     user_id = payload.get('user_id')    
 
     r = channel_removeowner_v1(user_id, channel_id, u_id)
-
+    save_datastore()
+    
     return dumps(r)
 
 @APP.route("/message/senddm/v1", methods=['POST'])
