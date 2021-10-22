@@ -39,7 +39,7 @@ def test_channel_inv_channelid_invaild():
     u_id = data['auth_user_id']
     invalid_channel = 999
     r1 = channel_invite(user_token, invalid_channel, u_id)
-    assert r1.status_code == 404
+    assert r1.status_code == 400
 
 def test_channel_join_channelid_invaild():
     clear_http()
@@ -48,7 +48,7 @@ def test_channel_join_channelid_invaild():
     user_token = data['token']
     invalid_channel = 999
     r1 = channel_join(user_token, invalid_channel)
-    assert r1.status_code == 404
+    assert r1.status_code == 400
    
 def test_channel_inv_user_id_invalid():
     clear_http()
