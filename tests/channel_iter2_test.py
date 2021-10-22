@@ -127,7 +127,7 @@ def test_invalid_channel_id_details():
     r1 = auth_register("test1@gmail.com", "password123", "Namey", "Name")
     token1 = r1.json()['token']
     
-    c_id = user_create_channel(token1, "channel1" , True)
+    user_create_channel(token1, "channel1" , True)
     
     r2 = channel_details(token1, 999)
     
@@ -152,7 +152,7 @@ def test_invalid_channel_id_remove():
     token1 = r1.json()['token']
     u_id = r1.json()['auth_user_id']
     
-    c_id = user_create_channel(token1, "channel1" , True)
+    user_create_channel(token1, "channel1" , True)
         
     r4 = channel_removeowner(token1, 999, u_id)
     assert r4.status_code == INPUT_ERROR    
@@ -175,7 +175,6 @@ def test_uid_notowner_remove():
     c_id = user_create_channel(token1, "channel1" , True)
     
     r2 = auth_register("test2@gmail.com", "password123", "New", "Person")
-    token2 = r2.json()['token']
     u_id2 = r2.json()['auth_user_id']    
     
     r4 = channel_removeowner(token1, c_id, u_id2)
@@ -213,9 +212,8 @@ def test_invalid_channel_id_add():
 
     r1 = auth_register("test1@gmail.com", "password123", "Namey", "Name")
     token1 = r1.json()['token']
-    u_id = r1.json()['auth_user_id']
     
-    c_id = user_create_channel(token1, "channel1" , True)
+    user_create_channel(token1, "channel1" , True)
     
     r2 = auth_register("test2@gmail.com", "password123", "New", "Person")
     u_id2 = r2.json()['auth_user_id'] 
@@ -228,12 +226,9 @@ def test_invalid_uid_add():
 
     r1 = auth_register("test1@gmail.com", "password123", "Namey", "Name")
     token1 = r1.json()['token']
-    u_id = r1.json()['auth_user_id']
-    
     c_id = user_create_channel(token1, "channel1" , True)
     
     r2 = auth_register("test2@gmail.com", "password123", "New", "Person")
-    u_id2 = r2.json()['auth_user_id']    
     
     r3 = channel_addowner(token1, c_id, 123)
     assert r3.status_code == INPUT_ERROR
@@ -243,7 +238,6 @@ def test_uid_notmember_add():
 
     r1 = auth_register("test1@gmail.com", "password123", "Namey", "Name")
     token1 = r1.json()['token']
-    u_id = r1.json()['auth_user_id']
     
     c_id = user_create_channel(token1, "channel1" , True)
     
