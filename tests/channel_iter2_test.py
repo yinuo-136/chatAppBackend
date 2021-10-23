@@ -70,7 +70,6 @@ def test_basic_add_owner():
     clear_http()
     r1 = auth_register("test1@gmail.com", "password123", "Namey", "Name")
     token1 = r1.json()['token']
-    u_id = r1.json()['auth_user_id']
     
     c_id = user_create_channel(token1, "channel1" , True)
     
