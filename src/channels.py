@@ -6,12 +6,6 @@ from src.data_store import data_store
 def channels_list_v1(auth_user_id):
 
     store = data_store.get()
-    u_dict = store['user_details']
-
-    #user id validity check
-    if auth_user_id not in u_dict.keys():
-    	raise AccessError("the user id you entered does not exist") 
-
 
     list_dict = []
     channel_list = store['channels']
