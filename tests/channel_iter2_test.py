@@ -1,16 +1,12 @@
 import pytest
 import requests
-import json
-from src import config
 
-from src import channel
 from src.server import channel_addowner
 from wrapper.auth_wrappers import auth_register, auth_login, auth_logout
 from wrapper.channel_wrappers import channel_addowner, channel_removeowner, channel_details, channel_join, channel_invite
-from wrapper.channels_wrappers import user_create_channel, channels_list
+from wrapper.channels_wrappers import user_create_channel, channels_list, user_sign_up
 from wrapper.user_wrappers import user_profile
 from wrapper.clear_wrapper import clear_http
-from src.data_store import data_store
 
 ACCESS_ERROR = 403
 INPUT_ERROR = 400
@@ -69,7 +65,7 @@ def test_basic_channel_details():
                     'all_members' : [user_profile(token1, u_id).json().get('user')]
     }
 
-'''
+
 def test_basic_add_owner():
     clear_http()
     r1 = auth_register("test1@gmail.com", "password123", "Namey", "Name")
@@ -79,19 +75,14 @@ def test_basic_add_owner():
     c_id = user_create_channel(token1, "channel1" , True)
     
     r2 = auth_register("test2@gmail.com", "password123", "New", "Person")
+    token2 = r2.json()['token']
     u_id2 = r2.json()['auth_user_id']    
     
+    channel_join(token2, c_id)
+
     r3 = channel_addowner(token1, c_id, u_id2)
     assert r3.json() == {}
-    
-    r4 = channel_details(token1, c_id)
-    
-    assert r4.json() == { 
-                    'name' : "channel1",
-                    'is_public' : True,
-                    'owner_members' : [user_profile(token1, u_id).json().get('user'), user_profile(token1, u_id2).json().get('user')],
-                    'all_members' : [user_profile(token1, u_id).json().get('user'), user_profile(token1, u_id2).json().get('user')]
-    }   
+    assert r3.status_code == 200  
 
   
 def test_basic_remove_owner():
@@ -104,26 +95,18 @@ def test_basic_remove_owner():
     
     r2 = auth_register("test2@gmail.com", "password123", "New", "Person")
     token2 = r2.json()['token']
-    u_id2 = r2.json()['auth_user_id']    
+    u_id2 = r2.json()['auth_user_id']  
+
+    channel_join(token2, c_id)
     
     r3 = channel_addowner(token1, c_id, u_id2)
     assert r3.json() == {}
     
     r4 = channel_removeowner(token2, c_id, u_id)
     assert r4.json() == {} 
+    assert r4.status_code == 200
    
-    r5 = channel_details(token1, c_id)
-    
-    assert r5.json() == { 
-                    'name' : "channel1",
-                    'is_public' : True,
-                    'owner_members' : [user_profile(token1, u_id2).json().get('user')],
-                    'all_members' : [user_profile(token1, u_id2).json().get('user')]
-    }   
-'''
-
-
-
+      
 def test_invalid_channel_id_details():
     clear_http()
     r1 = auth_register("test1@gmail.com", "password123", "Namey", "Name")
@@ -134,19 +117,21 @@ def test_invalid_channel_id_details():
     r2 = channel_details(token1, 999)
     
     assert r2.status_code == INPUT_ERROR
-'''  
-TOKEN CHECKER ALREADY CHECKS AUTH DETAILS 
+
+
 def test_invalid_auth_user_details():
     clear_http()
     r1 = auth_register("test1@gmail.com", "password123", "Namey", "Name")
     token1 = r1.json()['token']
     
     c_id = user_create_channel(token1, "channel1" , True)
+
+    token2 = user_sign_up("test2@gmail.com", "password1234", "Namey1", "Name1")
     
-    r2 = channel_details(token1, c_id)
+    r2 = channel_details(token2, c_id)
     
     assert r2.status_code == ACCESS_ERROR
-'''   
+  
     
 def test_invalid_channel_id_remove():
     clear_http()
@@ -192,8 +177,8 @@ def test_uid_onlyowner_remove():
     
     r4 = channel_removeowner(token1, c_id, u_id)
     assert r4.status_code == INPUT_ERROR
-    
-'''def test_auth_user_not_owner_remove():
+  
+def test_auth_user_not_owner_remove():
     clear_http()
     r1 = auth_register("test1@gmail.com", "password123", "Namey", "Name")
     token1 = r1.json()['token']
@@ -203,11 +188,11 @@ def test_uid_onlyowner_remove():
     
     r2 = auth_register("test2@gmail.com", "password123", "New", "Person")
     token2 = r2.json()['token']
-    u_id2 = r2.json()['auth_user_id']    
-    
+    channel_join(token2, c_id) 
+     
     r4 = channel_removeowner(token2, c_id, u_id)
-    assert r4.json() == ACCESS_ERROR
-'''
+    assert r4.status_code == ACCESS_ERROR
+
 
 def test_invalid_channel_id_add():
     clear_http()
@@ -260,12 +245,29 @@ def test_uid_alreadyowner_add():
     
     r3 = channel_addowner(token1, c_id, u_id)
     assert r3.status_code == INPUT_ERROR
- 
-'''   
-def test_auth_user_notowner_add():
-    clear_http()
 
-'''
+
+def test_auth_user_no_owner_permission_add():
+    clear_http()
+    r1 = auth_register("test1@gmail.com", "password123", "Namey", "Name")
+    token1 = r1.json()['token']
+    
+    c_id = user_create_channel(token1, "channel1" , True)
+    
+    r2 = auth_register("test2@gmail.com", "password123", "New", "Person")
+    token2 = r2.json()['token']
+
+    r3 = auth_register("test3@gmail.com", "password1235", "Namey3", "Name3")
+    token3 = r3.json()['token']
+    u_id3 = r3.json()['auth_user_id']
+    channel_join(token2, c_id)
+    channel_join(token3, c_id) 
+     
+    r4 = channel_addowner(token2, c_id, u_id3)
+    assert r4.status_code == ACCESS_ERROR
+
+
+
 
 
 
