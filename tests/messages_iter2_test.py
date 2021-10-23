@@ -4,6 +4,7 @@ from wrapper.channels_wrappers import clear, user_sign_up, user_create_channel
 from wrapper.message_wrappers import send_message, senddm_message, edit_message, show_messages, show_dm_messages, remove_messages
 from wrapper.dm_wrappers import dm_create_wrapper
 from wrapper.auth_wrappers import auth_register
+from wrapper.channel_wrappers import channel_join
 from src.config import url
 
 BASE_URL = url
@@ -25,10 +26,8 @@ def test_message_send_channel_valid():
 
     assert payload.status_code == 400
 
-#feature 2: raise access error when token is invalid
-#TO DO
 
-#feature 3: raise input error when message is less than 1 or over 1000 characters 
+#feature 2: raise input error when message is less than 1 or over 1000 characters 
 def test_message_send_less_1():
     clear()
     token = user_sign_up('test@gmail.com', 'password', 'first', 'last')
@@ -51,7 +50,7 @@ def test_message_send_over_1000():
     
     assert payload.status_code == 400
 
-#featrue 4: raise access error when the authorised user is not a member of the channel
+#featrue 3: raise access error when the authorised user is not a member of the channel
 def test_message_send_not_a_member():
     clear()
     token_1 = user_sign_up('test1@gmail.com', 'password1', 'first1', 'last2') 
@@ -64,7 +63,7 @@ def test_message_send_not_a_member():
     
     assert payload.status_code == 403
 
-#featrue 5: two message id should be unique
+#featrue 4: two message id should be unique
 def test_message_send_id_unique():
     clear()
     token = user_sign_up('test@gmail.com', 'password', 'first', 'last')
@@ -86,12 +85,8 @@ def test_message_send_id_unique():
 
 ########################################################################################
 ##channel_messages_v2
-#feature 1: raise Accesserror if token does not refer to a valid user(or session_id)
-'''
-def test_user_id_validity_messages():
-'''
     
-#feature 2: raise Accesserror if user is not a member in the channel
+#feature 1: raise Accesserror if user is not a member in the channel
 def test_user_ismember_messages():
 
     clear()
@@ -105,7 +100,7 @@ def test_user_ismember_messages():
     assert payload.status_code == 403
 
 
-#feature 3: raise Inputerror if channel_id is invalid
+#feature 2: raise Inputerror if channel_id is invalid
 def test_channel_isvalid_messages():
     clear()
 
@@ -120,7 +115,7 @@ def test_channel_isvalid_messages():
 
     assert payload.status_code == 400
 
-#feature 4: raise InputError if start is greater than the total number 
+#feature 3: raise InputError if start is greater than the total number 
 # of messages in the channel
 def test_start_isgreat_message():
     clear()
@@ -134,7 +129,7 @@ def test_start_isgreat_message():
     
     assert payload.status_code == 400
 
-#feature 5: raise InputError if start is less than zero
+#feature 4: raise InputError if start is less than zero
 def test_start_less_than_zero():
     clear()
 
@@ -147,7 +142,7 @@ def test_start_less_than_zero():
     
     assert payload.status_code == 400
 
-#feature 6: end will return -1 if the message that need to be displayed is less than 50
+#feature 5: end will return -1 if the message that need to be displayed is less than 50
 def test_messages_end_return():
 
     clear()
@@ -165,7 +160,7 @@ def test_messages_end_return():
     p = payload.json()
     assert p['end'] == -1
     
-#feature 7: end will return start + 50 if the message that need to be displayed is more than or equal to 50
+#feature 6: end will return start + 50 if the message that need to be displayed is more than or equal to 50
 def test_messages_end_return_1():
 
     clear()
@@ -185,10 +180,8 @@ def test_messages_end_return_1():
 
 #############################################################################################################
 ##message_senddm_v1 tests
-#feature 1: raise access error when token is invalid
-#TO DO
 
-#feature 2:raise input error when length of message is less than 1 or over 1000 characters
+#feature 1:raise input error when length of message is less than 1 or over 1000 characters
 
 def test_senddm_less_1():
     clear()
@@ -228,7 +221,7 @@ def test_senddm_over_1000():
     
     assert payload.status_code == 400
 
-#feature 3: raise input error if dm_id does not refer to a valid DM
+#feature 2: raise input error if dm_id does not refer to a valid DM
 def test_senddm_id_validity():
     clear()
 
@@ -243,7 +236,7 @@ def test_senddm_id_validity():
 
     assert payload.status_code == 400
 
-#featrue 4: raise access error when the authorised user is not a member of the DM
+#featrue 3: raise access error when the authorised user is not a member of the DM
 def test_message_senddm_not_a_member():
     clear()
     token_1 = user_sign_up('test1@gmail.com', 'password1', 'first1', 'last2') 
@@ -263,7 +256,7 @@ def test_message_senddm_not_a_member():
     
     assert payload.status_code == 403
 
-#feature 5: two message id should be unique
+#feature 4: two message id should be unique
 def test_message_senddm_id_unique():
     clear()
     token_1 = user_sign_up('test@gmail.com', 'password', 'first', 'last')
@@ -342,10 +335,23 @@ def test_message_edit_dm_not_join():
 
 #feature 4: raise access error when the message wasn't sent by the authorised user making this 
 # request and the authorised user does not have owner permissions in the channel/DM
-'''
+
 def test_message_edit_channel_no_permission():
-   To Do
-'''
+    clear()
+    token_1 = user_sign_up('test1@gmail.com', 'password1', 'first1', 'last1')
+    token_2 = user_sign_up('test2@gmail.com', 'password2', 'first2', 'last2')
+
+    channel_id = user_create_channel(token_1, '12345', True)
+
+    m_id = send_message(token_1, channel_id, 'hello')  
+
+    channel_join(token_2, channel_id)
+    
+    payload = edit_message(token_2, m_id, 'a')
+
+    assert payload.status_code == 403
+
+
 def test_message_edit_dm_no_permission():
     clear()
     token_1 = user_sign_up('test@gmail.com', 'password', 'first', 'last')
@@ -466,10 +472,21 @@ def test_message_remove_dm_not_join():
 
 #feature 3: raise access error when the message wasn't sent by the authorised user making this 
 # request and the authorised user does not have owner permissions in the channel/DM
-'''
+
 def test_message_remove_channel_no_permission():
-   To Do
-'''
+    
+    clear()
+    token_1 = user_sign_up('test1@gmail.com', 'password1', 'first1', 'last1')
+    token_2 = user_sign_up('test2@gmail.com', 'password2', 'first2', 'last2')
+
+    channel_id = user_create_channel(token_1, '12345', True)
+
+    m_id = send_message(token_1, channel_id, 'hello') 
+    channel_join(token_2, channel_id)
+    payload = remove_messages(token_2, m_id)
+
+    assert payload.status_code == 403
+
 def test_message_remove_dm_no_permission():
     clear()
     token_1 = user_sign_up('test@gmail.com', 'password', 'first', 'last')

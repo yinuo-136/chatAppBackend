@@ -1,6 +1,8 @@
 import pytest
 import requests
+from src import channel
 from wrapper.channels_wrappers import clear, user_sign_up
+from wrapper.channel_wrappers import channel_join
 from src.config import url
 
 BASE_URL = url
@@ -222,36 +224,23 @@ def test_leave_check_return():
 
     assert r == {}
 
-# feature 4: raise access error when the toke entered is invalid(u_id or session_id)
-'''
-def test_leave_uid_validity():
+def test_leave_successful():
     clear()
-    #register a user
-    token_1 = user_sign_up('test@gmail.com', 'password', 'First', 'Last')
-    
-    #use the token to create a channel
-    payload_1 = requests.post(f'{BASE_URL}/channels/create/v2', json={'token': token_1,
+
+    token_1 = user_sign_up('test1@gmail.com', 'password1', 'First1', 'Last1')
+    token_2 = user_sign_up('test2@gmail.com', 'password2', 'First2', 'Last2')
+    payload = requests.post(f'{BASE_URL}/channels/create/v2', json={'token': token_1,
                                                             'name': 'correct1',
                                                             'is_public': True})
-    p1 = payload_1.json()
-    #create another user
-    payload_2 = requests.post(f'{BASE_URL}/auth/register/v2', json= {'email': 'test2@gmail.com',
-                                                            'password': 'password2',
-                                                            'name_first': 'first2',
-                                                            'name_last': 'last2'})
-    p2 = payload_2.json()
-    token_2 = p2['token']
-    u_id_2 = p2['auth_user_id']
-    #make this user join the channel
-    requests.post(f'{BASE_URL}/channel/join/v2', json={'token': token_2, 'channel_id': p1['channel_id']})
-    #remove token_2 user
-    requests.post(f'{BASE_URL}/admin/user/remove/v1', json={'token': token_1, 'u_id':u_id_2 })
+    p = payload.json()
+    channel_join(token_2, p['channel_id'])
+    r_type = requests.post(f'{BASE_URL}/channel/leave/v1', json={'token': token_2, 'channel_id': p['channel_id']})
+    r = r_type.json()
 
-    r_type = requests.post(f'{BASE_URL}/channel/leave/v1', json={'token': token_2})
+    assert r == {}
 
-    assert r_type.status_code == 403
-'''
 
+# feature 4: raise access error when the toke entered is invalid(u_id or session_id)
 def test_leave_sid_validity():
     clear()
     token = user_sign_up('test@gmail.com', 'password', 'First', 'Last')
@@ -266,7 +255,8 @@ def test_leave_sid_validity():
 
     assert r_type.status_code == 403
     
-    
+######################################################################################################
+#channels_list tests    
 def test_list_sid_validity():
 
     clear()

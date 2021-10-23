@@ -27,10 +27,6 @@ def channel_invite_v1(auth_user_id, channel_id, u_id):
     '''
     store = data_store.get()
 
-    #check auth_user_id is valid
-    if auth_user_id not in store['user_details'].keys():
-        raise AccessError("Autherised user ID is not valid")
-
     #check channel_id is valid
     if channel_id not in store['channels'].keys():
         raise InputError("channel ID is not valid")
@@ -80,10 +76,6 @@ def channel_details_v1(auth_user_id, channel_id):
         returns a dictionary containing 'name', 'is_public', 'owner_members', 'all_members'.
     '''
     store = data_store.get()
-
-    #check if auth_user_id is valid
-    if auth_user_id not in store['user_details'].keys():
-        raise AccessError("user_id is invalid")
 
     #check if channel_id refers to a valid channel
     if channel_id not in store['channels'].keys():
@@ -208,11 +200,6 @@ def channel_join_v1(auth_user_id, channel_id):
     store = data_store.get()
 
     channel = store['channels'].get(channel_id)
-
-    #check for valid auth_user_id
-    if auth_user_id not in store['user_details'].keys():
-        raise AccessError("auth_user_id is not valid")
-
 
     #error checking for invalid channel_id
     if channel_id not in store['channels'].keys():
