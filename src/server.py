@@ -61,7 +61,7 @@ def register():
     token = jwt.encode(payload, config.SECRET, algorithm = 'HS256')
     
     #Persistence
-    #save_datastore()
+    save_datastore()
     
     return dumps({'token' : token, 'auth_user_id' : user_id})
 
@@ -84,7 +84,7 @@ def login():
     
     #Token implementation
     token = jwt.encode(payload, config.SECRET, algorithm = 'HS256')
-    
+    save_datastore()
     return dumps({'token' : token, 'auth_user_id' : user_id})
     
 @APP.route("/auth/logout/v1", methods=['POST'])
@@ -100,7 +100,7 @@ def logout():
      
     auth_logout_v1(user_id)
     auth_invalidate_session(user_id, session_id)
-  
+    save_datastore()
     return dumps({})
     
  
@@ -139,7 +139,7 @@ def list_users():
 def http_clear_req__delete():
 
     clear_v1()
-
+    save_datastore()
     return dumps({})
 
 @APP.route("/user/profile/setname/v1", methods=['PUT']) 
@@ -158,7 +158,7 @@ def set_user_name():
     user_id = payload.get('user_id')
     
     user_set_name(user_id, name_first, name_last)
-    
+    save_datastore()
     return dumps({})
     
 
@@ -177,7 +177,7 @@ def set_user_email():
     user_id = payload.get('user_id')
     
     user_set_email(user_id, email)
-    
+    save_datastore()
     return dumps({})
     
 @APP.route("/user/profile/sethandle/v1", methods=['PUT'])   
@@ -195,7 +195,7 @@ def set_user_handle():
     user_id = payload.get('user_id')
     
     user_set_handle(user_id, handle_str)
-    
+    save_datastore()
     return dumps({})
 
 
@@ -215,7 +215,7 @@ def admin_remove():
     admin_user_remove(auth_user_id, u_id)
     
     auth_invalidate_session(u_id, session_id)
-    
+    save_datastore()
     return dumps({})
 
 
@@ -329,7 +329,6 @@ def channel_details():
     user_id = payload.get('user_id')
 
     details = channel_details_v1(user_id, channel_id)
-    save_datastore()
 
     return dumps(details)
 
@@ -449,7 +448,7 @@ def dm_create_http():
     
     dict_dm_id = dm_create_v1(owner_u_id, u_ids)
     dm_id = dict_dm_id['dm_id']
-
+    save_datastore()
     return dumps({ 'dm_id' : dm_id })
 
 
@@ -500,7 +499,7 @@ def dm_remove_http():
     
     dm_remove_v1(owner_u_id, dm_id)
     
-
+    save_datastore()
     return dumps( {} )
 
 
@@ -550,7 +549,7 @@ def dm_leave_http():
 
     
     dm_leave_v1(auth_u_id, dm_id)
-
+    save_datastore()
     return dumps( {} )
 
 
@@ -603,6 +602,7 @@ def channel_invite():
     payload = jwt.decode(token, config.SECRET, algorithms=["HS256"])
     user_id = payload.get('user_id')
     channel_invite_v1(user_id, channel_id, u_id)
+    save_datastore()
     return dumps({})
 	
 @APP.route("/channel/join/v2", methods=['POST'])
@@ -615,6 +615,7 @@ def channel_join():
     payload = jwt.decode(token, config.SECRET, algorithms=["HS256"])
     user_id = payload.get('user_id')
     channel_join_v1(user_id, channel_id)
+    save_datastore()
     return dumps({})
 
 
@@ -632,12 +633,12 @@ def admin_change_permission():
     auth_user_id = payload.get('user_id')
     
     admin_permission_change(auth_user_id, u_id, permission_id)
-    
+    save_datastore()
     return dumps({})
 
 #### NO NEED TO MODIFY BELOW THIS POINT
 
 if __name__ == "__main__":
-    #load_datastore()
+    load_datastore()
     signal.signal(signal.SIGINT, quit_gracefully) # For coverage
     APP.run(port=config.port) # Do not edit this port
