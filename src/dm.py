@@ -203,7 +203,8 @@ def dm_details_v1(auth_u_id, dm_id):
     all_members = specific_dm['u_ids']
     
     owner_id = specific_dm['owner_id'] #our owner id
-    all_members.append(owner_id)
+    if owner_id != None:
+        all_members.append(owner_id)
 
     #"dm_id" : {'name' : 'a, b, c', owner_id' : 1, 'u_ids': [2,3,4], 'messages' : {},}
 
