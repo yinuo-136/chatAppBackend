@@ -126,7 +126,6 @@ def test_dm_owner_remove():
     clear_http()
     r1 = auth_register("email@gmail.com", "password123", "Jayden", "Matthews")
     token1 = r1.json()['token']
-    u_id = r1.json()['auth_user_id']
     
     r2 = auth_register("email1@gmail.com", "password123", "Nick", "Stath")
     token2 = r2.json()['token']
