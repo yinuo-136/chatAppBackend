@@ -260,7 +260,7 @@ def channel_addowner_v1(auth_user_id, channel_id, u_id):
     
     u_permission = store['global_permissions'][auth_user_id]
     if auth_user_id not in channel[2] and u_permission != 1:
-        raise AccessError("User is not an owner of this channel")
+        raise AccessError("User does not have owner permission in this channel")
 
     #check if u_id is valid
     if u_id not in store['user_details'].keys():
@@ -294,7 +294,7 @@ def channel_removeowner_v1(auth_user_id, channel_id, u_id):
         
     u_permission = store['global_permissions'][auth_user_id]
     if auth_user_id not in channel[2] and u_permission != 1:
-        raise AccessError("User is not an owner of this channel")
+        raise AccessError("User does not have owner permissions in this channel")
 
     #check if u_id is valid
     if u_id not in store['user_details'].keys():
