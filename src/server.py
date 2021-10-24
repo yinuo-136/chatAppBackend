@@ -484,7 +484,6 @@ def dm_remove_http():
     Parameters:         { token, dm_id }
     Return Type:        {}
     '''
-
     data = request.get_json(force=True)
     
     token = data['token']
@@ -561,7 +560,6 @@ def dm_messages_http():
     Parameters:     { token, dm_id, start }
     Return Type:    { messages, start, end }
     '''
-
     token = request.args.get('token')
     dm_id = int(request.args.get('dm_id'))
     start = int(request.args.get('start'))
