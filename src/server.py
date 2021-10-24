@@ -43,7 +43,6 @@ APP.register_error_handler(Exception, defaultHandler)
 
 @APP.route("/auth/register/v2", methods=['POST'])
 def register():
-    load_datastore()
     data = request.get_json()    
     
     u_id = auth_register_v1(data['email'], data['password'], data['name_first'], data['name_last'])
@@ -69,7 +68,6 @@ def register():
 
 @APP.route("/auth/login/v2", methods=['POST'])    
 def login():
-    load_datastore()
     data = request.get_json()
     
     u_id = auth_login_v1(data['email'], data['password'])
@@ -91,7 +89,6 @@ def login():
     
 @APP.route("/auth/logout/v1", methods=['POST'])
 def logout():
-    load_datastore()
     data = request.get_json()
     
     #Token Validation
@@ -110,7 +107,6 @@ def logout():
 @APP.route("/user/profile/v1", methods=['GET'])
 #Parameters:{ token, u_id }Return Type:{ user }
 def profile():
-    load_datastore()
     token = request.args.get('token')
     u_id = int(request.args.get('u_id'))
     
@@ -128,7 +124,6 @@ def profile():
 @APP.route("/users/all/v1", methods=['GET'])
 #Parameters:{ token } Return Type:{ users }
 def list_users():
-    load_datastore()
     token = request.args.get('token')
     
     token_checker(token)
@@ -150,7 +145,6 @@ def http_clear_req__delete():
 @APP.route("/user/profile/setname/v1", methods=['PUT']) 
 #Parameters:{ token, name_first, name_last } Return Type:{}
 def set_user_name():
-    load_datastore()
     data = request.get_json()
     
     token = data['token']
@@ -171,7 +165,6 @@ def set_user_name():
 @APP.route("/user/profile/setemail/v1", methods=['PUT'])    
 #Parameters:{ token, email } Return Type:{}
 def set_user_email():
-    load_datastore()
     data = request.get_json()
     
     token = data['token']
@@ -190,7 +183,6 @@ def set_user_email():
 @APP.route("/user/profile/sethandle/v1", methods=['PUT'])   
 #Parameters:{ token, handle_str } Return Type:{}
 def set_user_handle():
-    load_datastore()
     data = request.get_json()
     
     token = data['token']
@@ -209,7 +201,6 @@ def set_user_handle():
 
 @APP.route("/admin/user/remove/v1", methods=['DELETE'])
 def admin_remove():
-    load_datastore()
     data = request.get_json()
     
     token = data['token']
@@ -230,7 +221,6 @@ def admin_remove():
 
 @APP.route("/channels/create/v2", methods=['POST'])   
 def channels_create():
-    load_datastore()
     #get the response from frontend
     resp = request.get_json()
 
@@ -254,7 +244,6 @@ def channels_create():
 
 @APP.route("/channels/listall/v2", methods=['GET'])
 def channels_listall():
-    load_datastore()
     #get the token from frontend
     token = request.args.get('token')
 
@@ -266,7 +255,6 @@ def channels_listall():
 
 @APP.route("/channel/leave/v1", methods=['POST'])
 def channel_leave():
-    load_datastore()
     #get the info from frontend
     resp = request.get_json()
     token = resp['token']
@@ -288,7 +276,6 @@ def channel_leave():
 
 @APP.route("/message/send/v1", methods=['POST'])
 def message_send():
-    load_datastore()
     resp = request.get_json()
     token = resp['token']
     channel_id = resp['channel_id']
@@ -310,7 +297,6 @@ def message_send():
 
 @APP.route("/channel/messages/v2", methods=['GET'])
 def channel_message():
-    load_datastore()
     #get the token from frontend
     token = request.args.get('token')
     channel_id = int(request.args.get('channel_id'))
@@ -332,7 +318,6 @@ def channel_message():
 #Parameters:{ token, channel_id }
 #Return Type:{ name, is_public, ownder_members, all_members }
 def channel_details():
-    load_datastore()
     token = request.args.get('token')
 
     channel_id = int(request.args.get('channel_id'))
@@ -350,7 +335,6 @@ def channel_details():
 @APP.route("/channel/addowner/v1", methods=['POST'])
 #Parameters:{ token, channel_id, u_id } Return Type:{}
 def channel_addowner():
-    load_datastore()
     data = request.get_json()
 
     token = data['token']
@@ -371,7 +355,6 @@ def channel_addowner():
 @APP.route("/channel/removeowner/v1", methods=['POST'])
 #Parameters:{ token, channel_id, u_id } Return Type:{}
 def channel_removeowner():
-    load_datastore()
     data = request.get_json()
 
     token = data['token']
@@ -391,7 +374,6 @@ def channel_removeowner():
 
 @APP.route("/message/senddm/v1", methods=['POST'])
 def message_senddm():
-    load_datastore()
     resp = request.get_json()
 
     token = resp['token']
@@ -411,7 +393,6 @@ def message_senddm():
 
 @APP.route("/message/edit/v1", methods=['PUT'])
 def message_edit():
-    load_datastore()
     resp = request.get_json()
     token = resp['token']
     message_id = resp['message_id']
@@ -430,7 +411,6 @@ def message_edit():
 
 @APP.route("/message/remove/v1", methods=['DELETE'])
 def message_remove():
-    load_datastore()
     resp = request.get_json()
     token = resp['token']
     message_id = resp['message_id']
@@ -455,7 +435,6 @@ def dm_create_http():
     Return Type:{ dm_id }
     
     '''
-    load_datastore()
     data = request.get_json(force=True)
     
     token = data['token']
@@ -484,7 +463,6 @@ def dm_list_http():
     Return Type:{ dms }
     
     '''
-    load_datastore()
     token = request.args.get('token')
 
     token_checker(token) # will raise an error if token is invalid
@@ -506,7 +484,6 @@ def dm_remove_http():
     Parameters:         { token, dm_id }
     Return Type:        {}
     '''
-    load_datastore()
     data = request.get_json(force=True)
     
     token = data['token']
@@ -533,7 +510,6 @@ def dm_details_http():
     Parameters:     { token, dm_id }
     Return Type:    { name, members }
     '''
-    load_datastore()
     token = request.args.get('token')
     dm_id = int(request.args.get('dm_id'))
     
@@ -560,7 +536,6 @@ def dm_leave_http():
     Return Type:    {}
     
     '''
-    load_datastore()
     data = request.get_json(force=True)
     
     token = data['token']
@@ -585,7 +560,6 @@ def dm_messages_http():
     Parameters:     { token, dm_id, start }
     Return Type:    { messages, start, end }
     '''
-    load_datastore()
     token = request.args.get('token')
     dm_id = int(request.args.get('dm_id'))
     start = int(request.args.get('start'))
@@ -604,7 +578,6 @@ def dm_messages_http():
     
 @APP.route("/channels/list/v2", methods=['GET'])
 def list_channel():
-    load_datastore()
     #Token implemented 
     token = request.args.get('token')
     #token validation
@@ -618,7 +591,6 @@ def list_channel():
 
 @APP.route("/channel/invite/v2", methods=['POST'])
 def channel_invite():
-    load_datastore()
     data = request.get_json()
     token = data['token']
     channel_id = data['channel_id']
@@ -633,7 +605,6 @@ def channel_invite():
 	
 @APP.route("/channel/join/v2", methods=['POST'])
 def channel_join():
-    load_datastore()
     data = request.get_json()
     token = data['token']
     channel_id = data['channel_id']
@@ -648,7 +619,6 @@ def channel_join():
 
 @APP.route("/admin/userpermission/change/v1", methods=['POST'])
 def admin_change_permission():
-    load_datastore()
     data = request.get_json()
     
     token = data['token']
@@ -667,5 +637,6 @@ def admin_change_permission():
 #### NO NEED TO MODIFY BELOW THIS POINT
 
 if __name__ == "__main__":
+    load_datastore()
     signal.signal(signal.SIGINT, quit_gracefully) # For coverage
     APP.run(port=config.port) # Do not edit this port
