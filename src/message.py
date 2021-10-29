@@ -123,6 +123,7 @@ def message_edit_v1(user_id, message_id, message):
         else: 
             dm_info = store['dms'][m_location[1]]
             dm_info['messages'].remove(message_id)
+        m_dict.pop(message_id) 
     else:
         m_dict[message_id][1] = message  
     
@@ -167,5 +168,5 @@ def message_remove_v1(user_id, message_id):
     else: 
         dm_info = store['dms'][m_location[1]]
         dm_info['messages'].remove(message_id)
-         
+    m_dict.pop(message_id)    
     return {} 
