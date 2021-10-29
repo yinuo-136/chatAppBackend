@@ -350,7 +350,7 @@ def dm_messages_v1(auth_u_id, dm_id, start):
     num_msgs = len(dm_messages)
 
     # index 0 is the first message, therefore start = 0 will have len 1. thus there are no msgs applicable if start > len(msgs) - 1
-    if (start > num_msgs - 1):
+    if (start > num_msgs):
         raise InputError("start is greater than the total number of messages in the channel")
 
 
