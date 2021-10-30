@@ -143,6 +143,6 @@ def test_share_message_successful_dm():
 
     payload = share_messages(token_1, m_id, 'abc', -1, dm_id_1)
 
-    assert payload.status == 200
+    assert payload.status_code == 200
 
 
