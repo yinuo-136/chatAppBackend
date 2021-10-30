@@ -164,11 +164,12 @@ def channel_messages_v1(auth_user_id, channel_id, start):
         message_id = m_id
         u_id = m_dict[m_id][0]
         message = m_dict[m_id][1]
+        shared_message = m_dict[m_id][4]
         time_created = m_dict[m_id][2]
         m_info.append({
                 'message_id': message_id,
                 'u_id': u_id,
-                'message': message,
+                'message': message + shared_message,
                 'time_created': time_created})    
     
     return {

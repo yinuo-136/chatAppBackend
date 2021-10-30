@@ -47,3 +47,12 @@ def remove_messages(token, message_id):
     payload = requests.delete(f'{BASE_URL}/message/remove/v1', json={'token': token,
                                                     'message_id': message_id})
     return payload
+
+def share_messages(token, og_message_id, message, channel_id, dm_id):
+    payload = requests.post(f'{BASE_URL}/message/share/v1', json={'token': token,
+                                                    'og_message_id': og_message_id,
+                                                    'message': message,
+                                                    'channel_id': channel_id,
+                                                    'dm_id': dm_id
+                                                    })
+    return payload

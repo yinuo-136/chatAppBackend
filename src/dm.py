@@ -381,13 +381,14 @@ def dm_messages_v1(auth_u_id, dm_id, start):
         message_id = m_id
         u_id = store_messages[m_id][0]
         message = store_messages[m_id][1]
+        shared_message = store_messages[m_id][4]
         time_created = store_messages[m_id][2]
 
 
         messages.append({
                 'message_id': message_id,
                 'u_id': u_id,
-                'message': message,
+                'message': message + shared_message,
                 'time_created': time_created
             })    
 
