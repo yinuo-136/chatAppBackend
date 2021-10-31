@@ -13,7 +13,7 @@ def standup_wait_thread(length, u_id, c_id):
 
     store = data_store.get()
 
-    message = store['standups'][c_id] #get our standup message
+    message = store['standups'][c_id]['message'] #get our standup message
 
     message_send_v1(u_id, c_id, message)
 
@@ -64,7 +64,7 @@ def standup_create_v1(u_id, c_id, length):
 
     # we gucci, lets begin
 
-    all_standups[c_id] = 'hey'
+    
 
     thread = threading.Thread(target=standup_wait_thread,
                                   args=(length, u_id, c_id))
@@ -80,5 +80,8 @@ def standup_create_v1(u_id, c_id, length):
     time_created = int(timestamp)
 
     time_finished = time_created + length
+
+
+    all_standups[c_id] = {'time_finished' : time_finished, 'message' : 'hey' }
 
     return { 'time_finish' : time_finished }

@@ -139,3 +139,38 @@ def test_standup_start__fail__active_standup_already():
 
 
     assert status_code == INPUT_ERROR
+
+
+#################### BEGIN OF STANDUP_ACTIVE
+
+
+def test_standup_active__success_basic():
+
+    # Clear
+
+    clear_http()
+
+    # Register a user
+
+
+    r1 = auth_register("test1@gmail.com", "password123", "John", "Smith")
+    token = r1.json()['token']
+
+    # create a channel
+
+
+    c_id1 = user_create_channel(token, "testchannel1", False)
+
+
+    # start a standup
+
+    standup_create_wrapper(token, c_id1, 60) #create for 60 seconds
+
+    # test if standup active, should be YES!
+
+    response_body = standup_is_active_wrapper(token, c_id1)
+
+    status_code = response_body.status_code
+    response_dict = json.loads(response_body.text)
+
+    assert status_code == SUCCESS
