@@ -85,3 +85,16 @@ def standup_create_v1(u_id, c_id, length):
     all_standups[c_id] = {'time_finished' : time_finished, 'message' : 'hey' }
 
     return { 'time_finish' : time_finished }
+
+
+
+def standup_active_v1(u_id, c_id):
+
+
+    #Parameters:{ token, channel_id }Return Type:{ is_active, time_finish }
+
+
+
+
+    return { 'is_active' : False,
+            'time_finish' : -1 }
