@@ -6,7 +6,7 @@ from requests.api import request
 from src import config
 from src.other import clear_v1
 
-from wrapper.standup_wrappers import standup_create
+from wrapper.standup_wrappers import standup_create_wrapper
 from wrapper.auth_wrappers import auth_register
 from wrapper.message_wrappers import senddm_message
 from wrapper.clear_wrapper import clear_http
