@@ -76,3 +76,9 @@ def pin_message(token, message_id):
                                                     'message_id': message_id
                                                     })
     return payload
+
+def unpin_message(token, message_id):
+    payload = requests.post(f'{BASE_URL}/message/unpin/v1', json={'token': token,
+                                                    'message_id': message_id
+                                                    })
+    return payload

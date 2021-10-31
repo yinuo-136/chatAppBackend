@@ -375,6 +375,45 @@ def message_pin_v1(user_id, message_id):
 
     return {}
 
+def message_unpin_v1(user_id, message_id):
+    store = data_store.get()
+
+    #check if message_id is not a valid message within a channel or DM that the authorised user has joined ot not
+    m_dict = store['messages']
+    if message_id not in m_dict:
+        raise InputError(description="message_id does not exist")
+    m_location = m_dict[message_id][3]
+    
+    if m_location[0] == 'channel':
+        c_info = store['channels'][m_location[1]]
+        #check whether u_id is in the channel
+        if user_id not in c_info[3]:
+            raise InputError(description="message_id does not refer to a valid message within a channel that the authorised user has joined")
+        
+        #check whether u_id has the owner permission to pin the message
+        u_permission = store['global_permissions'][user_id]
+        if u_permission != 1 and user_id not in c_info[2]:
+            raise AccessError(description="the authorised user does not have owner permissions in the channel")    
+    
+    else:
+        dm_info = store['dms'][m_location[1]]
+        #check whether u_id is in the dm
+        if user_id not in dm_info['u_ids'] and user_id != dm_info['owner_id']:
+            raise InputError(description="message_id does not refer to a valid message within a DM that the authorised user has joined")
+
+        #check whether u_id has the permission to pin the message
+        if user_id != dm_info['owner_id']:
+            raise AccessError(description="the authorised user does not have owner permissions in the DM") 
+
+    #check if the message is already pinned   
+    if m_dict[message_id][6] == False:
+        raise InputError(description="the message is not already pinned")
+
+    #pin the message
+    m_dict[message_id][6] = False
+
+    return {}
+
     
 
 
