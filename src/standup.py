@@ -2,8 +2,21 @@ from src.error import InputError
 from src.error import AccessError
 from src.data_store import data_store
 from src.user import user_details
+from src.message import message_send_v1
 import threading
 import time
+
+
+def standup_wait_thread(u_id, c_id):
+
+    store = data_store.get()
+
+    message = store['standups'][c_id] #get our standup message
+
+    message_send_v1(u_id, c_id, message)
+
+    #store['standups'].remove(c_id)
+
 
 def standup_create_v1(u_id, c_id, length):
 
@@ -48,5 +61,9 @@ def standup_create_v1(u_id, c_id, length):
 
 
     # we gucci, lets begin
+
+    all_standups[c_id] = ''
+
+
 
     return { 'time_finish' : 55 }
