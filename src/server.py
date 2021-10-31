@@ -7,7 +7,7 @@ from flask import Flask, request
 from flask_cors import CORS
 from src import config
 from src.dm import dm_create_v1, dm_list_v1, dm_remove_v1, dm_details_v1, dm_leave_v1, dm_messages_v1
-from src.standup import standup_create_v1
+from src.standup import standup_create_v1, standup_active_v1
 from src.channel import channel_leave_v1, channel_messages_v1, channel_addowner_v1, channel_details_v1, channel_removeowner_v1, channel_invite_v1, channel_join_v1
 from src.channels import channels_listall_v1, channels_create_v1, channels_list_v1
 from src.message import message_send_v1, message_senddm_v1, message_edit_v1, message_remove_v1
@@ -653,6 +653,23 @@ def standup_create_route():
 
     save_datastore()
     return dumps(time_finish_dict)
+
+
+
+@APP.route("/standup/active/v1", methods=['GET'])
+def standup_active_route():
+    #Token implemented 
+    token = request.args.get('token')
+    channel_id = int(request.args.get('channel_id'))
+    #token validation
+    token_checker(token)
+
+    payload = jwt.decode(token, config.SECRET, algorithms=["HS256"])
+    user_id = payload.get('user_id')
+   
+    r = standup_active_v1(user_id, channel_id)
+
+    return dumps(r)
 
 
 
