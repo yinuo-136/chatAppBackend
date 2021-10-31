@@ -10,3 +10,11 @@ def standup_create_wrapper(token, channel_id, length):
 
     
     return requests.post(config.url + "standup/start/v1", json=payload)
+
+
+def standup_is_active_wrapper(token, c_id):
+
+    payload = { 'token' : token,
+                'channel_id' : c_id } 
+
+    return requests.get(config.url + "standup/active/v1", params=payload)
