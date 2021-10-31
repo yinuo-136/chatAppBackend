@@ -31,9 +31,6 @@ def test_standup_start__success__basic():
 
     r1 = auth_register("test1@gmail.com", "password123", "John", "Smith")
     token = r1.json()['token']
-    
-    r2 = auth_register("test2@gmail.com", "password123", "Nick", "Zollos")
-    token2 = r2.json()['token']
 
     # create a channel
 
@@ -53,3 +50,92 @@ def test_standup_start__success__basic():
 
     assert status_code == SUCCESS
     assert len(response_body) == 1 #it contains one field `time_finish`
+
+
+def test_standup_start__fail__channel_id_invalid():
+
+    # Clear
+
+    clear_http()
+
+    # Register a user
+
+
+    r1 = auth_register("test1@gmail.com", "password123", "John", "Smith")
+    token = r1.json()['token']
+
+    # start a standup with INVALID ID
+
+    invalid_c_id = 9999
+
+    standup_response = standup_create_wrapper(token, invalid_c_id, 60) #create for 60 seconds
+
+    # check it returns 200 OK and a time_finish
+
+    status_code = standup_response.status_code
+
+    assert status_code == INPUT_ERROR
+
+
+
+def test_standup_start__fail__length_negative_int():
+
+    # Clear
+
+    clear_http()
+
+    # Register a user
+
+
+    r1 = auth_register("test1@gmail.com", "password123", "John", "Smith")
+    token = r1.json()['token']
+
+    # create a channel
+
+
+    c_id1 = user_create_channel(token, "testchannel1", False)
+
+
+    # start a standup
+
+    standup_response = standup_create_wrapper(token, c_id1, -1) # invalid -1 second time for standup
+
+    # check it returns 200 OK and a time_finish
+
+    status_code = standup_response.status_code
+
+
+    assert status_code == INPUT_ERROR
+
+
+
+
+def test_standup_start__fail__active_standup_already():
+
+    # Clear
+
+    clear_http()
+
+    # Register a user
+
+
+    r1 = auth_register("test1@gmail.com", "password123", "John", "Smith")
+    token = r1.json()['token']
+
+    # create a channel
+
+
+    c_id1 = user_create_channel(token, "testchannel1", False)
+
+
+    # start a standup
+
+    standup_create_wrapper(token, c_id1, 60) #create for 60 seconds
+    standup_response = standup_create_wrapper(token, c_id1, 60) #create for 60 seconds
+
+    # check it returns 200 OK and a time_finish
+
+    status_code = standup_response.status_code
+
+
+    assert status_code == INPUT_ERROR
