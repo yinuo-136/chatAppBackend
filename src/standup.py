@@ -5,8 +5,11 @@ from src.user import user_details
 from src.message import message_send_v1
 import threading
 from datetime import datetime, timezone
+import time
 
-def standup_wait_thread(u_id, c_id):
+def standup_wait_thread(length, u_id, c_id):
+
+    time.sleep(length) # sleep for the length of time, then send msg
 
     store = data_store.get()
 
@@ -63,8 +66,14 @@ def standup_create_v1(u_id, c_id, length):
 
     all_standups[c_id] = 'hey'
 
-    t = threading.Timer(length, standup_wait_thread(u_id, c_id))
-    t.start() # start our thread
+    thread = threading.Thread(target=standup_wait_thread,
+                                  args=(length, u_id, c_id))
+        # exits abnormally if main thread is terminated .
+    thread.daemon = True
+    thread.start()
+
+    # t = Timer(length, standup_wait_thread(u_id, c_id))
+    # t.start() # start our thread
 
     dt = datetime.now(timezone.utc)
     timestamp = dt.replace(tzinfo=timezone.utc).timestamp()
