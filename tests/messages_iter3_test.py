@@ -1,7 +1,7 @@
 import pytest
 import requests
 from wrapper.channels_wrappers import clear, user_sign_up, user_create_channel
-from wrapper.message_wrappers import send_message, senddm_message, edit_message, share_messages, show_messages, show_dm_messages, remove_messages
+from wrapper.message_wrappers import send_message, senddm_message, edit_message, share_messages, show_messages, show_dm_messages, remove_messages, react_message
 from wrapper.dm_wrappers import dm_create_wrapper
 from wrapper.auth_wrappers import auth_register
 from wrapper.channel_wrappers import channel_join
@@ -145,4 +145,94 @@ def test_share_message_successful_dm():
 
     assert payload.status_code == 200
 
+####################################################################################################3
+##message_react_v1 tests
+#feature 1: raise InpuError when message_id does not exist
+def test_message_react_m_id_not_exist():
+    clear()
+
+    token = user_sign_up('test@gmail.com', 'password', 'first', 'last')
+    m_id = 12
+    react_id = 1
+
+    payload = react_message(token, m_id, react_id)
+
+    assert payload.status_code == 400
+
+#feature 2: raise InputError when message_id is not a valid message within a channel or DM that the authorised user has joined
+def test_message_react_not_within_channel():
+    clear()
+
+    token_1 = user_sign_up('test@gmail.com', 'password', 'first', 'last')
+    token_2 = user_sign_up('test1@gmail.com', 'password1', 'first1', 'last1')
+
+    channel_id_1 = user_create_channel(token_1, '12345', True)
+    m_id = send_message(token_1, channel_id_1, 'hello')
+
+    react_id = 1
+
+    payload = react_message(token_2, m_id, react_id)
+
+    assert payload.status_code == 400
+
+def test_message_react_not_winthin_dm():
+    clear()
+
+    token_1 = user_sign_up('test@gmail.com', 'password', 'first', 'last')
+    token_2 = user_sign_up('test1@gmail.com', 'password1', 'first1', 'last1')
+
+
+    dm_info = dm_create_wrapper(token_1, [])
+    dm_id_1 = dm_info.json()['dm_id']
+    m_id = senddm_message(token_1, dm_id_1, 'hello')
+
+    react_id = 1
+
+    payload = react_message(token_2, m_id, react_id)
+
+    assert payload.status_code == 400
+
+#feature 3: raise InputError when react ID is not a valid id
+def test_message_react_id_invalid():
+    clear()
+
+    token_1 = user_sign_up('test@gmail.com', 'password', 'first', 'last')
+
+    channel_id_1 = user_create_channel(token_1, '12345', True)
+    m_id = send_message(token_1, channel_id_1, 'hello')
+    react_id = 2
+
+    payload = react_message(token_1, m_id, react_id)
+
+    assert payload.status_code == 400
+
+#feature 4: raise InputError when the message already contains a react with ID react_id from the authorised user
+def test_message_react_already_reacted():
+    clear()
+
+    token_1 = user_sign_up('test@gmail.com', 'password', 'first', 'last')
+
+    channel_id_1 = user_create_channel(token_1, '12345', True)
+    m_id = send_message(token_1, channel_id_1, 'hello')
+    react_id = 1
+
+    react_message(token_1, m_id, react_id)
+
+    payload = react_message(token_1, m_id, react_id)
+
+    assert payload.status_code == 400
+
+#feature 5: test successful case
+def test_successful_message_react():
+    clear()
+
+    token_1 = user_sign_up('test@gmail.com', 'password', 'first', 'last')
+
+    channel_id_1 = user_create_channel(token_1, '12345', True)
+    m_id = send_message(token_1, channel_id_1, 'hello')
+    react_id = 1
+
+    payload = react_message(token_1, m_id, react_id)
+
+    assert payload.status_code == 200
 

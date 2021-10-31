@@ -39,8 +39,11 @@ def message_send_v1(user_id, channel_id, message):
 
     channel_info = channel_dict[channel_id]
     channel_info[4].append(message_id)
+
+    #add the reacts
+    reacts = {1:[]}
     
-    message_info.update({message_id: [user_id, message, time_created, sent_location, shared_message]})
+    message_info.update({message_id: [user_id, message, time_created, sent_location, shared_message, reacts]})
     return {'message_id': message_id}
 
 
@@ -80,7 +83,9 @@ def message_senddm_v1(user_id, dm_id, message):
 
     dm_info['messages'].append(message_id)
 
-    message_info.update({message_id: [user_id, message, time_created, sent_location, shared_message]})
+    #add reacts
+    reacts = {1:[]}
+    message_info.update({message_id: [user_id, message, time_created, sent_location, shared_message, reacts]})
     return {'message_id': message_id}
 
 
@@ -235,8 +240,49 @@ def message_share_v1(user_id, message_id, message, channel_id, dm_id):
     else:
         sent_location = ['dm', dm_id]
         dm_list[dm_id]['messages'].append(shared_message_id)
+    
+    #add reacts
+    reacts = {1:[]}
 
-    m_dict.update({shared_message_id: [user_id, add_message, time_created, sent_location, shared_message]})
+    m_dict.update({shared_message_id: [user_id, add_message, time_created, sent_location, shared_message, reacts]})
 
     return {'shared_message_id': shared_message_id}
+
+
+def message_react_v1(user_id, message_id, react_id):
+    store = data_store.get()
+
+    #check if message_id is not a valid message within a channel or DM that the authorised user has joined ot not
+    m_dict = store['messages']
+    if message_id not in m_dict:
+        raise InputError(description="message_id does not exist")
+    m_location = m_dict[message_id][3]
+    
+    if m_location[0] == 'channel':
+        c_info = store['channels'][m_location[1]]
+        #check whether u_id is in the channel
+        if user_id not in c_info[3]:
+            raise InputError(description="message_id does not refer to a valid message within a channel that the authorised user has joined")   
+    
+    else:
+        dm_info = store['dms'][m_location[1]]
+        #check whether u_id is in the dm
+        if user_id not in dm_info['u_ids'] and user_id != dm_info['owner_id']:
+            raise InputError(description="message_id does not refer to a valid message within a DM that the authorised user has joined")
+        
+    #check if react_id is a valid react ID or not
+    valid_react_id = [1]
+    if react_id not in valid_react_id:
+        raise InputError(description="react_id is not a valid react ID")
+    
+    #check if the message already contains a react with ID react_id from the authorised user
+    reacted_info = m_dict[message_id][5]
+    reacted_users = reacted_info[react_id]
+    if user_id in reacted_users:
+        raise InputError(description="the message already contains a react with ID react_id from the authorised user")
+    
+    #add the user to the react list
+    reacted_users.append(user_id)
+    
+    return {}
 

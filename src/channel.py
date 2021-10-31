@@ -166,11 +166,26 @@ def channel_messages_v1(auth_user_id, channel_id, start):
         message = m_dict[m_id][1]
         shared_message = m_dict[m_id][4]
         time_created = m_dict[m_id][2]
+
+        #get the reacts list of the message
+        react_dict = m_dict[m_id][5]
+        reacts = []       
+        for react_id in react_dict.keys():
+            is_this_user_reacted = False
+            u_ids = react_dict[react_id]
+            if auth_user_id in u_ids:
+                is_this_user_reacted = True
+            reacts.append({'react_id': react_id,
+                        'u_ids': u_ids,
+                        'is_this_user_reacted': is_this_user_reacted})
+            
+
         m_info.append({
                 'message_id': message_id,
                 'u_id': u_id,
                 'message': message + shared_message,
-                'time_created': time_created})    
+                'time_created': time_created,
+                'reacts': reacts})    
     
     return {
         'messages': m_info,

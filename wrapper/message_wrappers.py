@@ -56,3 +56,10 @@ def share_messages(token, og_message_id, message, channel_id, dm_id):
                                                     'dm_id': dm_id
                                                     })
     return payload
+
+def react_message(token, message_id, react_id):
+    payload = requests.post(f'{BASE_URL}/message/react/v1', json={'token': token,
+                                                    'message_id': message_id,
+                                                    'react_id': react_id,
+                                                    })
+    return payload
