@@ -93,8 +93,39 @@ def standup_active_v1(u_id, c_id):
 
     #Parameters:{ token, channel_id }Return Type:{ is_active, time_finish }
 
+    store = data_store.get()
+
+    all_standups = store['standups']
+    all_channels = store['channels']
 
 
+    #InputError when: channel_id does not refer to a valid channel
+    
+    c_exists = (c_id in all_channels.keys())
 
-    return { 'is_active' : False,
-            'time_finish' : -1 }
+    if (not c_exists):
+        raise InputError("channel_id does not refer to a valid channel")
+
+    # AccessError when: channel_id is valid and the authorised user is not a member of the channel
+
+    members_list = all_channels[c_id][3]
+
+    user_is_member = (u_id in members_list)
+
+    if (not user_is_member):
+        raise AccessError("channel_id is valid and the authorised user is not a member of the channel")
+
+
+    # lets implement
+
+    standup_in_prog = (c_id in all_standups.keys())
+
+    is_active = False
+    time_finish = None
+
+    if (standup_in_prog):
+        time_finish = all_standups[c_id]['time_finished']
+        is_active = True
+
+    return { 'is_active' : is_active,
+            'time_finish' : time_finish }
