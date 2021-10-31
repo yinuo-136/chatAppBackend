@@ -4,8 +4,7 @@ from src.data_store import data_store
 from src.user import user_details
 from src.message import message_send_v1
 import threading
-import time
-
+from datetime import datetime, timezone
 
 def standup_wait_thread(u_id, c_id):
 
@@ -15,7 +14,7 @@ def standup_wait_thread(u_id, c_id):
 
     message_send_v1(u_id, c_id, message)
 
-    #store['standups'].remove(c_id)
+    store['standups'].pop(c_id)
 
 
 def standup_create_v1(u_id, c_id, length):
@@ -62,8 +61,15 @@ def standup_create_v1(u_id, c_id, length):
 
     # we gucci, lets begin
 
-    all_standups[c_id] = ''
+    all_standups[c_id] = 'hey'
 
+    t = threading.Timer(length, standup_wait_thread(u_id, c_id))
+    t.start() # start our thread
 
+    dt = datetime.now(timezone.utc)
+    timestamp = dt.replace(tzinfo=timezone.utc).timestamp()
+    time_created = int(timestamp)
 
-    return { 'time_finish' : 55 }
+    time_finished = time_created + length
+
+    return { 'time_finish' : time_finished }
