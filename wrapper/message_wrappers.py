@@ -63,3 +63,10 @@ def react_message(token, message_id, react_id):
                                                     'react_id': react_id,
                                                     })
     return payload
+
+def unreact_message(token, message_id, react_id):
+    payload = requests.post(f'{BASE_URL}/message/unreact/v1', json={'token': token,
+                                                    'message_id': message_id,
+                                                    'react_id': react_id,
+                                                    })
+    return payload
