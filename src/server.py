@@ -634,6 +634,27 @@ def admin_change_permission():
     save_datastore()
     return dumps({})
 
+
+
+@APP.route("/standup/start/v1", methods=['POST'])
+def standup_create_route():
+    data = request.get_json()
+    
+    token = data['token']
+    channel_id = data['channel_id']
+    length = data['length']
+    
+    token_checker(token)
+    payload = jwt.decode(token, config.SECRET, algorithms=["HS256"])
+    auth_user_id = payload.get('user_id')
+    
+    time_finish_dict = standup_create_v1(auth_user_id, channel_id, length)
+
+    save_datastore()
+    return dumps(time_finish_dict)
+
+
+
 #### NO NEED TO MODIFY BELOW THIS POINT
 
 if __name__ == "__main__":
