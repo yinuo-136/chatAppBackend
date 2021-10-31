@@ -383,6 +383,7 @@ def dm_messages_v1(auth_u_id, dm_id, start):
         message = store_messages[m_id][1]
         shared_message = store_messages[m_id][4]
         time_created = store_messages[m_id][2]
+        is_pinned = store_messages[m_id][6]
 
         #get the reacts list of the message
         react_dict = store_messages[m_id][5]
@@ -401,7 +402,8 @@ def dm_messages_v1(auth_u_id, dm_id, start):
                 'u_id': u_id,
                 'message': message + shared_message,
                 'time_created': time_created,
-                'reacts': reacts
+                'reacts': reacts,
+                'is_pinned': is_pinned
             })    
 
 

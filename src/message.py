@@ -42,8 +42,11 @@ def message_send_v1(user_id, channel_id, message):
 
     #add the reacts
     reacts = {1:[]}
+
+    #add the is_pinned attribute
+    is_pinned = False
     
-    message_info.update({message_id: [user_id, message, time_created, sent_location, shared_message, reacts]})
+    message_info.update({message_id: [user_id, message, time_created, sent_location, shared_message, reacts, is_pinned]})
     return {'message_id': message_id}
 
 
@@ -85,7 +88,11 @@ def message_senddm_v1(user_id, dm_id, message):
 
     #add reacts
     reacts = {1:[]}
-    message_info.update({message_id: [user_id, message, time_created, sent_location, shared_message, reacts]})
+
+    #add the is_pinned attribute
+    is_pinned = False
+
+    message_info.update({message_id: [user_id, message, time_created, sent_location, shared_message, reacts, is_pinned]})
     return {'message_id': message_id}
 
 
@@ -244,9 +251,15 @@ def message_share_v1(user_id, message_id, message, channel_id, dm_id):
     #add reacts
     reacts = {1:[]}
 
-    m_dict.update({shared_message_id: [user_id, add_message, time_created, sent_location, shared_message, reacts]})
+    #add the is_pinned attribute
+    is_pinned = False
+
+    m_dict.update({shared_message_id: [user_id, add_message, time_created, sent_location, shared_message, reacts, is_pinned]})
 
     return {'shared_message_id': shared_message_id}
+
+
+
 
 
 def message_react_v1(user_id, message_id, react_id):
@@ -322,6 +335,47 @@ def message_unreact_v1(user_id, message_id, react_id):
     reacted_users.remove(user_id)
 
     return {}
+
+def message_pin_v1(user_id, message_id):
+    store = data_store.get()
+
+    #check if message_id is not a valid message within a channel or DM that the authorised user has joined ot not
+    m_dict = store['messages']
+    if message_id not in m_dict:
+        raise InputError(description="message_id does not exist")
+    m_location = m_dict[message_id][3]
+    
+    if m_location[0] == 'channel':
+        c_info = store['channels'][m_location[1]]
+        #check whether u_id is in the channel
+        if user_id not in c_info[3]:
+            raise InputError(description="message_id does not refer to a valid message within a channel that the authorised user has joined")
+        
+        #check whether u_id has the owner permission to pin the message
+        u_permission = store['global_permissions'][user_id]
+        if u_permission != 1 and user_id not in c_info[2]:
+            raise AccessError(description="the authorised user does not have owner permissions in the channel")    
+    
+    else:
+        dm_info = store['dms'][m_location[1]]
+        #check whether u_id is in the dm
+        if user_id not in dm_info['u_ids'] and user_id != dm_info['owner_id']:
+            raise InputError(description="message_id does not refer to a valid message within a DM that the authorised user has joined")
+
+        #check whether u_id has the permission to pin the message
+        if user_id != dm_info['owner_id']:
+            raise AccessError(description="the authorised user does not have owner permissions in the DM") 
+
+    #check if the message is already pinned   
+    if m_dict[message_id][6]:
+        raise InputError(description="the message is already pinned")
+
+    #pin the message
+    m_dict[message_id][6] = True
+
+    return {}
+
+    
 
 
 

@@ -166,6 +166,7 @@ def channel_messages_v1(auth_user_id, channel_id, start):
         message = m_dict[m_id][1]
         shared_message = m_dict[m_id][4]
         time_created = m_dict[m_id][2]
+        is_pinned = m_dict[m_id][6]
 
         #get the reacts list of the message
         react_dict = m_dict[m_id][5]
@@ -185,7 +186,8 @@ def channel_messages_v1(auth_user_id, channel_id, start):
                 'u_id': u_id,
                 'message': message + shared_message,
                 'time_created': time_created,
-                'reacts': reacts})    
+                'reacts': reacts,
+                'is_pinned': is_pinned})    
     
     return {
         'messages': m_info,

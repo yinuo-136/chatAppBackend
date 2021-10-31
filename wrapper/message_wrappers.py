@@ -70,3 +70,9 @@ def unreact_message(token, message_id, react_id):
                                                     'react_id': react_id,
                                                     })
     return payload
+
+def pin_message(token, message_id):
+    payload = requests.post(f'{BASE_URL}/message/pin/v1', json={'token': token,
+                                                    'message_id': message_id
+                                                    })
+    return payload
