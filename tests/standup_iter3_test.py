@@ -6,7 +6,7 @@ from requests.api import request
 from src import config
 from src.other import clear_v1
 
-from wrapper.standup_wrappers import standup_create_wrapper
+from wrapper.standup_wrappers import standup_create_wrapper, standup_is_active_wrapper
 from wrapper.auth_wrappers import auth_register
 from wrapper.channels_wrappers import user_create_channel
 from wrapper.clear_wrapper import clear_http
