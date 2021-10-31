@@ -223,13 +223,28 @@ def test_message_react_already_reacted():
     assert payload.status_code == 400
 
 #feature 5: test successful case
-def test_successful_message_react():
+def test_successful_message_react_channel():
     clear()
 
     token_1 = user_sign_up('test@gmail.com', 'password', 'first', 'last')
 
     channel_id_1 = user_create_channel(token_1, '12345', True)
     m_id = send_message(token_1, channel_id_1, 'hello')
+    react_id = 1
+
+    payload = react_message(token_1, m_id, react_id)
+
+    assert payload.status_code == 200
+
+def test_successful_message_react_dm():
+    clear()
+
+    token_1 = user_sign_up('test@gmail.com', 'password', 'first', 'last')
+
+    dm_info = dm_create_wrapper(token_1, [])
+    dm_id_1 = dm_info.json()['dm_id']
+    m_id = senddm_message(token_1, dm_id_1, 'hello')
+
     react_id = 1
 
     payload = react_message(token_1, m_id, react_id)
