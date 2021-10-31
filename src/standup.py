@@ -13,7 +13,15 @@ def standup_create_v1(u_id, c_id, length):
     
     '''
 
+    store = data_store.get()
+
+    all_standups = store['standups']
+    all_channels = store['channels']
+
     #InputError when any of: channel_id does not refer to a valid channel
+
+
+
     #InputError when any of: length is a negative integer
     #InputError when any of: an active standup is currently running in the channel
       
