@@ -32,11 +32,13 @@ def test_standup_start__success__basic():
     r1 = auth_register("test1@gmail.com", "password123", "John", "Smith")
     token = r1.json()['token']
     
+    r2 = auth_register("test2@gmail.com", "password123", "Nick", "Zollos")
+    token2 = r2.json()['token']
 
     # create a channel
 
 
-    c_id1 = user_create_channel(token, "testchannel", False)
+    c_id1 = user_create_channel(token, "testchannel1", False)
 
 
     # start a standup
