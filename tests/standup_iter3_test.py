@@ -174,3 +174,4 @@ def test_standup_active__success_basic():
     response_dict = json.loads(response_body.text)
 
     assert status_code == SUCCESS
+    assert response_dict['is_active'] == True
