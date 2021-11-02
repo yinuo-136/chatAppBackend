@@ -141,12 +141,53 @@ def standup_send_v1(u_id, c_id, message):
     Return Type:    {}
     '''
 
+    store = data_store.get()
+
+    all_standups = store['standups']
+    all_channels = store['channels']
 
     #InputError when any of: channel_id does not refer to a valid channel
+
+    c_exists = (c_id in all_channels.keys())
+
+    if (not c_exists):
+        raise InputError("channel_id does not refer to a valid channel")
+
     #InputError when any of: length of message is over 1000 characters
+
+    message_over_limit = (len(message) > 1000)
+
+    if (message_over_limit):
+        raise InputError("length of message is over 1000 characters")
+
+
     #InputError when any of: an active standup is not currently running in the channel
+
+    standup_in_prog = (c_id in all_standups.keys())
+
+    if (not standup_in_prog):
+        raise InputError("an active standup is not currently running in the channel")
       
+    
     # AccessError when: channel_id is valid and the authorised user is not a member of the channel
 
+    members_list = all_channels[c_id][3]
+
+    user_is_member = (u_id in members_list)
+
+    if (not user_is_member):
+        raise AccessError("channel_id is valid and the authorised user is not a member of the channel")
+
+
+    # we are all g, lets continue
+
+
+    curr_standup_message_list = all_standups[c_id]['message']
+
+    username = store['user_details'][u_id]
+    new_msg = f"{username}: {message}"
+
+    # we append it to a list, as we join this at the end with \n
+    curr_standup_message_list.append(new_msg) 
 
     return {}
