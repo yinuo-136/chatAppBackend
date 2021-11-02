@@ -131,3 +131,22 @@ def standup_active_v1(u_id, c_id):
 
     return { 'is_active' : is_active,
             'time_finish' : time_finish }
+
+
+
+def standup_send_v1(u_id, c_id, message):
+
+    '''
+    Parameters:     { token, channel_id, message }
+    Return Type:    {}
+    '''
+
+
+    #InputError when any of: channel_id does not refer to a valid channel
+    #InputError when any of: length of message is over 1000 characters
+    #InputError when any of: an active standup is not currently running in the channel
+      
+    # AccessError when: channel_id is valid and the authorised user is not a member of the channel
+
+
+    return {}
