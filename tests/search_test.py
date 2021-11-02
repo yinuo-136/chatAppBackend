@@ -108,7 +108,7 @@ def test_search_successful_case_five():
 
     channel_id_1 = user_create_channel(token_1, '12345', True)
     m_id_1 = send_message(token_1, channel_id_1, 'hello')
-    m_id_2 = send_message(token_1, channel_id_1, 'no')
+    send_message(token_1, channel_id_1, 'no')
     
 
     payload = search_messages(token_1, 'llo')
