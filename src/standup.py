@@ -184,7 +184,7 @@ def standup_send_v1(u_id, c_id, message):
 
     curr_standup_message_list = all_standups[c_id]['message']
 
-    username = store['user_details'][u_id][2]
+    username = store['user_details'][u_id][4]
     new_msg = f"{username}: {message}"
 
     # we append it to a list, as we join this at the end with \n
