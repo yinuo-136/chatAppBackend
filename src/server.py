@@ -13,6 +13,7 @@ from src.message import message_send_v1, message_senddm_v1, message_edit_v1, mes
 from src.auth import auth_login_v1, auth_register_v1, auth_logout_v1, auth_invalidate_session, auth_store_session_id
 from src.user import user_details, list_all_users, user_set_email, user_set_handle, user_set_name
 from src.database import save_datastore, load_datastore
+from src.search import search_v1
 from src.token import token_checker
 from src.other import clear_v1
 from src.admin import admin_user_remove, admin_permission_change
@@ -722,6 +723,20 @@ def message_unpin():
     r = message_unpin_v1(auth_user_id, message_id)
     save_datastore()
 
+    return dumps(r)
+
+@APP.route("/search/v1", methods=['GET'])
+def search():
+    #Token implemented 
+    token = request.args.get('token')
+    query_str = request.args.get('query_str')
+    #token validation
+    token_checker(token)
+
+    payload = jwt.decode(token, config.SECRET, algorithms=["HS256"])
+    user_id = payload.get('user_id')
+   
+    r = search_v1(user_id, query_str)
     return dumps(r)
 
 
