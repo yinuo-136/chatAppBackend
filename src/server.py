@@ -673,6 +673,24 @@ def standup_active_route():
 
 
 
+@APP.route("/standup/send/v1", methods=['POST'])
+def standup_send_route():
+    data = request.get_json()
+    
+    token = data['token']
+    channel_id = data['channel_id']
+    message = data['message']
+    
+    token_checker(token)
+    payload = jwt.decode(token, config.SECRET, algorithms=["HS256"])
+    auth_user_id = payload.get('user_id')
+    
+    standup_send_v1(auth_user_id, channel_id, message)
+
+    save_datastore()
+    return dumps( {} ) # returns empty dict
+
+
 #### NO NEED TO MODIFY BELOW THIS POINT
 
 if __name__ == "__main__":
