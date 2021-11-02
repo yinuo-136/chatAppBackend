@@ -175,3 +175,43 @@ def test_standup_active__success_basic():
 
     assert status_code == SUCCESS
     assert response_dict['is_active'] == True
+
+
+
+#################### BEGIN OF standup/send/v1
+
+
+
+def test_standup_send__success__basic():
+
+    #clear
+
+    clear_http()
+
+    # Register a user
+
+
+    r1 = auth_register("test1@gmail.com", "password123", "John", "Smith")
+    token = r1.json()['token']
+
+    # create a channel
+
+
+    c_id1 = user_create_channel(token, "testchannel1", False)
+
+
+    # start a standup
+
+    standup_create_wrapper(token, c_id1, 60) #create for 60 seconds
+
+    # send message to standup
+
+    r = standup_send_wrapper(token, c_id1, "this is a test message")
+
+    # check 200 OK
+
+    status_code = r.status_code
+    response_body = json.loads(r.text)
+
+    assert status_code == SUCCESS
+    assert response_body == {}
