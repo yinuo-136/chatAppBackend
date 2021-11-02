@@ -5,6 +5,7 @@ import hashlib
 import re
 from src.data_store import data_store
 from src.error import InputError, AccessError
+from src.config import url
 
 def check_user_details(password, name_first, name_last):
     '''
@@ -123,6 +124,9 @@ def auth_register_v1(email, password, name_first, name_last):
 
     # Storing Details in Datastore
     new_id = len(store['user_details']) + 1
+    
+    #img_url is default
+    img_url = url + "static/default.jpg"
 
     #implementation of global permissions (1 for Owner, 2 for Member)
     if len(store['registered_users'].keys()) == 0:
@@ -131,7 +135,7 @@ def auth_register_v1(email, password, name_first, name_last):
         store['global_permissions'].update({new_id: 2})
 
     store['logged_in_users'].append(new_id)
-    store['user_details'].update({new_id : (email, hashlib.sha256(password.encode()).hexdigest(), name_first, name_last, handle)})
+    store['user_details'].update({new_id : (email, hashlib.sha256(password.encode()).hexdigest(), name_first, name_last, handle, img_url)})
     store['registered_users'].update({email: hashlib.sha256(password.encode()).hexdigest()})
     store['user_ids'].update({email: new_id})
 
@@ -152,19 +156,12 @@ def auth_store_session_id(u_id, session_id):
     store['session_ids'].append((u_id, session_id))
    
 def auth_invalidate_session(u_id, session_id):
-    '''tup = [('hi', 'bye'), ('one', 'two')]
-    tup_dict = dict(tup) # {'hi': 'bye', 'one': 'two'}
-    tup_dict.pop('hi')
-    tup = tuple(tup_dict.items()) # (('one', 'two'),)'''
 
     store = data_store.get()
 
-    sessions = store['session_ids']
-    
-    sessions_dict = dict(sessions)
-    sessions_dict.pop(u_id)
-    
-    store['session_ids'] = list(tuple(sessions_dict.items()))
+    for i, session in enumerate(store['session_ids']):
+        if session[0] == u_id and session[1] == session_id:
+            store['session_ids'].pop(i)
     
     data_store.set(store)
 

@@ -35,5 +35,19 @@ def set_handle(token, handle_str):
     payload = {'token' : token, 'handle_str' : handle_str}
     
     return requests.put(config.url + "user/profile/sethandle/v1", json = payload)  
+    
+def upload_photo(token, img_url, x1, y1, x2, y2):
+    
+    payload = {
+        'token' : token,
+        'img_url' : img_url,
+        'x_start' : x1,
+        'y_start' : y1,
+        'x_end' : x2,
+        'y_end' : y2
+    }
+    
+    return requests.post(config.url + "user/profile/uploadphoto/v1", json = payload)  
+
 
 

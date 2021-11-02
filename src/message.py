@@ -169,3 +169,9 @@ def message_remove_v1(user_id, message_id):
         dm_info['messages'].remove(message_id)
          
     return {} 
+
+'''    
+def message_send_later_channel(channel_id, message, time_sent):
+
+def message_send_later_dm(dm_id, message, time_sent):
+'''

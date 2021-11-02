@@ -1,6 +1,12 @@
 import re
+import urllib.request
+import os
+from urllib.error import URLError
+from PIL import Image
+from src.config import url
 from src.data_store import data_store
 from src.error import InputError, AccessError
+
 
 
 def user_details(u_id):
@@ -16,7 +22,8 @@ def user_details(u_id):
         'email' : user[0],
         'name_first' : user[2],
         'name_last' : user[3],
-        'handle_str' : user[4]
+        'handle_str' : user[4],
+        'profile_img_url' : user[5]
     }
 
 def list_all_users():
@@ -32,7 +39,8 @@ def list_all_users():
                 'email' : user[0],
                 'name_first' : user[2],
                 'name_last' : user[3],
-                'handle_str' : user[4]
+                'handle_str' : user[4],
+                'profile_img_url' : user[5]
             })
     
     return users
@@ -90,3 +98,60 @@ def user_set_handle(u_id, handle_str):
     user = tuple(user)
     
     store['user_details'].update({u_id: user})
+    
+    
+def user_profile_uploadphoto(user_id, img_url, x_start, y_start, x_end, y_end):
+    store = data_store.get()
+    
+    user = store['user_details'].get(user_id)
+    u_handle = user[4]
+    
+    path = u_handle + ".jpg"
+    
+    # x_start, y_start, x_end, y_end are negative
+    if x_start < 0 or y_start < 0 or x_end < 0 or y_end < 0:
+          raise InputError("Invalid crop dimensions")     
+          
+    # if x_start >= x_end 
+    if x_end < x_start:
+        raise InputError("Invalid crop dimensions")
+        
+    # if y_start >= y_end
+    if y_end < y_start:
+        raise InputError("Invalid crop dimensions")
+
+    try:
+        urllib.request.urlretrieve(img_url, "src/static/" + path)
+    except URLError:
+        raise InputError("Invalid image url passed")
+         
+    imageObject = Image.open("src/static/" + path)
+    
+    if imageObject.format != 'JPEG':
+        os.remove("src/static/" + path)
+        raise InputError("Image format must be a JPEG/JPG")
+    
+    # Dimensions Error Cases
+    width, height = imageObject.size
+    
+    # if y_start or y_end >= height
+    if y_start > height or y_end > height:
+        os.remove("src/static/" + path)
+        raise InputError("Invalid crop dimensions")
+        
+    # if x_start or x_end >= width
+    if x_start > width or x_end > width:
+        os.remove("src/static/" + path)
+        raise InputError("Invalid crop dimensions")
+    
+    cropped_image = imageObject.crop((x_start, y_start, x_end, y_end))
+    
+    cropped_image.save("src/static/" + path)
+    
+    new_img_url = url + "src/static/" + path
+    
+    store['user_details'].update({user_id : (user[0], user[1], user[2], user[3], user[4] , new_img_url)})
+    
+    
+    
+    
