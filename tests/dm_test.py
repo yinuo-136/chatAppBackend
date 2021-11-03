@@ -112,6 +112,7 @@ def test_dm_create__success_basic():
 
     
     r = dm_create_wrapper(my_user_token, [valid_other_id])
+    dm_create_wrapper(my_user_token, [valid_other_id])
 
     status_code = r.status_code
     response_dict = json.loads(r.text)
@@ -465,13 +466,6 @@ def test_dm_remove__error__user_unauthorised():
 
 #################################### START OF dm_details_v1 TESTS
 
-    ''' 
-    Given a DM with ID dm_id that the authorised user is a member of, provide basic details about the DM.
-    
-    Parameters:     { token, dm_id }
-    Return Type:    { name, members }
-    '''
-
 
 def test_dm_details__success_basic():
 
@@ -626,21 +620,6 @@ def test_dm_details__fail__user_not_member__valid_dm_id():
 
 
 #################################### START OF dm_leave_v1 TESTS
-
-'''
-
-Given a DM ID, the user is removed as a member of this DM. 
-
-The creator is allowed to leave and the DM will still exist if this happens. 
-
-This does not update the name of the DM.
-
-
-    
-Parameters:{ token, dm_id }
-Return Type:{}
-
-'''
 
 
 def test_dm_leave__success__basic_member():

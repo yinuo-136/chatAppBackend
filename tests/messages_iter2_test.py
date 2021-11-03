@@ -75,13 +75,14 @@ def test_message_send_id_unique():
 
     payload_2 = requests.post(f'{BASE_URL}/message/send/v1', json={'token': token,
                                                                 'channel_id': channel_id,
-                                                                'message': "b"})
+                                                                'message': "@firstlast b"})
 
     p1 = payload_1.json()
     p1 = p1['message_id']
     p2 = payload_2.json()
     p2 = p2['message_id']
     assert p1 != p2
+
 
 ########################################################################################
 ##channel_messages_v2
@@ -269,9 +270,9 @@ def test_message_senddm_id_unique():
     r = r.json()
     dm_id = r['dm_id']
 
-    p1 = senddm_message(token_1, dm_id, 'a')
+    p1 = senddm_message(token_1, dm_id, '@first2last2 b')
 
-    p2 = senddm_message(token_1, dm_id, 'b')
+    p2 = senddm_message(token_1, dm_id, '@firstlast b')
 
     assert p1 != p2
 
@@ -412,7 +413,20 @@ def test_message_edit__dm_empty_string():
     assert show_dm_messages(token_1, dm_id, 0) == ['hello2']
 
 #feature 6: test the success case
-def test_message_edit_success():
+def test_message_edit_success_case_one():
+    clear()
+    token_1 = user_sign_up('test1@gmail.com', 'password1', 'first1', 'last1')
+
+    channel_id = user_create_channel(token_1, '12345', True)
+
+    m_id_1 = send_message(token_1, channel_id, 'hello1')  
+    send_message(token_1, channel_id, 'hello2')
+
+    edit_message(token_1, m_id_1, '@first1last1 hello3')
+
+    assert show_messages(token_1, channel_id, 0) == ['hello2','@first1last1 hello3']
+
+def test_message_edit_success_case_two():
     clear()
     token_1 = user_sign_up('test1@gmail.com', 'password1', 'first1', 'last1')
 
@@ -424,6 +438,26 @@ def test_message_edit_success():
     edit_message(token_1, m_id_1, 'hello3')
 
     assert show_messages(token_1, channel_id, 0) == ['hello2','hello3']
+
+def test_message_edit_success_case_three():
+    clear()
+    token_1 = user_sign_up('test@gmail.com', 'password', 'first', 'last')
+    data_2 = auth_register('test2@gmail.com', 'password2', 'first2', 'last2')
+
+    data = data_2.json()
+    u_id_2 = data['auth_user_id']
+    
+    r = dm_create_wrapper(token_1, [u_id_2])
+    r = r.json()
+    dm_id = r['dm_id']
+
+    m_id_1 = senddm_message(token_1, dm_id, 'hello')
+    senddm_message(token_1, dm_id, 'hello2')
+    payload = edit_message(token_1, m_id_1, '@firstlast @hhaha hello')
+
+    assert payload.status_code == 200
+
+    assert show_dm_messages(token_1, dm_id, 0) == ['hello2', '@firstlast @hhaha hello']
 
 ############################################################################################
 ##message_remove_v1 tests

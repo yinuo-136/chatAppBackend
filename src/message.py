@@ -2,8 +2,10 @@ from src.error import InputError
 from src.error import AccessError
 from src.data_store import data_store
 from datetime import datetime, timezone
+from src.notifications import notification_tag, update_notification_channel, update_notification_dm, update_react_notification
+    
 
-
+    
 def message_send_v1(user_id, channel_id, message):
     store = data_store.get()
     channel_dict = store['channels']
@@ -47,6 +49,23 @@ def message_send_v1(user_id, channel_id, message):
     is_pinned = False
     
     message_info.update({message_id: [user_id, message, time_created, sent_location, shared_message, reacts, is_pinned]})
+
+    #notification implementation
+    #check if there is tags in the message
+    if "@" in message:
+        handle_list = notification_tag(message)
+
+        #construct the notification message
+        user_info = store['user_details']
+        user_handle = user_info[user_id][4]
+        channel_name = channel_info[0]
+        n_message = message[0:20]
+        notification_message = f"{user_handle} tagged you in {channel_name}: {n_message}"
+        n_dict = {'channel_id': channel_id, 'dm_id': -1, 'notification_message': notification_message}
+
+        #update the notification dict
+        update_notification_channel(store, handle_list, n_dict, channel_id)
+
     return {'message_id': message_id}
 
 
@@ -93,6 +112,22 @@ def message_senddm_v1(user_id, dm_id, message):
     is_pinned = False
 
     message_info.update({message_id: [user_id, message, time_created, sent_location, shared_message, reacts, is_pinned]})
+
+    #notification implementation
+    #check if there is tags in the message
+    if "@" in message:
+        handle_list = notification_tag(message)
+
+        #construct the notification message
+        user_info = store['user_details']
+        user_handle = user_info[user_id][4]
+        dm_name = dm_info['name']
+        n_message = message[0:20]
+        notification_message = f"{user_handle} tagged you in {dm_name}: {n_message}"
+        n_dict = {'channel_id': -1, 'dm_id': dm_id, 'notification_message': notification_message}
+
+        #update the notification dict
+        update_notification_dm(store, handle_list, n_dict, dm_id)
     return {'message_id': message_id}
 
 
@@ -141,6 +176,31 @@ def message_edit_v1(user_id, message_id, message):
         m_dict.pop(message_id) 
     else:
         m_dict[message_id][1] = message  
+
+        #notification implementation
+        #check if there is tags in the message
+        if "@" in message:
+            handle_list = notification_tag(message)
+            user_info = store['user_details']
+            user_handle = user_info[user_id][4]
+            if m_location[0] == 'channel':
+                #construct the notification message
+                channel_name = c_info[0]
+                n_message = message[0:20]
+                notification_message = f"{user_handle} tagged you in {channel_name}: {n_message}"
+                n_dict = {'channel_id': m_location[1], 'dm_id': -1, 'notification_message': notification_message}
+
+                #update the notification dict
+                update_notification_channel(store, handle_list, n_dict, m_location[1])  
+            else: 
+                #construct the notification message              
+                dm_name = dm_info['name']
+                n_message = message[0:20]
+                notification_message = f"{user_handle} tagged you in {dm_name}: {n_message}"
+                n_dict = {'channel_id': -1, 'dm_id': m_location[1], 'notification_message': notification_message}
+
+                #update the notification dict
+                update_notification_dm(store, handle_list, n_dict, m_location[1])
     
     return {}
 
@@ -256,6 +316,31 @@ def message_share_v1(user_id, message_id, message, channel_id, dm_id):
 
     m_dict.update({shared_message_id: [user_id, add_message, time_created, sent_location, shared_message, reacts, is_pinned]})
 
+    #notification implementation
+    #check if there is tags in the message
+    if "@" in message:
+        handle_list = notification_tag(message)
+        user_info = store['user_details']
+        user_handle = user_info[user_id][4]
+        if m_location[0] == 'channel':
+            #construct the notification message
+            channel_name = c_info[0]
+            n_message = message[0:20]
+            notification_message = f"{user_handle} tagged you in {channel_name}: {n_message}"
+            n_dict = {'channel_id': m_location[1], 'dm_id': -1, 'notification_message': notification_message}
+
+            #update the notification dict
+            update_notification_channel(store, handle_list, n_dict, m_location[1])  
+        else: 
+            #construct the notification message              
+            dm_name = dm_info['name']
+            n_message = message[0:20]
+            notification_message = f"{user_handle} tagged you in {dm_name}: {n_message}"
+            n_dict = {'channel_id': -1, 'dm_id': m_location[1], 'notification_message': notification_message}
+
+            #update the notification dict
+            update_notification_dm(store, handle_list, n_dict, m_location[1])
+
     return {'shared_message_id': shared_message_id}
 
 
@@ -296,7 +381,22 @@ def message_react_v1(user_id, message_id, react_id):
     
     #add the user to the react list
     reacted_users.append(user_id)
-    
+
+    #notification implementation
+    user_info = store['user_details']
+    user_handle = user_info[user_id][4]
+    if m_location[0] == 'channel':
+        #construct the notification message
+        channel_name = c_info[0]
+        notification_message = f"{user_handle} reacted to your message in {channel_name}"
+        n_dict = {'channel_id': m_location[1], 'dm_id': -1, 'notification_message': notification_message}
+  
+    else: 
+        #construct the notification message              
+        dm_name = dm_info['name']
+        notification_message = f"{user_handle} reacted to your message in {dm_name}"
+        n_dict = {'channel_id': -1, 'dm_id': m_location[1], 'notification_message': notification_message}
+    update_react_notification(store, n_dict, message_id)
     return {}
 
 def message_unreact_v1(user_id, message_id, react_id):
@@ -331,7 +431,7 @@ def message_unreact_v1(user_id, message_id, react_id):
     if user_id not in reacted_users:
         raise InputError(description="the message does not contain a react with ID react_id from the authorised user")    
 
-    #pop the user to the react list
+    #remove the user from the react list
     reacted_users.remove(user_id)
 
     return {}

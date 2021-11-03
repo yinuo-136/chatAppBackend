@@ -120,7 +120,21 @@ def test_message_share_length_more_than_1000():
     assert payload.status_code == 400
 
 #feature 7: test success case of the function
-def test_share_message_successful_channel():
+def test_share_message_successful_channel_one():
+    clear()
+
+    token_1 = user_sign_up('test@gmail.com', 'password', 'first', 'last')
+
+    channel_id_1 = user_create_channel(token_1, '12345', True)
+
+    m_id = send_message(token_1, channel_id_1, 'hello')
+
+    payload = share_messages(token_1, m_id, '@firstlast abc' , channel_id_1, -1)
+    share_messages(token_1, m_id, '@firstlast abc' , channel_id_1, -1)
+
+    assert payload.status_code == 200
+
+def test_share_message_successful_channel_two():
     clear()
 
     token_1 = user_sign_up('test@gmail.com', 'password', 'first', 'last')
@@ -133,7 +147,20 @@ def test_share_message_successful_channel():
 
     assert payload.status_code == 200
 
-def test_share_message_successful_dm():
+def test_share_message_successful_dm_one():
+    clear()
+
+    token_1 = user_sign_up('test@gmail.com', 'password', 'first', 'last')
+    dm_info = dm_create_wrapper(token_1, [])
+    dm_id_1 = dm_info.json()['dm_id']
+    m_id = senddm_message(token_1, dm_id_1, 'hello')
+
+    payload = share_messages(token_1, m_id, '@firstlast abc', -1, dm_id_1)
+    share_messages(token_1, m_id, '@firstlast abc', -1, dm_id_1)
+
+    assert payload.status_code == 200
+
+def test_share_message_successful_dm_two():
     clear()
 
     token_1 = user_sign_up('test@gmail.com', 'password', 'first', 'last')
@@ -223,7 +250,7 @@ def test_message_react_already_reacted():
     assert payload.status_code == 400
 
 #feature 5: test successful case
-def test_successful_message_react_channel():
+def test_successful_message_react_channel_one():
     clear()
 
     token_1 = user_sign_up('test@gmail.com', 'password', 'first', 'last')
@@ -248,6 +275,22 @@ def test_successful_message_react_dm():
     react_id = 1
 
     payload = react_message(token_1, m_id, react_id)
+
+    assert payload.status_code == 200
+
+def test_successful_message_react_channel_two():
+    clear()
+
+    token_1 = user_sign_up('test@gmail.com', 'password', 'first', 'last')
+
+    channel_id_1 = user_create_channel(token_1, '12345', True)
+    m_id_1 = send_message(token_1, channel_id_1, 'hello')
+    m_id_2 = send_message(token_1, channel_id_1, 'hello1')
+    react_id = 1
+    
+
+    payload = react_message(token_1, m_id_1, react_id)
+    react_message(token_1, m_id_2, react_id)
 
     assert payload.status_code == 200
 

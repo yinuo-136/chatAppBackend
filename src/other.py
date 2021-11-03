@@ -12,6 +12,7 @@ def clear_v1():
     store['session_ids'] = []
     store['dms'] = {}
     store['messages'] = {}
+    store['notifications'] = {}
     
     data_store.set(store)
     return {}

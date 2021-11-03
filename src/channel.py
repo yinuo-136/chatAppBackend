@@ -55,6 +55,17 @@ def channel_invite_v1(auth_user_id, channel_id, u_id):
     c_messages = channel[4]
     
     store['channels'].update({channel_id : (c_name, c_public, c_owners, c_members, c_messages)})
+
+    #notification implementations
+    user_info = store['user_details']
+    user_handle = user_info[auth_user_id][4]
+    channel_name = c_name
+    notification_message = f"{user_handle} added you to {channel_name}"
+    n_dict = {'channel_id': channel_id, 'dm_id': -1, 'notification_message': notification_message}
+    if u_id not in store['notifications']:
+        store['notifications'].update({u_id: [n_dict]}) 
+    else:
+        store['notifications'][u_id].append(n_dict)
     
     return {}
 

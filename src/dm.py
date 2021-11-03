@@ -80,6 +80,17 @@ def dm_create_v1(owner_u_id, u_ids):
 
     data_store.set(store)
 
+    #notification implementations
+    user_info = store['user_details']
+    user_handle = user_info[owner_u_id][4]
+    notification_message = f"{user_handle} added you to {dm_name}"
+    n_dict = {'channel_id': -1, 'dm_id': dm_id, 'notification_message': notification_message}
+    for u_id in u_ids:
+        if u_id not in store['notifications']:
+            store['notifications'].update({u_id: [n_dict]}) 
+        else:
+            store['notifications'][u_id].append(n_dict)
+
 
     # dummy code for `dm_id` return
     return { 'dm_id' : dm_id }
