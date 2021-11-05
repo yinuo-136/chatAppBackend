@@ -90,3 +90,15 @@ def user_set_handle(u_id, handle_str):
     user = tuple(user)
     
     store['user_details'].update({u_id: user})
+    
+def users_stats_v1(token)
+    
+    
+    
+    
+    
+    
+    return {
+        "workspace_stats":
+    
+    }
