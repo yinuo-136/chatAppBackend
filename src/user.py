@@ -91,14 +91,14 @@ def user_set_handle(u_id, handle_str):
     
     store['user_details'].update({u_id: user})
     
-def users_stats_v1(token)
+def users_stats_v1(user_id):
+    
+    
+    pass
     
     
     
+    #return {
+     #   "workspace_stats":
     
-    
-    
-    return {
-        "workspace_stats":
-    
-    }
+    #}
