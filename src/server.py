@@ -636,6 +636,7 @@ def admin_change_permission():
 
 @APP.route("users/stats/v1", methods=['GET'])
 def user_stats():
+    #token implemented
     token = request.args.get('token')
     #token check 
     token_checker(token)
