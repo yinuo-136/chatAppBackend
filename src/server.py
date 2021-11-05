@@ -11,7 +11,7 @@ from src.channel import channel_leave_v1, channel_messages_v1, channel_addowner_
 from src.channels import channels_listall_v1, channels_create_v1, channels_list_v1
 from src.message import message_send_v1, message_senddm_v1, message_edit_v1, message_remove_v1
 from src.auth import auth_login_v1, auth_register_v1, auth_logout_v1, auth_invalidate_session, auth_store_session_id
-from src.user import user_details, list_all_users, user_set_email, user_set_handle, user_set_name
+from src.user import user_details, list_all_users, user_set_email, user_set_handle, user_set_name, users_stats_v1 
 from src.database import save_datastore, load_datastore
 from src.token import token_checker
 from src.other import clear_v1
@@ -633,6 +633,19 @@ def admin_change_permission():
     admin_permission_change(auth_user_id, u_id, permission_id)
     save_datastore()
     return dumps({})
+
+@APP.route("users/stats/v1", methods=['GET'])
+def user_stats():
+    token = request.args.get('token')
+    #token check 
+    token_checker(token)
+    
+    payload = jwt.decode(token, config.SECRET, algorithms=["HS256"])
+    user_id = payload.get('user_id')
+    
+    
+    workspace_stats = users_stats_v1(user_id)
+    return dumps(workspace_stats)
 
 #### NO NEED TO MODIFY BELOW THIS POINT
 
