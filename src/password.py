@@ -62,4 +62,8 @@ def password_reset_v1(new_password, reset_code):
     
     store['registered_users'].update({u_email : hashlib.sha256(new_password.encode()).hexdigest()})
     
+    for i, code in enumerate(store['unique_codes']):
+        if reset_code == code[1]:
+            store['unique_codes'].pop(i)
+            
     data_store.set(store)

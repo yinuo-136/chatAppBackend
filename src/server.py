@@ -10,7 +10,7 @@ from src import config
 from src.dm import dm_create_v1, dm_list_v1, dm_remove_v1, dm_details_v1, dm_leave_v1, dm_messages_v1
 from src.channel import channel_leave_v1, channel_messages_v1, channel_addowner_v1, channel_details_v1, channel_removeowner_v1, channel_invite_v1, channel_join_v1
 from src.channels import channels_listall_v1, channels_create_v1, channels_list_v1
-from src.message import message_send_v1, message_senddm_v1, message_edit_v1, message_remove_v1
+from src.message import message_send_v1, message_senddm_v1, message_edit_v1, message_remove_v1, message_send_later_channel, message_send_later_dm
 from src.auth import auth_login_v1, auth_register_v1, auth_logout_v1, auth_invalidate_session, auth_store_session_id
 from src.user import user_details, list_all_users, user_set_email, user_set_handle, user_set_name, user_profile_uploadphoto
 from src.database import save_datastore, load_datastore
@@ -139,11 +139,44 @@ def upload_user_photo():
 def download_photo(path):
     return send_from_directory('static', path)
 
-#@APP.route("/message/sendlater/v1", methods=['POST'])
-
-#@APP.route("/message/sendlaterdm/v1", methods=['POST'])
-
-
+@APP.route("/message/sendlater/v1", methods=['POST'])
+def sendlater_channel():
+#Parameters:{ token, channel_id, message, time_sent }Return Type:{ message_id }
+    data = request.get_json()
+    
+    #token validation
+    token_checker(data['token'])
+    
+    channel_id = data['channel_id']
+    message = data['message']
+    time_sent = data['time_sent']
+    
+    payload = jwt.decode(data['token'], config.SECRET, algorithms=["HS256"])
+    user_id = payload.get('user_id')
+    
+    ret = message_send_later_channel(user_id, channel_id, message, time_sent)
+    
+    return dumps(ret)
+    
+  
+@APP.route("/message/sendlaterdm/v1", methods=['POST'])
+def sendlater_dm():
+#Parameters:{ token, dm_id, message, time_sent }Return Type:{ message_id }
+    data = request.get_json()
+    
+    #token validation
+    token_checker(data['token'])
+    
+    dm_id = data['dm_id']
+    message = data['message']
+    time_sent = data['time_sent']
+    
+    payload = jwt.decode(data['token'], config.SECRET, algorithms=["HS256"])
+    user_id = payload.get('user_id')
+    
+    ret = message_send_later_dm(user_id, dm_id, message, time_sent)
+    
+    return dumps(ret)
     
 @APP.route("/auth/logout/v1", methods=['POST'])
 def logout():

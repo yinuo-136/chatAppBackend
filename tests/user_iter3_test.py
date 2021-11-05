@@ -64,6 +64,14 @@ def test_not_jpg_uploadphoto():
     r1 = upload_photo(token, PNG_IMAGE, 0, 0, 300, 300)
     assert r1.status_code == INPUT_ERROR
     
+def test_invalid_url_uploadphoto():
+    clear_http()
+    r = auth_register("jaymatt2232@gmail.com", "password", "jayden", "matthews")
+    token = r.json()['token']
+    
+    r1 = upload_photo(token, 'thisisnotreal.cool.au' , 0, 0, 500, 800)
+    assert r1.status_code == INPUT_ERROR
+    
 def test_basic_uploadphoto():
     clear_http()
     r = auth_register("jaymatt2232@gmail.com", "password", "jayden", "matthews")

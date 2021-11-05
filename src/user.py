@@ -122,7 +122,7 @@ def user_profile_uploadphoto(user_id, img_url, x_start, y_start, x_end, y_end):
 
     try:
         urllib.request.urlretrieve(img_url, "src/static/" + path)
-    except URLError:
+    except (URLError, ValueError):
         raise InputError("Invalid image url passed")
          
     imageObject = Image.open("src/static/" + path)

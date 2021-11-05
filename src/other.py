@@ -13,6 +13,8 @@ def clear_v1():
     store['dms'] = {}
     store['messages'] = {}
     store['unique_codes'] = []
+    store['user_stats'] = {}
+    store['workspace_stats'] = {}
     
     data_store.set(store)
     return {}
