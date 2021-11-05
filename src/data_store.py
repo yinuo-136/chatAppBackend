@@ -35,6 +35,12 @@ initial_object = {
     'session_ids' : [],
     'dms' : {},
     'messages' : {},
+    'workspace_stats' : {
+        'channels_exist' : [{'num_channels_exist','time_stamp'}],
+        'dms_exist': [{'num_dms_exist','time_stamp'}],
+        'messages_exist': [{'num_messages_exist','time_stamp'}],
+        'utilization_rate'
+    },
 }
 ## YOU SHOULD MODIFY THIS OBJECT ABOVE
 
