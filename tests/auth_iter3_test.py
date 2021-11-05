@@ -16,7 +16,7 @@ ACCESS_ERROR = 403
 def test_basic_request_password_change():
     clear_http()
     
-    r1 = auth_register("jaymatt2232@gmail.com", "password", "Jayden", "Matthews")
+    auth_register("jaymatt2232@gmail.com", "password", "Jayden", "Matthews")
     auth_register("different@gmail.com", "yipson123", "Nick", "Statho")
     
     #multiple sessions
