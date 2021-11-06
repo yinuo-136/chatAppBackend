@@ -92,13 +92,9 @@ def user_set_handle(u_id, handle_str):
     store['user_details'].update({u_id: user})
     
 def users_stats_v1(u_id):
-    
-    
-    pass
-    
-    
-    
-    #return {
-     #   "workspace_stats":
-    
-    #}
+    store = data_store.get()
+    workspace_stats_data = store['workspace_stats'].get(u_id)
+   
+    return {
+        "workspace_stats": workspace_stats_data
+    }
