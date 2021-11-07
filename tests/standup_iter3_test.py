@@ -141,6 +141,39 @@ def test_standup_start__fail__active_standup_already():
     assert status_code == INPUT_ERROR
 
 
+
+def test_standup_create__fail__user_not_member():
+
+   # Clear
+
+    clear_http()
+
+    # Register a user
+
+
+    r1 = auth_register("test1@gmail.com", "password123", "John", "Smith")
+    token1 = r1.json()['token']
+
+    r2 = auth_register("test2@gmail.com", "password123", "Nick", "Magalcky")
+    token2 = r2.json()['token']
+
+    # create a channel
+
+
+    c_id1 = user_create_channel(token1, "testchannel1", False)
+
+    # Start standup
+
+
+    standup_response = standup_create_wrapper(token2, c_id1, 60) #User who is NOT MEMBER start standup
+    
+    # Other user not in try start standup
+
+    status_code = standup_response.status_code
+
+    assert status_code == ACCESS_ERROR
+
+
 #################### BEGIN OF STANDUP_ACTIVE
 
 
