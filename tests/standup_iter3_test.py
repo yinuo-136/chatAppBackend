@@ -1,4 +1,5 @@
 from typing import Any
+from time import sleep
 import requests
 import json
 import jwt
@@ -40,8 +41,8 @@ def test_standup_start__success__basic():
 
     # start a standup
 
-    standup_response = standup_create_wrapper(token, c_id1, 60) #create for 60 seconds
-
+    standup_response = standup_create_wrapper(token, c_id1, 1) #create for 1 seconds
+    sleep(1)
     # check it returns 200 OK and a time_finish
 
     status_code = standup_response.status_code
@@ -68,7 +69,7 @@ def test_standup_start__fail__channel_id_invalid():
 
     invalid_c_id = 9999
 
-    standup_response = standup_create_wrapper(token, invalid_c_id, 60) #create for 60 seconds
+    standup_response = standup_create_wrapper(token, invalid_c_id, 1) #create for 1 seconds
 
     # check it returns 200 OK and a time_finish
 
@@ -130,8 +131,8 @@ def test_standup_start__fail__active_standup_already():
 
     # start a standup
 
-    standup_create_wrapper(token, c_id1, 60) #create for 60 seconds
-    standup_response = standup_create_wrapper(token, c_id1, 60) #create for 60 seconds
+    standup_create_wrapper(token, c_id1, 1) #create for 1 seconds
+    standup_response = standup_create_wrapper(token, c_id1, 1) #create for 1 seconds
 
     # check it returns 200 OK and a time_finish
 
@@ -165,7 +166,7 @@ def test_standup_create__fail__user_not_member():
     # Start standup
 
 
-    standup_response = standup_create_wrapper(token2, c_id1, 60) #User who is NOT MEMBER start standup
+    standup_response = standup_create_wrapper(token2, c_id1, 1) #User who is NOT MEMBER start standup
     
     # Other user not in try start standup
 
@@ -197,7 +198,7 @@ def test_standup_active__success_basic():
 
     # start a standup
 
-    standup_create_wrapper(token, c_id1, 60) #create for 60 seconds
+    standup_create_wrapper(token, c_id1, 1) #create for 1 seconds
 
     # test if standup active, should be YES!
 
@@ -231,7 +232,7 @@ def test_standup_active__success__no_standup_active():
 
     # start a standup
 
-    response_body = standup_is_active_wrapper(token, c_id1) #create for 60 seconds
+    response_body = standup_is_active_wrapper(token, c_id1) #create for 1 seconds
 
     status_code = response_body.status_code
     response_dict = json.loads(response_body.text)
@@ -257,7 +258,7 @@ def test_standup_active__fail__channel_id_invalid():
 
     invalid_c_id = 9999
 
-    standup_response = standup_is_active_wrapper(token, invalid_c_id) #create for 60 seconds
+    standup_response = standup_is_active_wrapper(token, invalid_c_id) #create for 1 seconds
 
     # check it returns 200 OK and a time_finish
 
@@ -290,7 +291,7 @@ def test_standup_active__fail__user_not_member():
     # Start standup
 
 
-    standup_create_wrapper(token1, c_id1, 60) #User who is NOT MEMBER start standup
+    standup_create_wrapper(token1, c_id1, 1) #User who is NOT MEMBER start standup
     
     # Other user check if standup active
 
@@ -326,7 +327,7 @@ def test_standup_send__success__basic():
 
     # start a standup
 
-    standup_create_wrapper(token, c_id1, 60) #create for 60 seconds
+    standup_create_wrapper(token, c_id1, 1) #create for 1 seconds
 
     # send message to standup
 
@@ -358,7 +359,7 @@ def test_standup_send__fail__channel_id_invalid():
 
     invalid_c_id = 9999
 
-    standup_response = standup_send_wrapper(token, invalid_c_id, "hey there") #create for 60 seconds
+    standup_response = standup_send_wrapper(token, invalid_c_id, "hey there") #create for 1 seconds
 
     # check it returns 200 OK and a time_finish
 
@@ -388,7 +389,7 @@ def test_standup_send__fail__message_greater_than_thousand_chars():
 
     # start a standup
 
-    standup_create_wrapper(token, c_id1, 60) #create for 60 seconds
+    standup_create_wrapper(token, c_id1, 1) #create for 1 seconds
 
     # send message to standup
 
@@ -457,7 +458,7 @@ def test_standup_send__fail__user_not_member():
     # Start standup
 
 
-    standup_create_wrapper(token1, c_id1, 60) #User who is NOT MEMBER start standup
+    standup_create_wrapper(token1, c_id1, 1) #User who is NOT MEMBER start standup
     
     # Other user check if standup active
 

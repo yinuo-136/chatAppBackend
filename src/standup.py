@@ -71,7 +71,7 @@ def standup_create_v1(u_id, c_id, length):
     thread = threading.Thread(target=standup_wait_thread,
                                   args=(length, u_id, c_id))
         # exits abnormally if main thread is terminated .
-    thread.daemon = True
+    thread.daemon = False
     thread.start()
 
     # t = Timer(length, standup_wait_thread(u_id, c_id))
