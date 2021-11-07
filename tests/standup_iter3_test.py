@@ -211,6 +211,31 @@ def test_standup_active__success_basic():
 
 
 
+def test_standup_active__fail__channel_id_invalid():
+
+    # Clear
+
+    clear_http()
+
+    # Register a user
+
+
+    r1 = auth_register("test1@gmail.com", "password123", "John", "Smith")
+    token = r1.json()['token']
+
+    # run standup active method on an invalid channel
+
+    invalid_c_id = 9999
+
+    standup_response = standup_is_active_wrapper(token, invalid_c_id) #create for 60 seconds
+
+    # check it returns 200 OK and a time_finish
+
+    status_code = standup_response.status_code
+
+    assert status_code == INPUT_ERROR
+
+
 #################### BEGIN OF standup/send/v1
 
 
