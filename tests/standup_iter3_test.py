@@ -211,6 +211,36 @@ def test_standup_active__success_basic():
 
 
 
+def test_standup_active__success__no_standup_active():
+
+    # Clear
+
+    clear_http()
+
+    # Register a user
+
+
+    r1 = auth_register("test1@gmail.com", "password123", "John", "Smith")
+    token = r1.json()['token']
+
+    # create a channel
+
+
+    c_id1 = user_create_channel(token, "testchannel1", False)
+
+
+    # start a standup
+
+    response_body = standup_is_active_wrapper(token, c_id1) #create for 60 seconds
+
+    status_code = response_body.status_code
+    response_dict = json.loads(response_body.text)
+
+    assert status_code == SUCCESS
+    assert response_dict['is_active'] == False
+
+
+
 def test_standup_active__fail__channel_id_invalid():
 
     # Clear
