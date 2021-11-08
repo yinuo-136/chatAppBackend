@@ -518,8 +518,25 @@ def message_unpin_v1(user_id, message_id):
 
 
         
-def send_later_helper_channel(channel_id, message_id):
+def send_later_helper_channel(channel_id, message_id, message, user_id):
     store = data_store.get()
+
+    #notification implementation
+    #check if there is tags in the message
+    channel_info = store['channels'][channel_id]
+    if "@" in message:
+        handle_list = notification_tag(message)
+
+        #construct the notification message
+        user_info = store['user_details']
+        user_handle = user_info[user_id][4]
+        channel_name = channel_info[0]
+        n_message = message[0:20]
+        notification_message = f"{user_handle} tagged you in {channel_name}: {n_message}"
+        n_dict = {'channel_id': channel_id, 'dm_id': -1, 'notification_message': notification_message}
+
+        #update the notification dict
+        update_notification_channel(store, handle_list, n_dict, channel_id)
     
     channel = store['channels'].get(channel_id)
     channel[4].append(message_id)
@@ -553,19 +570,45 @@ def message_send_later_channel(user_id, channel_id, message, time_sent):
         message_id = m_ids[-1] + 1
         
     sent_location = ['channel', channel_id]
+
+    shared_message = ''
+
+    #add the reacts
+    reacts = {1:[]}
+
+    #add the is_pinned attribute
+    is_pinned  = False
+
            
-    store['messages'].update({message_id: [user_id, message, time_sent, sent_location]})    
+    store['messages'].update({message_id: [user_id, message, time_sent, sent_location, shared_message, reacts, is_pinned]})    
         
     time_until_send = time_sent - current_time
     
-    t = threading.Timer(time_until_send, send_later_helper_channel, [channel_id, message_id])
+    t = threading.Timer(time_until_send, send_later_helper_channel, [channel_id, message_id, message, user_id])
     t.start()
     
     return {'message_id': message_id} 
     
-def send_later_helper_dm(dm_id, message_id):
+def send_later_helper_dm(dm_id, message_id, message, user_id):
     store = data_store.get()
-    
+
+    dm_info = store['dms'][dm_id]
+    #notification implementation
+    #check if there is tags in the message
+    if "@" in message:
+        handle_list = notification_tag(message)
+
+        #construct the notification message
+        user_info = store['user_details']
+        user_handle = user_info[user_id][4]
+        dm_name = dm_info['name']
+        n_message = message[0:20]
+        notification_message = f"{user_handle} tagged you in {dm_name}: {n_message}"
+        n_dict = {'channel_id': -1, 'dm_id': dm_id, 'notification_message': notification_message}
+
+        #update the notification dict
+        update_notification_dm(store, handle_list, n_dict, dm_id)
+
     dm = store['dms'].get(dm_id)
     dm['messages'].append(message_id)
     
@@ -599,12 +642,19 @@ def message_send_later_dm(user_id, dm_id, message, time_sent):
         message_id = m_ids[-1] + 1
         
     sent_location = ['dm', dm_id]
-           
-    store['messages'].update({message_id: [user_id, message, time_sent, sent_location]})    
+
+    shared_message = ''
+
+    #add reacts
+    reacts = {1:[]}
+
+    #add the is_pinned attribute
+    is_pinned = False     
+    store['messages'].update({message_id: [user_id, message, time_sent, sent_location, shared_message, reacts, is_pinned]})    
         
     time_until_send = time_sent - current_time
     
-    t = threading.Timer(time_until_send, send_later_helper_dm, [dm_id, message_id])
+    t = threading.Timer(time_until_send, send_later_helper_dm, [dm_id, message_id, message, user_id])
     t.start()
     
     return {'message_id': message_id} 
