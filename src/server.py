@@ -8,6 +8,7 @@ from flask_cors import CORS
 from flask_mail import Mail, Message
 from src import config
 from src.dm import dm_create_v1, dm_list_v1, dm_remove_v1, dm_details_v1, dm_leave_v1, dm_messages_v1
+from src.standup import standup_create_v1, standup_active_v1, standup_send_v1
 from src.channel import channel_leave_v1, channel_messages_v1, channel_addowner_v1, channel_details_v1, channel_removeowner_v1, channel_invite_v1, channel_join_v1
 from src.channels import channels_listall_v1, channels_create_v1, channels_list_v1
 from src.message import message_send_v1, message_senddm_v1, message_edit_v1, message_remove_v1, message_send_later_channel, message_send_later_dm
@@ -724,6 +725,62 @@ def admin_change_permission():
     admin_permission_change(auth_user_id, u_id, permission_id)
     save_datastore()
     return dumps({})
+
+
+
+@APP.route("/standup/start/v1", methods=['POST'])
+def standup_create_route():
+    data = request.get_json()
+    
+    token = data['token']
+    channel_id = data['channel_id']
+    length = data['length']
+    
+    token_checker(token)
+    payload = jwt.decode(token, config.SECRET, algorithms=["HS256"])
+    auth_user_id = payload.get('user_id')
+    
+    time_finish_dict = standup_create_v1(auth_user_id, channel_id, length)
+
+    save_datastore()
+    return dumps(time_finish_dict)
+
+
+
+@APP.route("/standup/active/v1", methods=['GET'])
+def standup_active_route():
+    #Token implemented 
+    token = request.args.get('token')
+    channel_id = int(request.args.get('channel_id'))
+    #token validation
+    token_checker(token)
+
+    payload = jwt.decode(token, config.SECRET, algorithms=["HS256"])
+    user_id = payload.get('user_id')
+   
+    r = standup_active_v1(user_id, channel_id)
+
+    return dumps(r)
+
+
+
+@APP.route("/standup/send/v1", methods=['POST'])
+def standup_send_route():
+    data = request.get_json()
+    
+    token = data['token']
+    channel_id = data['channel_id']
+    message = data['message']
+    
+    token_checker(token)
+    payload = jwt.decode(token, config.SECRET, algorithms=["HS256"])
+    auth_user_id = payload.get('user_id')
+    
+    standup_send_v1(auth_user_id, channel_id, message)
+
+    save_datastore()
+    return dumps( {} ) # returns empty dict
+
 
 #### NO NEED TO MODIFY BELOW THIS POINT
 

@@ -35,6 +35,7 @@ initial_object = {
     'session_ids' : [],
     'dms' : {},
     'messages' : {},
+    'standups' : {},
     'unique_codes' : [],
     'user_stats' : {},
     'workspace_stats' : {},

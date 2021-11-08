@@ -12,6 +12,7 @@ def clear_v1():
     store['session_ids'] = []
     store['dms'] = {}
     store['messages'] = {}
+    store['standups'] = {}
     store['unique_codes'] = []
     store['user_stats'] = {}
     store['workspace_stats'] = {}
