@@ -80,6 +80,17 @@ def dm_create_v1(owner_u_id, u_ids):
 
     data_store.set(store)
 
+    #notification implementations
+    user_info = store['user_details']
+    user_handle = user_info[owner_u_id][4]
+    notification_message = f"{user_handle} added you to {dm_name}"
+    n_dict = {'channel_id': -1, 'dm_id': dm_id, 'notification_message': notification_message}
+    for u_id in u_ids:
+        if u_id not in store['notifications']:
+            store['notifications'].update({u_id: [n_dict]}) 
+        else:
+            store['notifications'][u_id].append(n_dict)
+
 
     # dummy code for `dm_id` return
     return { 'dm_id' : dm_id }
@@ -377,14 +388,29 @@ def dm_messages_v1(auth_u_id, dm_id, start):
         message_id = m_id
         u_id = store_messages[m_id][0]
         message = store_messages[m_id][1]
+        shared_message = store_messages[m_id][4]
         time_created = store_messages[m_id][2]
+        is_pinned = store_messages[m_id][6]
 
+        #get the reacts list of the message
+        react_dict = store_messages[m_id][5]
+        reacts = []       
+        for react_id in react_dict.keys():
+            is_this_user_reacted = False
+            u_ids = react_dict[react_id]
+            if auth_u_id in u_ids:
+                is_this_user_reacted = True
+            reacts.append({'react_id': react_id,
+                        'u_ids': u_ids,
+                        'is_this_user_reacted': is_this_user_reacted})
 
         messages.append({
                 'message_id': message_id,
                 'u_id': u_id,
-                'message': message,
-                'time_created': time_created
+                'message': message + shared_message,
+                'time_created': time_created,
+                'reacts': reacts,
+                'is_pinned': is_pinned
             })    
 
 

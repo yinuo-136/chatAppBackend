@@ -321,8 +321,8 @@ def test_basic_join():
     r3 = channel_join(token1, c_id)
     
     assert r3.json() == {}
-    
-def test_basic_invite():
+   
+def test_basic_invite_one():
     clear_http()
     
     r1 = auth_register("test1@gmail.com", "password123", "John", "Smith")
@@ -334,6 +334,23 @@ def test_basic_invite():
     u_id = r2.json()['auth_user_id']
     
     r3 = channel_invite(token, c_id, u_id)
+    
+    assert r3.json() == {}
+
+def test_basic_invite_two():
+    clear_http()
+    
+    r1 = auth_register("test1@gmail.com", "password123", "John", "Smith")
+    token = r1.json()['token']
+    
+    c_id_1 = user_create_channel(token, "channelname", False)
+    c_id_2 = user_create_channel(token, "channelname1", False)
+    
+    r2 = auth_register("test2@gmail.com", "password123", "Johnny", "Sins")
+    u_id = r2.json()['auth_user_id']
+    
+    r3 = channel_invite(token, c_id_1, u_id)
+    channel_invite(token, c_id_2, u_id)
     
     assert r3.json() == {}
 
