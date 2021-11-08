@@ -99,6 +99,7 @@ def channel_details_v1(auth_user_id, channel_id):
             'name_first': user[2],
             'name_last': user[3],
             'handle_str': user[4],
+            'profile_img_url' : user[5]
         })
 
     for u_id in channel[3]:
@@ -109,6 +110,7 @@ def channel_details_v1(auth_user_id, channel_id):
             'name_first': user[2],
             'name_last': user[3],
             'handle_str': user[4],
+            'profile_img_url' : user[5]
         })
 
     return {

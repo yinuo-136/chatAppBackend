@@ -66,7 +66,7 @@ def admin_user_remove(auth_user_id, u_id):
     # list(filter(lambda x: x != u_id, store['logged_in_users'])) ????
     
     # Change users name_first and name_last, remove handle and email
-    store['user_details'].update({u_id : ("", user[1], 'Removed', 'user', "")})
+    store['user_details'].update({u_id : ("", user[1], 'Removed', 'user', "", user[5])})
     
     data_store.set(store)
     
