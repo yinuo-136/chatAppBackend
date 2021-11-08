@@ -23,7 +23,8 @@ def test_basic_user_profile():
                         'email' : 'email@gmail.com',
                         'name_first' : 'Jayden',
                         'name_last' : 'Matthews',
-                        'handle_str' : 'jaydenmatthews'}
+                        'handle_str' : 'jaydenmatthews',
+                        'profile_img_url' : config.url + "static/default.jpg"}
     }
     
 def test_basic_set_name():
@@ -40,7 +41,8 @@ def test_basic_set_name():
                         'email' : 'email@gmail.com',
                         'name_first' : 'newfirst',
                         'name_last' : 'newlast',
-                        'handle_str' : 'jaydenmatthews'}
+                        'handle_str' : 'jaydenmatthews',
+                        'profile_img_url' : config.url + "static/default.jpg"}
     }
     
 
@@ -60,7 +62,8 @@ def test_basic_set_email():
                         'email' : 'new@email.com',
                         'name_first' : 'Jayden',
                         'name_last' : 'Matthews',
-                        'handle_str' : 'jaydenmatthews'}
+                        'handle_str' : 'jaydenmatthews',
+                        'profile_img_url' : config.url + "static/default.jpg"}
     }
   
         
@@ -79,7 +82,8 @@ def test_basic_set_handle():
                         'email' : 'email@gmail.com',
                         'name_first' : 'Jayden',
                         'name_last' : 'Matthews',
-                        'handle_str' : 'newhandlestr'}
+                        'handle_str' : 'newhandlestr',
+                        'profile_img_url' : config.url + "static/default.jpg"}
     }
       
 
@@ -99,12 +103,14 @@ def test_basic_user_all():
                         'email' : 'email1@gmail.com',
                         'name_first' : 'Jayden',
                         'name_last' : 'Matthews',
-                        'handle_str' : 'jaydenmatthews'}, {
+                        'handle_str' : 'jaydenmatthews',
+                        'profile_img_url' : config.url + "static/default.jpg"}, {
                         'u_id' : 2,
                         'email' : 'email2@gmail.com',
                         'name_first' : 'Jayden',
                         'name_last' : 'Matthews',
-                        'handle_str' : 'jaydenmatthews0'}]
+                        'handle_str' : 'jaydenmatthews0',
+                        'profile_img_url' : config.url + "static/default.jpg"}]
     }    
 # user/profile
 # Non-existent user_id passed

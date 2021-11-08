@@ -163,7 +163,8 @@ def test_user_profile_remove():
                         'email' : '',
                         'name_first' : 'Removed',
                         'name_last' : 'user',
-                        'handle_str' : ''}
+                        'handle_str' : '',
+                        'profile_img_url' : config.url + "static/default.jpg"}
     }
     
     r4 = auth_register("email2@gmail.com", "password123", "New", "Person")
@@ -189,7 +190,8 @@ def test_list_all_remove():
                         'email' : 'email@gmail.com',
                         'name_first' : 'Jayden',
                         'name_last' : 'Matthews',
-                        'handle_str' : 'jaydenmatthews'}]
+                        'handle_str' : 'jaydenmatthews',
+                        'profile_img_url' : config.url + "static/default.jpg"}]
     }
     
 def test_invalid_uid_remove():

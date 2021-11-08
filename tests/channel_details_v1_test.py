@@ -5,6 +5,7 @@ from src.auth import auth_register_v1
 from src.channels import channels_create_v1
 from src.error import InputError, AccessError
 from src.other import clear_v1
+from src import config
 
 #Checks if InputError is raised when channel_id does not refer to a valid channel.
 def test_details_channel_id_valid():
@@ -53,7 +54,8 @@ def test_details_return_types():
         'email': "test@gmail.com",
         'name_first': "First",
         'name_last': "Last",
-        'handle_str': "firstlast"
+        'handle_str': "firstlast",
+        'profile_img_url' : config.url + "static/default.jpg"
     }]
 
     assert details_name == 'Name'

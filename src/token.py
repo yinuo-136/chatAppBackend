@@ -3,6 +3,15 @@ from src.data_store import data_store
 from src.error import InputError, AccessError
 from src.config import SECRET
 
+def token_generator(auth_user_id, session_id):
+    payload = {
+        'user_id' : auth_user_id, 
+        'session_id' :  session_id
+    }
+    
+    return jwt.encode(payload, SECRET, algorithm = 'HS256')
+
+
 def token_checker(token):
     payload = jwt.decode(token, SECRET, algorithms=["HS256"])
     user_id = payload.get('user_id')

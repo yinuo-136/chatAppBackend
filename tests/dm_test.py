@@ -520,19 +520,20 @@ def test_dm_details__success_basic():
 
     assert response_body == { 'name' : "jaydenmatthews, nicholasstathakis",
                               'members' : [
-                                  { 'u_id' : 2, 
-                                    'email' : "somerandom@gmail.com",
-                                    'name_first' : "Jayden",
-                                    'name_last' : "Matthews",
-                                    'handle_str' : "jaydenmatthews"
-                                },
                                   { 'u_id' : 1, 
                                     'email' : "test@gmail.com",
                                     'name_first' : "Nicholas",
                                     'name_last' : "Stathakis",
-                                    'handle_str' : "nicholasstathakis"
-                                }
-                                
+                                    'handle_str' : "nicholasstathakis",
+                                    'profile_img_url' : config.url + "static/default.jpg"
+                                },
+                                  { 'u_id' : 2, 
+                                    'email' : "somerandom@gmail.com",
+                                    'name_first' : "Jayden",
+                                    'name_last' : "Matthews",
+                                    'handle_str' : "jaydenmatthews",
+                                    'profile_img_url' : config.url + "static/default.jpg"
+                                }                             
                               ] 
                             }
 

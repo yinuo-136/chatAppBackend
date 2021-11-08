@@ -110,4 +110,6 @@ def test_short_last_name_register():
     r = auth_register("email@gmail.com", "password123", "Jayden", "")
     
     assert r.status_code == INPUT_ERROR
- 
+
+    
+    

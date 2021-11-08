@@ -35,7 +35,14 @@ initial_object = {
     'session_ids' : [],
     'dms' : {},
     'messages' : {},
+<<<<<<< HEAD
     'notifications': {}
+=======
+    'standups' : {},
+    'unique_codes' : [],
+    'user_stats' : {},
+    'workspace_stats' : {},
+>>>>>>> master
 }
 ## YOU SHOULD MODIFY THIS OBJECT ABOVE
 

@@ -5,6 +5,8 @@ import hashlib
 import re
 from src.data_store import data_store
 from src.error import InputError, AccessError
+from src.config import url
+from datetime import datetime, timezone
 
 def check_user_details(password, name_first, name_last):
     '''
@@ -119,10 +121,42 @@ def auth_register_v1(email, password, name_first, name_last):
 
     if handle_matches > 0:
         handle = handle + str(handle_matches - 1)
-
-
+        
+    
+    #### INITIALISATION OF WORKSPACE STATS ####
+    if len(store['registered_users'].keys()) == 0:
+        workspace_stats = {}
+        
+        dt = datetime.now(timezone.utc)
+        timestamp = dt.replace(tzinfo=timezone.utc).timestamp()
+        current_time = int(timestamp)  
+        
+        workspace_stats.update({'channels_exist' : [{'num_channels_exist' : 0, 'time_stamp' : current_time}]})
+        workspace_stats.update({'dms_exist' : [{'num_dms_exist' : 0, 'time_stamp' : current_time}]})     
+        workspace_stats.update({'messages_exist' : [{'num_messages_exist' : 0, 'time_stamp' : current_time}]}) 
+        workspace_stats.update({'utilization_rate' : 0.0})
+        
+        store['workspace_stats'] = workspace_stats
+        
     # Storing Details in Datastore
-    new_id = len(store['user_details']) + 1
+    new_id = len(store['user_details']) + 1    
+    
+    #### INITAL USER STATS FOR EACH REGISTERING USER ####    
+    user_stats = {}
+    
+    dt = datetime.now(timezone.utc)
+    timestamp = dt.replace(tzinfo=timezone.utc).timestamp()
+    current_time = int(timestamp)  
+    
+    user_stats.update({'channels_joined' : [{'num_channels_joined' : 0, 'time_stamp' : current_time}]})
+    user_stats.update({'dms_joined' : [{'num_dms_sent' : 0, 'time_stamp' : current_time}]})     
+    user_stats.update({'messages_sent' : [{'num_messages_sent' : 0, 'time_stamp' : current_time}]}) 
+    user_stats.update({'involvement_rate' : 0.0})
+    
+    store['user_stats'].update({new_id : user_stats})  
+    
+    #img_url is default
+    img_url = url + "static/default.jpg"
 
     #implementation of global permissions (1 for Owner, 2 for Member)
     if len(store['registered_users'].keys()) == 0:
@@ -131,7 +165,7 @@ def auth_register_v1(email, password, name_first, name_last):
         store['global_permissions'].update({new_id: 2})
 
     store['logged_in_users'].append(new_id)
-    store['user_details'].update({new_id : (email, hashlib.sha256(password.encode()).hexdigest(), name_first, name_last, handle)})
+    store['user_details'].update({new_id : (email, hashlib.sha256(password.encode()).hexdigest(), name_first, name_last, handle, img_url)})
     store['registered_users'].update({email: hashlib.sha256(password.encode()).hexdigest()})
     store['user_ids'].update({email: new_id})
 
@@ -152,19 +186,12 @@ def auth_store_session_id(u_id, session_id):
     store['session_ids'].append((u_id, session_id))
    
 def auth_invalidate_session(u_id, session_id):
-    '''tup = [('hi', 'bye'), ('one', 'two')]
-    tup_dict = dict(tup) # {'hi': 'bye', 'one': 'two'}
-    tup_dict.pop('hi')
-    tup = tuple(tup_dict.items()) # (('one', 'two'),)'''
 
     store = data_store.get()
 
-    sessions = store['session_ids']
-    
-    sessions_dict = dict(sessions)
-    sessions_dict.pop(u_id)
-    
-    store['session_ids'] = list(tuple(sessions_dict.items()))
+    for i, session in enumerate(store['session_ids']):
+        if session[0] == u_id and session[1] == session_id:
+            store['session_ids'].pop(i)
     
     data_store.set(store)
 
