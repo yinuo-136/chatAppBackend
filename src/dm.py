@@ -203,13 +203,11 @@ def dm_details_v1(auth_u_id, dm_id):
     all_members = specific_dm['u_ids']
     
     owner_id = specific_dm['owner_id'] #our owner id
-    if owner_id != None:
-        all_members.append(owner_id)
 
     #"dm_id" : {'name' : 'a, b, c', owner_id' : 1, 'u_ids': [2,3,4], 'messages' : {},}
 
 
-    user_is_member = (auth_u_id in all_members)
+    user_is_member = (auth_u_id in all_members) or (auth_u_id == owner_id)
 
 
     if (not user_is_member):
@@ -220,6 +218,9 @@ def dm_details_v1(auth_u_id, dm_id):
 
     name = specific_dm['name']
     members = []
+    
+    if owner_id != None:
+        members.append(user_details(owner_id))
 
     for u_id in all_members:
         members.append(user_details(u_id)) #method taken from `user.py` which gets our `user` data structure
@@ -335,9 +336,8 @@ def dm_messages_v1(auth_u_id, dm_id, start):
     all_members = specific_dm['u_ids']
     
     owner_id = specific_dm['owner_id'] #our owner id
-    all_members.append(owner_id)
 
-    user_is_member = (auth_u_id in all_members)
+    user_is_member = (auth_u_id in all_members) or (auth_u_id == owner_id)
 
 
     if (not user_is_member):
@@ -352,10 +352,6 @@ def dm_messages_v1(auth_u_id, dm_id, start):
     # index 0 is the first message, therefore start = 0 will have len 1. thus there are no msgs applicable if start > len(msgs) - 1
     if (start > num_msgs):
         raise InputError("start is greater than the total number of messages in the channel")
-
-
-    
-    
 
 
     # lets get to the implementation

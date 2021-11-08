@@ -1,8 +1,9 @@
+import threading
+import time
 from src.error import InputError
 from src.error import AccessError
 from src.data_store import data_store
 from datetime import datetime, timezone
-
 
 def message_send_v1(user_id, channel_id, message):
     store = data_store.get()
@@ -170,3 +171,97 @@ def message_remove_v1(user_id, message_id):
         dm_info['messages'].remove(message_id)
     m_dict.pop(message_id)    
     return {} 
+
+
+def send_later_helper_channel(channel_id, message_id):
+    store = data_store.get()
+    
+    channel = store['channels'].get(channel_id)
+    channel[4].append(message_id)
+    
+    data_store.set(store)
+
+def message_send_later_channel(user_id, channel_id, message, time_sent):
+    store = data_store.get()
+    
+    if channel_id not in store['channels'].keys():
+        raise InputError("The channel does not exist!")
+    
+    if len(message) > 1000:
+        raise InputError("The message you are sending is too long. (Must be < 1000 chars)")
+     
+    dt = datetime.now(timezone.utc)
+    timestamp = dt.replace(tzinfo=timezone.utc).timestamp()
+    current_time = int(timestamp)   
+    
+    if time_sent < current_time:
+        raise InputError("Invalid time specified: Cannot send message in the past")
+        
+    #Create the message but do not send to channel 
+    ############################################## 
+    #if no message in the database, set the initial one id = 1
+    if store['messages'] == {}:
+        message_id = 1
+    else:
+        #get the last one from the message id (the largest) then + 1 to get a new id
+        m_ids = list(store['messages'].keys())
+        message_id = m_ids[-1] + 1
+        
+    sent_location = ['channel', channel_id]
+           
+    store['messages'].update({message_id: [user_id, message, time_sent, sent_location]})    
+        
+    time_until_send = time_sent - current_time
+    
+    t = threading.Timer(time_until_send, send_later_helper_channel, [channel_id, message_id])
+    t.start()
+    
+    return {'message_id': message_id} 
+    
+def send_later_helper_dm(dm_id, message_id):
+    store = data_store.get()
+    
+    dm = store['dms'].get(dm_id)
+    dm['messages'].append(message_id)
+    
+    data_store.set(store)
+    
+def message_send_later_dm(user_id, dm_id, message, time_sent):
+    #{ "dms" : { "dm_id" : {'name' : 'a, b, c', owner_id' : 1, 'u_ids': [2,3,4], 'messages' : [] } } }
+    store = data_store.get()
+    
+    if dm_id not in store['dms'].keys():
+        raise InputError("That dm does not exist!")
+    
+    if len(message) > 1000:
+        raise InputError("The message you are sending is too long. (Must be < 1000 chars)")
+     
+    dt = datetime.now(timezone.utc)
+    timestamp = dt.replace(tzinfo=timezone.utc).timestamp()
+    current_time = int(timestamp)   
+    
+    if time_sent < current_time:
+        raise InputError("Invalid time specified: Cannot send message in the past")
+        
+    #Create the message but do not send to channel 
+    ############################################## 
+    #if no message in the database, set the initial one id = 1
+    if store['messages'] == {}:
+        message_id = 1
+    else:
+        #get the last one from the message id (the largest) then + 1 to get a new id
+        m_ids = list( store['messages'].keys())
+        message_id = m_ids[-1] + 1
+        
+    sent_location = ['dm', dm_id]
+           
+    store['messages'].update({message_id: [user_id, message, time_sent, sent_location]})    
+        
+    time_until_send = time_sent - current_time
+    
+    t = threading.Timer(time_until_send, send_later_helper_dm, [dm_id, message_id])
+    t.start()
+    
+    return {'message_id': message_id} 
+
+

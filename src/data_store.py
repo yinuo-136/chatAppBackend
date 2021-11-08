@@ -35,6 +35,9 @@ initial_object = {
     'session_ids' : [],
     'dms' : {},
     'messages' : {},
+    'unique_codes' : [],
+    'user_stats' : {},
+    'workspace_stats' : {},
 }
 ## YOU SHOULD MODIFY THIS OBJECT ABOVE
 
