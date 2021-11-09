@@ -3,6 +3,7 @@ import requests
 from src import channel
 from wrapper.channels_wrappers import clear, user_sign_up
 from wrapper.channel_wrappers import channel_join
+from wrapper.message_wrappers import react_message
 from src.config import url
 
 BASE_URL = url

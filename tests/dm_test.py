@@ -10,7 +10,7 @@ from src.other import clear_v1
 
 from wrapper.dm_wrappers import dm_create_wrapper, dm_list_wrapper, dm_remove_wrapper, dm_details_wrapper, dm_leave_wrapper, dm_messages_wrapper
 from wrapper.auth_wrappers import auth_register
-from wrapper.message_wrappers import senddm_message
+from wrapper.message_wrappers import senddm_message, react_message
 from wrapper.clear_wrapper import clear_http
 
 BASE_URL = config.url
@@ -872,9 +872,9 @@ def test_dm_messages__success__basic_one_message():
 
     # send one message
 
-    senddm_message(user_1_token, dm_id, 'hello1')
+    m_id = senddm_message(user_1_token, dm_id, 'hello1')
 
-
+    react_message(user_1_token, m_id, 1)
     # Request messages for this dm
 
 
