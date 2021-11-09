@@ -1,7 +1,7 @@
 import pytest
 import requests
 from wrapper.channels_wrappers import clear, user_sign_up, user_create_channel
-from wrapper.message_wrappers import send_message, senddm_message, edit_message, show_messages, show_dm_messages, remove_messages
+from wrapper.message_wrappers import send_message, senddm_message, edit_message, show_messages, show_dm_messages, remove_messages, react_message
 from wrapper.dm_wrappers import dm_create_wrapper
 from wrapper.auth_wrappers import auth_register
 from wrapper.channel_wrappers import channel_join
@@ -171,6 +171,24 @@ def test_messages_end_return_1():
     counter = 100
     while (counter > 0):
         send_message(token, channel_id, 'hello')
+        counter -= 1
+
+    payload = requests.get(f'{BASE_URL}/channel/messages/v2', params={'token': token,
+                                                                'channel_id': channel_id,
+                                                                'start': 0})
+    p = payload.json()
+    assert p['end'] == 50
+
+def test_messages_end_return_2():
+    
+    clear()
+
+    token = user_sign_up('test@gmail.com', 'password', 'first', 'last')
+    channel_id = user_create_channel(token, '12345', True)
+    counter = 100
+    while (counter > 0):
+        m_id = send_message(token, channel_id, 'hello')
+        react_message(token, m_id, 1)
         counter -= 1
 
     payload = requests.get(f'{BASE_URL}/channel/messages/v2', params={'token': token,

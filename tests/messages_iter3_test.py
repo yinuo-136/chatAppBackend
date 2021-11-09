@@ -681,6 +681,21 @@ def test_sendlater_channel_basic(current_time):
     
     assert show_messages(token, 1, 0) == ['this is a message']
 
+def test_sendlater_channel_basic_one(current_time):
+    clear_http()
+    
+    r1 = auth_register("jaymatt2232@gmail.com", "password", "jayden", "matthews")
+    token = r1.json()['token']
+    user_create_channel(token, "channelname", True)
+    
+    r = sendlater_ch(token, 1, "@jaydenmatthews this is a message", current_time + 1)
+    
+    sleep(1)    #Wait for message to send
+    
+    assert r.json() == {'message_id' : 1}
+    
+    assert show_messages(token, 1, 0) == ['@jaydenmatthews this is a message']
+
     
 def test_sendlater_dm_basic(current_time):
     clear_http()
@@ -700,6 +715,25 @@ def test_sendlater_dm_basic(current_time):
     assert r2.json() == {'message_id' : 1}
     
     assert show_dm_messages(token, 1, 0) == ['this is a message']
+
+def test_sendlater_dm_basic_one(current_time):
+    clear_http()
+    
+    r = auth_register("jaymatt2232@gmail.com", "password", "jayden", "matthews")
+    r1 = auth_register("nick@gmail.com", "password", "nick", "stath")
+    
+    u_id = r1.json()['auth_user_id']
+    token = r.json()['token']
+    
+    dm_create_wrapper(token, [u_id])
+    
+    r2 = sendlater_dm(token, 1, "@jaydenmatthews this is a message", current_time + 1)
+    
+    sleep(1)    #Wait for message to send
+    
+    assert r2.json() == {'message_id' : 1}
+    
+    assert show_dm_messages(token, 1, 0) == ['@jaydenmatthews this is a message']
     
 def test_sendlater_channel_multimessage(current_time):
     clear_http()
