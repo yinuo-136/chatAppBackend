@@ -2,6 +2,7 @@ from src.error import InputError
 from src.error import AccessError
 from src.data_store import data_store
 from datetime import datetime, timezone
+from src.stats import stats_channel_create
 
 def channels_list_v1(auth_user_id):
 
@@ -85,16 +86,8 @@ def channels_create_v1(auth_user_id, name, is_public):
     store['channels'].update({c_id : (name, is_public, owner, members, messages)})
     
     #Append and change initial object to users/stats
-    dt = datetime.now(timezone.utc)
-    timestamp = dt.replace(tzinfo=timezone.utc).timestamp()
-    current_time = int(timestamp)
-    num_channels = store["workspace_stats"]["channels_exist"][-1]["num_channels_exist"] + 1
-    workspace_channels = {
-        "num_channels_exist" : num_channels,
-	"time_stamp" : current_time
-    }
-	
-	
+    stats_channel_create()
+   
     return {
         'channel_id': c_id
     }
