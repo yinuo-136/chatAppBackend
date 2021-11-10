@@ -39,6 +39,9 @@ def message_send_v1(user_id, channel_id, message):
     channel_info[4].append(message_id)
     
     message_info.update({message_id: [user_id, message, time_created, sent_location]})
+    #user/stats helper function call
+    stats_message_send()
+    
     return {'message_id': message_id}
 
 
