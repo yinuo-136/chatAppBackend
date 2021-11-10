@@ -42,39 +42,6 @@ def stats_message_send():
 	    'num_messages_exist' : num_messages,
 	    'time_stamp' : current_time()
 	})
-
-def stats_message_senddm():
-	store = data_store.get()
-	messages_exist = store["workspace_stats"]["messages_exist"]
-	
-	num_messages = len(store['messages'])
-	
-	messages_exist.append({
-	    'num_messages_exist' : num_messages,
-	    'time_stamp' : current_time()
-	})
-
-def stats_message_sendlater():
-	store = data_store.get()
-	messages_exist = store["workspace_stats"]["messages_exist"]
-	
-	num_messages = len(store['messages'])
-	
-	messages_exist.append({
-	    'num_messages_exist' : num_messages,
-	    'time_stamp' : current_time()
-	})
-
-def stats_message_sendlaterdm():
-	store = data_store.get()
-	messages_exist = store["workspace_stats"]["messages_exist"]
-	
-	num_messages = len(store['messages'])
-	
-	messages_exist.append({
-	    'num_messages_exist' : num_messages,
-	    'time_stamp' : current_time()
-	})
 	
 def stats_update_utilization():
     #rate = num_users_who_have_joined_at_least_one_channel_or_dm / num_users
