@@ -2,6 +2,7 @@ from src.error import InputError
 from src.error import AccessError
 from src.data_store import data_store
 from src.user import user_details
+from src.stats import stats_dm_create
 from itertools import islice
 
 
@@ -79,7 +80,9 @@ def dm_create_v1(owner_u_id, u_ids):
     }})
 
     data_store.set(store)
-
+    
+    #call user/stats helper function and append initial object 
+    stats_dm_create()
 
     # dummy code for `dm_id` return
     return { 'dm_id' : dm_id }
