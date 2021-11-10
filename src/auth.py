@@ -141,7 +141,7 @@ def auth_register_v1(email, password, name_first, name_last):
     # Storing Details in Datastore
     new_id = len(store['user_details']) + 1    
     
-    #### INITAL USER STATS FOR EACH REGISTERING USER ####    
+    #### INITIAL USER STATS FOR EACH REGISTERING USER ####    
     user_stats = {}
     
     dt = datetime.now(timezone.utc)
@@ -150,8 +150,7 @@ def auth_register_v1(email, password, name_first, name_last):
     
     user_stats.update({'channels_joined' : [{'num_channels_joined' : 0, 'time_stamp' : current_time}]})
     user_stats.update({'dms_joined' : [{'num_dms_sent' : 0, 'time_stamp' : current_time}]})     
-    user_stats.update({'messages_sent' : [{'num_messages_sent' : 0, 'time_stamp' : current_time}]}) 
-    user_stats.update({'involvement_rate' : 0.0})
+    user_stats.update({'messages_sent' : [{'num_messages_sent' : 0, 'time_stamp' : current_time}]})
     
     store['user_stats'].update({new_id : user_stats})  
     

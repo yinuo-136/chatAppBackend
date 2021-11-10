@@ -298,7 +298,6 @@ def channel_addowner_v1(auth_user_id, channel_id, u_id):
         raise InputError("u_id is invalid")
 
     #check if u_id is not a member of channel
-    
     if u_id not in channel[3]:
         raise InputError("u_id is not a member of the channel")
 
