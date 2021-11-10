@@ -47,3 +47,60 @@ def remove_messages(token, message_id):
     payload = requests.delete(f'{BASE_URL}/message/remove/v1', json={'token': token,
                                                     'message_id': message_id})
     return payload
+
+def share_messages(token, og_message_id, message, channel_id, dm_id):
+    payload = requests.post(f'{BASE_URL}/message/share/v1', json={'token': token,
+                                                    'og_message_id': og_message_id,
+                                                    'message': message,
+                                                    'channel_id': channel_id,
+                                                    'dm_id': dm_id
+                                                    })
+    return payload
+
+def react_message(token, message_id, react_id):
+    payload = requests.post(f'{BASE_URL}/message/react/v1', json={'token': token,
+                                                    'message_id': message_id,
+                                                    'react_id': react_id,
+                                                    })
+    return payload
+
+def unreact_message(token, message_id, react_id):
+    payload = requests.post(f'{BASE_URL}/message/unreact/v1', json={'token': token,
+                                                    'message_id': message_id,
+                                                    'react_id': react_id,
+                                                    })
+    return payload
+
+def pin_message(token, message_id):
+    payload = requests.post(f'{BASE_URL}/message/pin/v1', json={'token': token,
+                                                    'message_id': message_id
+                                                    })
+    return payload
+
+def unpin_message(token, message_id):
+    payload = requests.post(f'{BASE_URL}/message/unpin/v1', json={'token': token,
+                                                    'message_id': message_id
+                                                    })
+    return payload
+    
+def sendlater_ch(token, channel_id, message, time_sent):
+    payload = {
+        'token' : token,
+        'channel_id' : channel_id,
+        'message' : message,
+        'time_sent' : time_sent
+    }
+    
+    return requests.post(f'{BASE_URL}/message/sendlater/v1', json = payload)
+
+def sendlater_dm(token, dm_id, message, time_sent):
+    payload = {
+        'token' : token,
+        'dm_id' : dm_id,
+        'message' : message,
+        'time_sent' : time_sent
+    }
+    
+    return requests.post(f'{BASE_URL}/message/sendlaterdm/v1', json = payload)
+
+

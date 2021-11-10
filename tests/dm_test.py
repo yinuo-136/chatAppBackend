@@ -10,7 +10,7 @@ from src.other import clear_v1
 
 from wrapper.dm_wrappers import dm_create_wrapper, dm_list_wrapper, dm_remove_wrapper, dm_details_wrapper, dm_leave_wrapper, dm_messages_wrapper
 from wrapper.auth_wrappers import auth_register
-from wrapper.message_wrappers import senddm_message
+from wrapper.message_wrappers import senddm_message, react_message
 from wrapper.clear_wrapper import clear_http
 
 BASE_URL = config.url
@@ -112,6 +112,7 @@ def test_dm_create__success_basic():
 
     
     r = dm_create_wrapper(my_user_token, [valid_other_id])
+    dm_create_wrapper(my_user_token, [valid_other_id])
 
     status_code = r.status_code
     response_dict = json.loads(r.text)
@@ -465,13 +466,6 @@ def test_dm_remove__error__user_unauthorised():
 
 #################################### START OF dm_details_v1 TESTS
 
-    ''' 
-    Given a DM with ID dm_id that the authorised user is a member of, provide basic details about the DM.
-    
-    Parameters:     { token, dm_id }
-    Return Type:    { name, members }
-    '''
-
 
 def test_dm_details__success_basic():
 
@@ -526,19 +520,20 @@ def test_dm_details__success_basic():
 
     assert response_body == { 'name' : "jaydenmatthews, nicholasstathakis",
                               'members' : [
-                                  { 'u_id' : 2, 
-                                    'email' : "somerandom@gmail.com",
-                                    'name_first' : "Jayden",
-                                    'name_last' : "Matthews",
-                                    'handle_str' : "jaydenmatthews"
-                                },
                                   { 'u_id' : 1, 
                                     'email' : "test@gmail.com",
                                     'name_first' : "Nicholas",
                                     'name_last' : "Stathakis",
-                                    'handle_str' : "nicholasstathakis"
-                                }
-                                
+                                    'handle_str' : "nicholasstathakis",
+                                    'profile_img_url' : config.url + "static/default.jpg"
+                                },
+                                  { 'u_id' : 2, 
+                                    'email' : "somerandom@gmail.com",
+                                    'name_first' : "Jayden",
+                                    'name_last' : "Matthews",
+                                    'handle_str' : "jaydenmatthews",
+                                    'profile_img_url' : config.url + "static/default.jpg"
+                                }                             
                               ] 
                             }
 
@@ -626,21 +621,6 @@ def test_dm_details__fail__user_not_member__valid_dm_id():
 
 
 #################################### START OF dm_leave_v1 TESTS
-
-'''
-
-Given a DM ID, the user is removed as a member of this DM. 
-
-The creator is allowed to leave and the DM will still exist if this happens. 
-
-This does not update the name of the DM.
-
-
-    
-Parameters:{ token, dm_id }
-Return Type:{}
-
-'''
 
 
 def test_dm_leave__success__basic_member():
@@ -892,9 +872,9 @@ def test_dm_messages__success__basic_one_message():
 
     # send one message
 
-    senddm_message(user_1_token, dm_id, 'hello1')
+    m_id = senddm_message(user_1_token, dm_id, 'hello1')
 
-
+    react_message(user_1_token, m_id, 1)
     # Request messages for this dm
 
 

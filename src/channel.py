@@ -55,6 +55,17 @@ def channel_invite_v1(auth_user_id, channel_id, u_id):
     c_messages = channel[4]
     
     store['channels'].update({channel_id : (c_name, c_public, c_owners, c_members, c_messages)})
+
+    #notification implementations
+    user_info = store['user_details']
+    user_handle = user_info[auth_user_id][4]
+    channel_name = c_name
+    notification_message = f"{user_handle} added you to {channel_name}"
+    n_dict = {'channel_id': channel_id, 'dm_id': -1, 'notification_message': notification_message}
+    if u_id not in store['notifications']:
+        store['notifications'].update({u_id: [n_dict]}) 
+    else:
+        store['notifications'][u_id].append(n_dict)
     
     return {}
 
@@ -99,6 +110,7 @@ def channel_details_v1(auth_user_id, channel_id):
             'name_first': user[2],
             'name_last': user[3],
             'handle_str': user[4],
+            'profile_img_url' : user[5]
         })
 
     for u_id in channel[3]:
@@ -109,6 +121,7 @@ def channel_details_v1(auth_user_id, channel_id):
             'name_first': user[2],
             'name_last': user[3],
             'handle_str': user[4],
+            'profile_img_url' : user[5]
         })
 
     return {
@@ -164,12 +177,30 @@ def channel_messages_v1(auth_user_id, channel_id, start):
         message_id = m_id
         u_id = m_dict[m_id][0]
         message = m_dict[m_id][1]
+        shared_message = m_dict[m_id][4]
         time_created = m_dict[m_id][2]
+        is_pinned = m_dict[m_id][6]
+
+        #get the reacts list of the message
+        react_dict = m_dict[m_id][5]
+        reacts = []       
+        for react_id in react_dict.keys():
+            is_this_user_reacted = False
+            u_ids = react_dict[react_id]
+            if auth_user_id in u_ids:
+                is_this_user_reacted = True
+            reacts.append({'react_id': react_id,
+                        'u_ids': u_ids,
+                        'is_this_user_reacted': is_this_user_reacted})
+            
+
         m_info.append({
                 'message_id': message_id,
                 'u_id': u_id,
-                'message': message,
-                'time_created': time_created})    
+                'message': message + shared_message,
+                'time_created': time_created,
+                'reacts': reacts,
+                'is_pinned': is_pinned})    
     
     return {
         'messages': m_info,

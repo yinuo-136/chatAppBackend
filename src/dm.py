@@ -2,7 +2,7 @@ from src.error import InputError
 from src.error import AccessError
 from src.data_store import data_store
 from src.user import user_details
-from src.stats import stats_dm_create
+from src.stats import stats_dm_create, stats_update_utilization
 from itertools import islice
 
 
@@ -81,10 +81,23 @@ def dm_create_v1(owner_u_id, u_ids):
 
     data_store.set(store)
     
-    #call user/stats helper function and append initial object 
-    stats_dm_create()
+    
+
+    #notification implementations
+    user_info = store['user_details']
+    user_handle = user_info[owner_u_id][4]
+    notification_message = f"{user_handle} added you to {dm_name}"
+    n_dict = {'channel_id': -1, 'dm_id': dm_id, 'notification_message': notification_message}
+    for u_id in u_ids:
+        if u_id not in store['notifications']:
+            store['notifications'].update({u_id: [n_dict]}) 
+        else:
+            store['notifications'][u_id].append(n_dict)
 
     # dummy code for `dm_id` return
+    #call user/stats helper function and append initial object 
+    stats_dm_create()
+    stats_update_utilization()
     return { 'dm_id' : dm_id }
 
 
@@ -206,13 +219,11 @@ def dm_details_v1(auth_u_id, dm_id):
     all_members = specific_dm['u_ids']
     
     owner_id = specific_dm['owner_id'] #our owner id
-    if owner_id != None:
-        all_members.append(owner_id)
 
     #"dm_id" : {'name' : 'a, b, c', owner_id' : 1, 'u_ids': [2,3,4], 'messages' : {},}
 
 
-    user_is_member = (auth_u_id in all_members)
+    user_is_member = (auth_u_id in all_members) or (auth_u_id == owner_id)
 
 
     if (not user_is_member):
@@ -223,6 +234,9 @@ def dm_details_v1(auth_u_id, dm_id):
 
     name = specific_dm['name']
     members = []
+    
+    if owner_id != None:
+        members.append(user_details(owner_id))
 
     for u_id in all_members:
         members.append(user_details(u_id)) #method taken from `user.py` which gets our `user` data structure
@@ -338,9 +352,8 @@ def dm_messages_v1(auth_u_id, dm_id, start):
     all_members = specific_dm['u_ids']
     
     owner_id = specific_dm['owner_id'] #our owner id
-    all_members.append(owner_id)
 
-    user_is_member = (auth_u_id in all_members)
+    user_is_member = (auth_u_id in all_members) or (auth_u_id == owner_id)
 
 
     if (not user_is_member):
@@ -355,10 +368,6 @@ def dm_messages_v1(auth_u_id, dm_id, start):
     # index 0 is the first message, therefore start = 0 will have len 1. thus there are no msgs applicable if start > len(msgs) - 1
     if (start > num_msgs):
         raise InputError("start is greater than the total number of messages in the channel")
-
-
-    
-    
 
 
     # lets get to the implementation
@@ -384,14 +393,29 @@ def dm_messages_v1(auth_u_id, dm_id, start):
         message_id = m_id
         u_id = store_messages[m_id][0]
         message = store_messages[m_id][1]
+        shared_message = store_messages[m_id][4]
         time_created = store_messages[m_id][2]
+        is_pinned = store_messages[m_id][6]
 
+        #get the reacts list of the message
+        react_dict = store_messages[m_id][5]
+        reacts = []       
+        for react_id in react_dict.keys():
+            is_this_user_reacted = False
+            u_ids = react_dict[react_id]
+            if auth_u_id in u_ids:
+                is_this_user_reacted = True
+            reacts.append({'react_id': react_id,
+                        'u_ids': u_ids,
+                        'is_this_user_reacted': is_this_user_reacted})
 
         messages.append({
                 'message_id': message_id,
                 'u_id': u_id,
-                'message': message,
-                'time_created': time_created
+                'message': message + shared_message,
+                'time_created': time_created,
+                'reacts': reacts,
+                'is_pinned': is_pinned
             })    
 
 

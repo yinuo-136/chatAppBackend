@@ -41,6 +41,12 @@ initial_object = {
         'messages_exist': [{'num_messages_exist','time_stamp'}],
         'utilization_rate'
     },
+    'notifications': {},
+    'standups' : {},
+    'unique_codes' : [],
+    'user_stats' : {},
+    'workspace_stats' : {},
+>>>>>>> 1cdcefefffc537ba6658608ee16baa7454792292
 }
 ## YOU SHOULD MODIFY THIS OBJECT ABOVE
 
