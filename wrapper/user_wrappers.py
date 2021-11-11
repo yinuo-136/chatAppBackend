@@ -50,4 +50,7 @@ def upload_photo(token, img_url, x1, y1, x2, y2):
     return requests.post(config.url + "user/profile/uploadphoto/v1", json = payload)  
 
 
-
+def users_stats(token):
+    payload = {'token' : token}
+    
+    return requests.get(config.url + "users/stats/v1", params = payload)
