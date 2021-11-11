@@ -178,12 +178,12 @@ def user_stats_v1(u_id):
 
     #Involvement
     if denominator == 0:
-        involvement = 0
+        involvement = 0.0
     else:
         involvement = numerator / denominator
     
     if involvement > 1:
-        involvement = 1
+        involvement = 1.0
     
     user_stats = store['user_stats'][u_id]
     user_stats.update({'involvement_rate' : involvement})

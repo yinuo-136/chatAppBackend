@@ -149,7 +149,7 @@ def auth_register_v1(email, password, name_first, name_last):
     current_time = int(timestamp)  
     
     user_stats.update({'channels_joined' : [{'num_channels_joined' : 0, 'time_stamp' : current_time}]})
-    user_stats.update({'dms_joined' : [{'num_dms_sent' : 0, 'time_stamp' : current_time}]})     
+    user_stats.update({'dms_joined' : [{'num_dms_joined' : 0, 'time_stamp' : current_time}]})     
     user_stats.update({'messages_sent' : [{'num_messages_sent' : 0, 'time_stamp' : current_time}]})
     
     store['user_stats'].update({new_id : user_stats})  
