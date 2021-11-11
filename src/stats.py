@@ -67,13 +67,13 @@ def stats_update_utilization():
     for channel in store['channels'].values():
         members = channel[3]
         for u_id in members:
-            if u_id is not in joined_users:
+            if u_id not in joined_users:
                 joined_users.append(u_id)
     
     for dm in store['dms'].values():
         members = dm['u_ids']
         for u_id in members:
-            if u_id is not in joined_users:
+            if u_id not in joined_users:
                 joined_users.append(u_id)
 
     num_joined_users = len(joined_users)
