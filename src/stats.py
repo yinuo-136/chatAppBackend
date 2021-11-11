@@ -31,6 +31,18 @@ def stats_dm_create():
 		'num_dms_exist' : num_dms,
 		'time_stamp' : current_time()
 	})
+	
+	
+def stats_dm_remove():
+    store = data_store.get()
+    
+    dms_exist = store["workspace_stats"]["dms_exist"]
+    num_dms = dms_exist[-1]['num_dms_exist'] - 1
+    
+    dms_exist.append({
+		'num_dms_exist' : num_dms,
+		'time_stamp' : current_time()
+	})
 
 def stats_message_send():
 	store = data_store.get()
