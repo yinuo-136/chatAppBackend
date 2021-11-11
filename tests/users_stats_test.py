@@ -5,7 +5,7 @@ from wrapper.auth_wrappers import auth_register
 from wrapper.user_wrappers import users_stats
 from wrapper.channels_wrappers import user_create_channel
 
-#utilisation_rate = num_users_who_have_joined_at_least_one_channel_or_dm / num_users
+#utilisation_rate calc = num_users_who_have_joined_at_least_one_channel_or_dm / num_users
 
 def test_users_stats_new_user():
 	clear_http()
