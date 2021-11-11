@@ -256,6 +256,7 @@ def message_remove_v1(user_id, message_id):
     m_dict.pop(message_id) 
     #user/stats helper function calls
     stats_message_send() 
+    stats_update_utilization()
     return {} 
 
 
