@@ -730,7 +730,7 @@ def admin_change_permission():
     save_datastore()
     return dumps({})
 
-@APP.route("users/stats/v1", methods=['GET'])
+@APP.route("/users/stats/v1", methods=['GET'])
 def user_stats():
     #token implemented
     token = request.args.get('token')
