@@ -2,7 +2,7 @@ from src.error import InputError
 from src.error import AccessError
 from src.data_store import data_store
 from src.user import user_details
-from src.stats import stats_dm_create, stats_update_utilization
+from src.stats import stats_dm_create, stats_update_utilization, stats_dm_remove
 from itertools import islice
 
 
@@ -185,7 +185,8 @@ def dm_remove_v1(u_id, dm_id):
     #print(all_dm_dict)
     all_dm_dict.pop(dm_id) # remove this entry from the dm dict
     #print(all_dm_dict)
-
+    stats_dm_remove()
+    stats_update_utilization()
     
     return {}
 
