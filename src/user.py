@@ -160,7 +160,8 @@ def user_stats_v1(u_id):
     #Denominator
     num_channels = len(store['channels'])
     num_dms = len(store['dms'])
-    num_msgs = len(store['messages'])
+    num_msgs = len(store['messages']) + len(store['standups'])
+
 
     denominator = num_channels + num_dms + num_msgs
 
