@@ -2,6 +2,7 @@ from src.error import InputError
 from src.error import AccessError
 from src.data_store import data_store
 from src.user import user_details
+from src.user_stats import user_stats_dms_join, user_stats_dms_leave
 from src.stats import stats_dm_create, stats_update_utilization, stats_dm_remove
 from itertools import islice
 
@@ -94,6 +95,14 @@ def dm_create_v1(owner_u_id, u_ids):
         else:
             store['notifications'][u_id].append(n_dict)
 
+
+    #Analytics
+    #Owner
+    user_stats_dms_join(owner_u_id)
+    #Members
+    for member in u_ids:
+        user_stats_dms_join(member)
+
     # dummy code for `dm_id` return
     #call user/stats helper function and append initial object 
     stats_dm_create()
@@ -177,13 +186,19 @@ def dm_remove_v1(u_id, dm_id):
     if (owner_id != u_id):
         raise AccessError("dm_id is valid and the authorised user is not the original DM creator")
 
-
+    #Analytics
+    #Owner
+    user_stats_dms_leave(u_id)
+    #Members
+    for member in store['dms'][dm_id]['u_ids']:
+        user_stats_dms_leave(member)
 
     # proceed to goods
 
     #print(all_dm_dict)
     all_dm_dict.pop(dm_id) # remove this entry from the dm dict
     #print(all_dm_dict)
+
     stats_dm_remove()  
     return {}
 
@@ -279,9 +294,10 @@ def dm_leave_v1(auth_u_id, dm_id):
 
     # we are gravy
 
-    is_owner = (auth_u_id is owner_id)
+    #Analytics
+    user_stats_dms_leave(auth_u_id)
 
-    
+    is_owner = (auth_u_id is owner_id)
 
     # STRUCTURE:
     #       "dm_id" : {'name' : 'a, b, c', owner_id' : 1, 'u_ids': [2,3,4], 'messages' : {},}

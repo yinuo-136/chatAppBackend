@@ -10,12 +10,14 @@ def send_message(token, channel_id, message):
                                                                 'message': message})
     r = payload.json()
     return r['message_id']
+    
 def senddm_message(token, dm_id, message):
     payload = requests.post(f'{BASE_URL}/message/senddm/v1', json={'token': token,
                                                                 'dm_id': dm_id,
                                                                 'message': message})
     r = payload.json()
     return r['message_id']
+
 def edit_message(token, message_id, message):
     payload = requests.put(f'{BASE_URL}/message/edit/v1', json={'token': token,
                                                     'message_id': message_id,

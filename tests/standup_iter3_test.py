@@ -304,6 +304,30 @@ def test_standup_active__fail__user_not_member():
 
 
 #################### BEGIN OF standup/send/v1
+def test_standup_no_messages():
+    #clear
+
+    clear_http()
+
+    # Register a user
+
+
+    r1 = auth_register("test1@gmail.com", "password123", "John", "Smith")
+    token = r1.json()['token']
+
+    # create a channel
+
+
+    c_id1 = user_create_channel(token, "testchannel1", False)
+
+
+    # start a standup
+
+    r = standup_create_wrapper(token, c_id1, 1) #create for 1 seconds
+
+    sleep(1)
+
+    assert r.status_code == SUCCESS
 
 
 

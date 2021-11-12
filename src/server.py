@@ -14,8 +14,7 @@ from src.channel import channel_leave_v1, channel_messages_v1, channel_addowner_
 from src.channels import channels_listall_v1, channels_create_v1, channels_list_v1
 from src.message import message_send_v1, message_senddm_v1, message_edit_v1, message_remove_v1, message_share_v1, message_react_v1, message_unreact_v1, message_pin_v1, message_unpin_v1, message_send_later_channel, message_send_later_dm
 from src.auth import auth_login_v1, auth_register_v1, auth_logout_v1, auth_invalidate_session, auth_store_session_id
-from src.user import user_details, list_all_users, user_set_email, user_set_handle, user_set_name, users_stats_v1 
-from src.user import user_details, list_all_users, user_set_email, user_set_handle, user_set_name, user_profile_uploadphoto
+from src.user import user_details, list_all_users, user_set_email, user_set_handle, user_set_name, user_profile_uploadphoto, user_stats_v1, users_stats_v1 
 from src.notifications import notifications_get_v1
 from src.database import save_datastore, load_datastore
 from src.search import search_v1
@@ -294,6 +293,16 @@ def set_user_handle():
     save_datastore()
     return dumps({})
 
+@APP.route("/user/stats/v1", methods=['GET'])
+def user_stats():
+    token = request.args.get('token')
+    token_checker(token)
+
+    payload = jwt.decode(token, config.SECRET, algorithms=["HS256"])
+    user_id = payload.get('user_id')
+    stats = user_stats_v1(user_id)
+
+    return dumps(stats)
 
 @APP.route("/admin/user/remove/v1", methods=['DELETE'])
 def admin_remove():
@@ -731,7 +740,7 @@ def admin_change_permission():
     return dumps({})
 
 @APP.route("/users/stats/v1", methods=['GET'])
-def user_stats():
+def users_stats():
     #token implemented
     token = request.args.get('token')
     #token check 

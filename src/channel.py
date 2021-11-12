@@ -1,6 +1,7 @@
 from src.error import InputError
 from src.error import AccessError
 from src.data_store import data_store
+from src.user_stats import user_stats_channels_join, user_stats_channels_leave
 from itertools import islice
 
 
@@ -66,6 +67,9 @@ def channel_invite_v1(auth_user_id, channel_id, u_id):
         store['notifications'].update({u_id: [n_dict]}) 
     else:
         store['notifications'][u_id].append(n_dict)
+
+    #Analytics
+    user_stats_channels_join(u_id)
     
     return {}
 
@@ -256,6 +260,9 @@ def channel_join_v1(auth_user_id, channel_id):
     
     store['channels'].update({channel_id : (c_name, c_public, c_owners, c_members, c_messages)})
 
+    #Analytics
+    user_stats_channels_join(auth_user_id)
+
     return {}
 
 
@@ -273,7 +280,10 @@ def channel_leave_v1(user_id, channel_id):
     if user_id in channel_info[2]:
         channel_info[2].remove(user_id)
 
-    channel_info[3].remove(user_id) 
+    channel_info[3].remove(user_id)
+
+    #Analytics
+    user_stats_channels_leave(user_id)
     
     return {}
 
@@ -298,7 +308,6 @@ def channel_addowner_v1(auth_user_id, channel_id, u_id):
         raise InputError("u_id is invalid")
 
     #check if u_id is not a member of channel
-    
     if u_id not in channel[3]:
         raise InputError("u_id is not a member of the channel")
 

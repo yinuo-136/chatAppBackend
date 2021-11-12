@@ -1,6 +1,7 @@
 from src.error import InputError
 from src.error import AccessError
 from src.data_store import data_store
+from src.user_stats import user_stats_channels_join
 from datetime import datetime, timezone
 from src.stats import stats_channel_create
 
@@ -84,6 +85,9 @@ def channels_create_v1(auth_user_id, name, is_public):
     members = [auth_user_id]
     messages = []
     store['channels'].update({c_id : (name, is_public, owner, members, messages)})
+
+    #Analytics
+    user_stats_channels_join(auth_user_id)
     
     #Append and change initial object to users/stats
     stats_channel_create()

@@ -29,3 +29,7 @@ def channel_join(token, channel_id):
 	    
     return requests.post(config.url + "channel/join/v2", json = payload)
 
+def channel_leave(token, channel_id):
+    payload = { 'token' : token, 'channel_id' : channel_id }
+
+    return requests.post(config.url + "channel/leave/v1", json = payload)

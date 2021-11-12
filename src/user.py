@@ -165,5 +165,41 @@ def user_profile_uploadphoto(user_id, img_url, x_start, y_start, x_end, y_end):
     
     store['user_details'].update({user_id : (user[0], user[1], user[2], user[3], user[4] , new_img_url)})
     
+def user_stats_v1(u_id):
+    store = data_store.get()
     
+    #(sum(num_channels_joined, num_dms_joined, num_msgs_sent)) / (sum(num_channels, num_dms, num_msgs))
+    #If denominator = 0 then involvement = 0, involvement capped at 1.
+    #Denominator
+    num_channels = len(store['channels'])
+    num_dms = len(store['dms'])
+    num_msgs = len(store['messages'])
 
+
+    denominator = num_channels + num_dms + num_msgs
+
+    #Numerator
+    channels = store['user_stats'][u_id]['channels_joined']
+    num_channels_joined = channels[-1]['num_channels_joined']
+
+    dms = store['user_stats'][u_id]['dms_joined']
+    num_dms_joined = dms[-1]['num_dms_joined']
+
+    msgs = store['user_stats'][u_id]['messages_sent']
+    num_msgs_sent = msgs[-1]['num_messages_sent']
+
+    numerator = num_channels_joined + num_dms_joined + num_msgs_sent
+
+    #Involvement
+    if denominator == 0:
+        involvement = 0.0
+    else:
+        involvement = numerator / denominator
+    
+    if involvement > 1:
+        involvement = 1.0
+    
+    user_stats = store['user_stats'][u_id]
+    user_stats.update({'involvement_rate' : involvement})
+
+    return user_stats
