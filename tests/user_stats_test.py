@@ -12,15 +12,17 @@ from wrapper.message_wrappers import send_message, senddm_message, sendlater_ch,
 from wrapper.standup_wrappers import standup_create_wrapper
 
 @pytest.fixture
-def current_time():    
+def time():    
     dt = datetime.now(timezone.utc)
     timestamp = dt.replace(tzinfo=timezone.utc).timestamp()
     return int(timestamp)   
 
 
-def test_stats_new_user(current_time):
+def test_stats_new_user(time):
     clear_http()
-
+    
+    current_time = time    
+    
     r = auth_register("test@gmail.com", "password", "Steven", "Wolfe")
     token = r.json()['token']
 
@@ -32,8 +34,10 @@ def test_stats_new_user(current_time):
                          'involvement_rate' : 0.0}
 
 
-def test_stats_channel_create_join_leave_invite(current_time):
+def test_stats_channel_create_join_leave_invite(time):
     clear_http()
+    
+    current_time = time    
 
     user = auth_register("test@gmail.com", "password", "Steven", "Wolfe")
     token = user.json()['token']
@@ -63,10 +67,11 @@ def test_stats_channel_create_join_leave_invite(current_time):
                          'involvement_rate' : 1.0} 
 
 
-def test_stats_dms_create_remove(current_time):
+def test_stats_dms_create_remove(time):
     clear_http()
 
-
+    current_time = time    
+    
     user = auth_register("test@gmail.com", "password", "Steven", "Wolfe")
     token = user.json()['token']
     user2 = auth_register("test2@gmail.com", "password", "Johnny", "Sins")
@@ -105,8 +110,10 @@ def test_stats_dms_create_remove(current_time):
                          'involvement_rate' : 0.0}
 
 
-def test_stats_dms_leave(current_time):
+def test_stats_dms_leave(time):
     clear_http()
+
+    current_time = time    
 
     user = auth_register("test@gmail.com", "password", "Steven", "Wolfe")
     token = user.json()['token']
@@ -133,8 +140,10 @@ def test_stats_dms_leave(current_time):
                          'involvement_rate' : 0.0}
 
 
-def test_stats_messages_send(current_time):
+def test_stats_messages_send(time):
     clear_http()
+
+    current_time = time    
 
     user = auth_register("test@gmail.com", "password", "Johnny", "Sins")
     token = user.json()['token']
@@ -146,18 +155,22 @@ def test_stats_messages_send(current_time):
     send_message(token, channel_id, "Hi, engineer, doctor, dentist, teacher, pizza delivery guy... here.")
     dm_create_wrapper(token, [u_id2])
     senddm_message(token2, 1, "Bing Chilling")
-    sendlater_ch(token, channel_id, "Hello", current_time)
-    sendlater_dm(token2, 1, "Lao Gan Ma", current_time)
-    sendlater_dm(token2, 1, "Lao Gan Ma", current_time)
+    sendlater_ch(token, channel_id, "Hello", current_time + 1)
+    sendlater_dm(token2, 1, "Lao Gan Ma", current_time + 1)
+    sendlater_dm(token2, 1, "Lao Gan Ma", current_time + 1)
     standup_create_wrapper(token, channel_id, 1)
     sleep(1)
 
     '''
-    Stats Summary
+    User:
     Channels = 1
     DMs = 1
-    Standups = 1
-    Messages = 5
+    Messages = 3
+    
+    User2:
+    Channels = 0
+    DMs = 1
+    Messages = 3
 
     Expected Involvement (7 Denominator)
     Johnny Sins = 5/8
@@ -171,8 +184,8 @@ def test_stats_messages_send(current_time):
                                         {'num_dms_joined': 1, 'time_stamp': current_time}],
                          'messages_sent': [{'num_messages_sent': 0, 'time_stamp': current_time},
                                            {'num_messages_sent': 1, 'time_stamp': current_time},
-                                           {'num_messages_sent': 2, 'time_stamp': current_time},
-                                           {'num_messages_sent': 3, 'time_stamp': current_time}],
+                                           {'num_messages_sent': 2, 'time_stamp': current_time + 1},
+                                           {'num_messages_sent': 3, 'time_stamp': current_time + 1}],
                          'involvement_rate' : 0.625}
 
 
@@ -182,6 +195,6 @@ def test_stats_messages_send(current_time):
                                         {'num_dms_joined': 1, 'time_stamp': current_time}],
                          'messages_sent': [{'num_messages_sent': 0, 'time_stamp': current_time},
                                            {'num_messages_sent': 1, 'time_stamp': current_time},
-                                           {'num_messages_sent': 2, 'time_stamp': current_time},
-                                           {'num_messages_sent': 3, 'time_stamp': current_time}],
+                                           {'num_messages_sent': 2, 'time_stamp': current_time + 1},
+                                           {'num_messages_sent': 3, 'time_stamp': current_time + 1}],
                          'involvement_rate' : 0.5}
