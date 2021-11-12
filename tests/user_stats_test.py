@@ -11,13 +11,15 @@ from wrapper.dm_wrappers import dm_create_wrapper, dm_remove_wrapper, dm_leave_w
 from wrapper.message_wrappers import send_message, senddm_message, sendlater_ch, sendlater_dm
 from wrapper.standup_wrappers import standup_create_wrapper
 
-
-def test_stats_new_user():
-    clear_http()
-
+@pytest.fixture
+def current_time():    
     dt = datetime.now(timezone.utc)
     timestamp = dt.replace(tzinfo=timezone.utc).timestamp()
-    current_time = int(timestamp)
+    return int(timestamp)   
+
+
+def test_stats_new_user(current_time):
+    clear_http()
 
     r = auth_register("test@gmail.com", "password", "Steven", "Wolfe")
     token = r.json()['token']
@@ -30,12 +32,8 @@ def test_stats_new_user():
                          'involvement_rate' : 0.0}
 
 
-def test_stats_channel_create_join_leave_invite():
+def test_stats_channel_create_join_leave_invite(current_time):
     clear_http()
-
-    dt = datetime.now(timezone.utc)
-    timestamp = dt.replace(tzinfo=timezone.utc).timestamp()
-    current_time = int(timestamp)
 
     user = auth_register("test@gmail.com", "password", "Steven", "Wolfe")
     token = user.json()['token']
@@ -65,12 +63,9 @@ def test_stats_channel_create_join_leave_invite():
                          'involvement_rate' : 1.0} 
 
 
-def test_stats_dms_create_remove():
+def test_stats_dms_create_remove(current_time):
     clear_http()
 
-    dt = datetime.now(timezone.utc)
-    timestamp = dt.replace(tzinfo=timezone.utc).timestamp()
-    current_time = int(timestamp)
 
     user = auth_register("test@gmail.com", "password", "Steven", "Wolfe")
     token = user.json()['token']
@@ -110,12 +105,8 @@ def test_stats_dms_create_remove():
                          'involvement_rate' : 0.0}
 
 
-def test_stats_dms_leave():
+def test_stats_dms_leave(current_time):
     clear_http()
-
-    dt = datetime.now(timezone.utc)
-    timestamp = dt.replace(tzinfo=timezone.utc).timestamp()
-    current_time = int(timestamp)
 
     user = auth_register("test@gmail.com", "password", "Steven", "Wolfe")
     token = user.json()['token']
@@ -142,12 +133,8 @@ def test_stats_dms_leave():
                          'involvement_rate' : 0.0}
 
 
-def test_stats_messages_send():
+def test_stats_messages_send(current_time):
     clear_http()
-
-    dt = datetime.now(timezone.utc)
-    timestamp = dt.replace(tzinfo=timezone.utc).timestamp()
-    current_time = int(timestamp)
 
     user = auth_register("test@gmail.com", "password", "Johnny", "Sins")
     token = user.json()['token']
