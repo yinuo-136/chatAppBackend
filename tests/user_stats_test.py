@@ -131,6 +131,18 @@ def test_stats_messages_send():
     standup_create_wrapper(token, channel_id, 1)
     sleep(1)
 
+    '''
+    Stats Summary
+    Channels = 1
+    DMs = 1
+    Standups = 1
+    Messages = 5
+
+    Expected Involvement (7 Denominator)
+    Johnny Sins = 5/8
+    Zhong Xina = 4/8
+    '''
+
     r1 = user_stats(token)
     assert r1.json() == {'channels_joined': [{'num_channels_joined': 0, 'time_stamp': current_time},
                                              {'num_channels_joined': 1, 'time_stamp': current_time}],
@@ -152,16 +164,3 @@ def test_stats_messages_send():
                                            {'num_messages_sent': 2, 'time_stamp': current_time},
                                            {'num_messages_sent': 3, 'time_stamp': current_time}],
                          'involvement_rate' : 0.5}
-
-'''
-Stats Summary
-Channels = 1
-DMs = 1
-Standups = 1
-Messages = 5
-
-Expected Involvement (7 Denominator)
-Johnny Sins = 5/8
-Zhong Xina = 4/8
-'''
-
