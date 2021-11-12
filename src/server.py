@@ -740,7 +740,7 @@ def admin_change_permission():
     return dumps({})
 
 @APP.route("/users/stats/v1", methods=['GET'])
-def user_stats():
+def users_stats():
     #token implemented
     token = request.args.get('token')
     #token check 
