@@ -2,6 +2,7 @@ from src.error import InputError
 from src.error import AccessError
 from src.data_store import data_store
 from src.user import user_details
+from src.stats import stats_dm_create, stats_update_utilization, stats_dm_remove
 from itertools import islice
 
 
@@ -79,6 +80,8 @@ def dm_create_v1(owner_u_id, u_ids):
     }})
 
     data_store.set(store)
+    
+    
 
     #notification implementations
     user_info = store['user_details']
@@ -91,8 +94,9 @@ def dm_create_v1(owner_u_id, u_ids):
         else:
             store['notifications'][u_id].append(n_dict)
 
-
     # dummy code for `dm_id` return
+    #call user/stats helper function and append initial object 
+    stats_dm_create()
     return { 'dm_id' : dm_id }
 
 
@@ -180,8 +184,7 @@ def dm_remove_v1(u_id, dm_id):
     #print(all_dm_dict)
     all_dm_dict.pop(dm_id) # remove this entry from the dm dict
     #print(all_dm_dict)
-
-    
+    stats_dm_remove()  
     return {}
 
 

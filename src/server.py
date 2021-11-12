@@ -12,9 +12,9 @@ from src.dm import dm_create_v1, dm_list_v1, dm_remove_v1, dm_details_v1, dm_lea
 from src.standup import standup_create_v1, standup_active_v1, standup_send_v1
 from src.channel import channel_leave_v1, channel_messages_v1, channel_addowner_v1, channel_details_v1, channel_removeowner_v1, channel_invite_v1, channel_join_v1
 from src.channels import channels_listall_v1, channels_create_v1, channels_list_v1
-
 from src.message import message_send_v1, message_senddm_v1, message_edit_v1, message_remove_v1, message_share_v1, message_react_v1, message_unreact_v1, message_pin_v1, message_unpin_v1, message_send_later_channel, message_send_later_dm
 from src.auth import auth_login_v1, auth_register_v1, auth_logout_v1, auth_invalidate_session, auth_store_session_id
+from src.user import user_details, list_all_users, user_set_email, user_set_handle, user_set_name, users_stats_v1 
 from src.user import user_details, list_all_users, user_set_email, user_set_handle, user_set_name, user_profile_uploadphoto
 from src.notifications import notifications_get_v1
 from src.database import save_datastore, load_datastore
@@ -730,6 +730,16 @@ def admin_change_permission():
     save_datastore()
     return dumps({})
 
+@APP.route("/users/stats/v1", methods=['GET'])
+def user_stats():
+    #token implemented
+    token = request.args.get('token')
+    #token check 
+    token_checker(token)
+    
+    workspace_stats = users_stats_v1()
+    return dumps(workspace_stats)
+    
 @APP.route("/message/share/v1", methods=['POST'])
 def message_share():
     data = request.get_json()

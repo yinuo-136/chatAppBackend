@@ -6,6 +6,7 @@ from PIL import Image
 from src.config import url
 from src.data_store import data_store
 from src.error import InputError, AccessError
+from src.stats import stats_update_utilization
 
 
 
@@ -99,6 +100,18 @@ def user_set_handle(u_id, handle_str):
     
     store['user_details'].update({u_id: user})
     
+
+def users_stats_v1():
+    store = data_store.get()
+    workspace_stats_data = store['workspace_stats']
+   
+    #update utilization_rate
+    stats_update_utilization()
+    
+    return {
+        "workspace_stats": workspace_stats_data
+    }
+
     
 def user_profile_uploadphoto(user_id, img_url, x_start, y_start, x_end, y_end):
     store = data_store.get()
@@ -153,5 +166,4 @@ def user_profile_uploadphoto(user_id, img_url, x_start, y_start, x_end, y_end):
     store['user_details'].update({user_id : (user[0], user[1], user[2], user[3], user[4] , new_img_url)})
     
     
-    
-    
+
