@@ -113,8 +113,6 @@ def test_stats_dms_create_remove(time):
 def test_stats_dms_leave(time):
     clear_http()
 
-    current_time = time    
-
     user = auth_register("test@gmail.com", "password", "Steven", "Wolfe")
     token = user.json()['token']
     user2 = auth_register("test2@gmail.com", "password", "Johnny", "Sins")
