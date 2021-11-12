@@ -37,7 +37,7 @@ def stats_dm_remove():
     store = data_store.get()
     
     dms_exist = store["workspace_stats"]["dms_exist"]
-    num_dms = dms_exist[-1]['num_dms_exist'] - 1
+    num_dms = len(store['dms'])
     
     dms_exist.append({
 		'num_dms_exist' : num_dms,
