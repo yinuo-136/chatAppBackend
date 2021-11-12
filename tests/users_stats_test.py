@@ -96,7 +96,7 @@ def test_send_message_remove(current_time):
 
     r4 = users_stats(token)
     
-    assert r4.json()['workspace_stats']['dms_exist'][-1]['num_messages_exist'] == 0 
+    assert r4.json()['workspace_stats']['messages_exist'][-1]['num_messages_exist'] == 0 
     assert r4.json()['workspace_stats']['utilization_rate'] == 1.0 
     
 def test_stats_sendlater(current_time):
