@@ -737,11 +737,9 @@ def user_stats():
     #token check 
     token_checker(token)
     
-    payload = jwt.decode(token, config.SECRET, algorithms=["HS256"])
-    user_id = payload.get('user_id')
     
     
-    workspace_stats = users_stats_v1(user_id)
+    workspace_stats = users_stats_v1()
     return dumps(workspace_stats)
     
 @APP.route("/message/share/v1", methods=['POST'])
