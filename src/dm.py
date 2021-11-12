@@ -287,10 +287,10 @@ def dm_leave_v1(auth_u_id, dm_id):
 
     # we are gravy
 
-    is_owner = (auth_u_id is owner_id)
-
     #Analytics
     user_stats_dms_leave(auth_u_id)
+
+    is_owner = (auth_u_id is owner_id)
 
     # STRUCTURE:
     #       "dm_id" : {'name' : 'a, b, c', owner_id' : 1, 'u_ids': [2,3,4], 'messages' : {},}

@@ -11,6 +11,7 @@ from wrapper.dm_wrappers import dm_create_wrapper, dm_remove_wrapper, dm_leave_w
 from wrapper.message_wrappers import send_message, senddm_message, sendlater_ch, sendlater_dm
 from wrapper.standup_wrappers import standup_create_wrapper
 
+
 def test_stats_new_user():
     clear_http()
 
@@ -27,6 +28,7 @@ def test_stats_new_user():
                          'dms_joined': [{'num_dms_joined': 0, 'time_stamp': current_time}],
                          'messages_sent': [{'num_messages_sent': 0, 'time_stamp': current_time}],
                          'involvement_rate' : 0.0}
+
 
 def test_stats_channel_create_join_leave_invite():
     clear_http()
@@ -62,7 +64,8 @@ def test_stats_channel_create_join_leave_invite():
                          'messages_sent': [{'num_messages_sent': 0, 'time_stamp': current_time}],
                          'involvement_rate' : 1.0} 
 
-def test_stats_dms_create_remove_leave():
+
+def test_stats_dms_create_remove():
     clear_http()
 
     dt = datetime.now(timezone.utc)
@@ -77,10 +80,8 @@ def test_stats_dms_create_remove_leave():
     user3 = auth_register("test3@gmail.com", "password", "Zhong", "Xina")
     u_id3 = user3.json()['auth_user_id']
     token3 = user3.json()['token']
-    u_ids = [u_id2, u_id3]
 
-    dm_create_wrapper(token, u_ids)
-    dm_leave_wrapper(token2, 1)
+    dm_create_wrapper(token, [u_id2, u_id3])
     dm_remove_wrapper(token, 1)
     
 
@@ -107,6 +108,39 @@ def test_stats_dms_create_remove_leave():
                                         {'num_dms_joined': 0, 'time_stamp': current_time}],
                          'messages_sent': [{'num_messages_sent': 0, 'time_stamp': current_time}],
                          'involvement_rate' : 0.0}
+
+
+def test_stats_dms_leave():
+    clear_http()
+
+    dt = datetime.now(timezone.utc)
+    timestamp = dt.replace(tzinfo=timezone.utc).timestamp()
+    current_time = int(timestamp)
+
+    user = auth_register("test@gmail.com", "password", "Steven", "Wolfe")
+    token = user.json()['token']
+    user2 = auth_register("test2@gmail.com", "password", "Johnny", "Sins")
+    token2 = user2.json()['token']
+    u_id2 = user2.json()['auth_user_id']
+
+    dm_create_wrapper(token, [u_id2])
+    dm_leave_wrapper(token2, 1)
+
+    r1 = user_stats(token)
+    assert r1.json() == {'channels_joined': [{'num_channels_joined': 0, 'time_stamp': current_time}],
+                         'dms_joined': [{'num_dms_joined': 0, 'time_stamp': current_time},
+                                        {'num_dms_joined': 1, 'time_stamp': current_time}],
+                         'messages_sent': [{'num_messages_sent': 0, 'time_stamp': current_time}],
+                         'involvement_rate' : 1.0}   
+
+    r2 = user_stats(token2)
+    assert r2.json() == {'channels_joined': [{'num_channels_joined': 0, 'time_stamp': current_time}],
+                         'dms_joined': [{'num_dms_joined': 0, 'time_stamp': current_time},
+                                        {'num_dms_joined': 1, 'time_stamp': current_time},
+                                        {'num_dms_joined': 0, 'time_stamp': current_time}],
+                         'messages_sent': [{'num_messages_sent': 0, 'time_stamp': current_time}],
+                         'involvement_rate' : 0.0}
+
 
 def test_stats_messages_send():
     clear_http()
