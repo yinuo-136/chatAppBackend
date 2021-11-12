@@ -7,7 +7,7 @@ from wrapper.auth_wrappers import auth_register
 from wrapper.user_wrappers import users_stats
 from wrapper.channels_wrappers import user_create_channel
 from wrapper.dm_wrappers import dm_create_wrapper, dm_remove_wrapper
-from wrapper.message_wrappers import send_message, sendlater_ch
+from wrapper.message_wrappers import send_message, sendlater_ch, remove_messages
 
 
 #utilisation_rate calc = num_users_who_have_joined_at_least_one_channel_or_dm / num_users
@@ -77,7 +77,7 @@ def test_users_dm_createremove(current_time):
     assert r4.json()['workspace_stats']['dms_exist'][-1]['num_dms_exist'] == 0 
     assert r4.json()['workspace_stats']['utilization_rate'] == 0.0 
  
-def test_send_message(current_time):   
+def test_send_message_remove(current_time):   
     clear_http()
     
     r = auth_register("test_1@gmail.com", "password", "John", "Smith")
@@ -91,6 +91,13 @@ def test_send_message(current_time):
 
     assert r1.json()['workspace_stats']['messages_exist'][-1]['num_messages_exist'] == 1
     assert r1.json()['workspace_stats']['utilization_rate'] == 1.0
+
+    remove_messages(token, 1)
+
+    r4 = users_stats(token)
+    
+    assert r4.json()['workspace_stats']['dms_exist'][-1]['num_messages_exist'] == 0 
+    assert r4.json()['workspace_stats']['utilization_rate'] == 1.0 
     
 def test_stats_sendlater(current_time):
     clear_http()
