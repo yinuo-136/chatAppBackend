@@ -180,20 +180,18 @@ def dm_remove_v1(u_id, dm_id):
     if (owner_id != u_id):
         raise AccessError("dm_id is valid and the authorised user is not the original DM creator")
 
-
-
-    # proceed to goods
-
-    #print(all_dm_dict)
-    all_dm_dict.pop(dm_id) # remove this entry from the dm dict
-    #print(all_dm_dict)
-
     #Analytics
     #Owner
     user_stats_dms_leave(u_id)
     #Members
     for member in store['dms'][dm_id]['u_ids']:
         user_stats_dms_leave(member)
+
+    # proceed to goods
+
+    #print(all_dm_dict)
+    all_dm_dict.pop(dm_id) # remove this entry from the dm dict
+    #print(all_dm_dict)
 
     return {}
 
@@ -291,7 +289,8 @@ def dm_leave_v1(auth_u_id, dm_id):
 
     is_owner = (auth_u_id is owner_id)
 
-    
+    #Analytics
+    user_stats_dms_leave(auth_u_id)
 
     # STRUCTURE:
     #       "dm_id" : {'name' : 'a, b, c', owner_id' : 1, 'u_ids': [2,3,4], 'messages' : {},}
@@ -323,9 +322,6 @@ def dm_leave_v1(auth_u_id, dm_id):
     }})
 
     data_store.set(store)
-
-    #Analytics
-    user_stats_dms_leave(auth_u_id)
     
     return {}
 

@@ -101,7 +101,7 @@ def test_stats_dms_create_remove_leave():
                          'involvement_rate' : 0.0}
 
     r3 = user_stats(token3)
-    assert r2.json() == {'channels_joined': [{'num_channels_joined': 0, 'time_stamp': current_time}],
+    assert r3.json() == {'channels_joined': [{'num_channels_joined': 0, 'time_stamp': current_time}],
                          'dms_joined': [{'num_dms_joined': 0, 'time_stamp': current_time},
                                         {'num_dms_joined': 1, 'time_stamp': current_time},
                                         {'num_dms_joined': 0, 'time_stamp': current_time}],
