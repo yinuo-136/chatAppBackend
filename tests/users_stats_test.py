@@ -24,9 +24,9 @@ def test_users_stats_new_user():
     r1 = users_stats(token)
 
     assert r1.json() == {'channels_exist': [{'num_channels_exist': 0, 'time_stamp': current_time}],
-                    'dms_joined': [{'num_dms_exist': 0, 'time_stamp': current_time}],
-                    'messages_sent': [{'num_messages_exist': 0, 'time_stamp': current_time}],
-                    'utilization_rate' : 0.0}
+                        'dms_joined': [{'num_dms_exist': 0, 'time_stamp': current_time}],
+                        'messages_sent': [{'num_messages_exist': 0, 'time_stamp': current_time}],
+                        'utilization_rate' : 0.0}
 
 	
 
