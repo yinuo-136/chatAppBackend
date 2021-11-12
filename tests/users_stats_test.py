@@ -8,24 +8,24 @@ from wrapper.channels_wrappers import user_create_channel
 #utilisation_rate calc = num_users_who_have_joined_at_least_one_channel_or_dm / num_users
 
 def test_users_stats_new_user():
-	clear_http()
+    clear_http()
 	
 	
-	dt = datetime.now(timezone.utc)
+    dt = datetime.now(timezone.utc)
     timestamp = dt.replace(tzinfo=timezone.utc).timestamp()
     current_time = int(timestamp)
 
 	
 	
-	r = auth_register("test_1@gmail.com", "password", "John", "Smith")
-	token = r.json()['token']
+    r = auth_register("test_1@gmail.com", "password", "John", "Smith")
+    token = r.json()['token']
 	
-	r1 = users_stats(token)
+    r1 = users_stats(token)
 
-	assert r1.json() == {'channels_exist': [{'num_channels_exist': 0, 'time_stamp': current_time}],
-                        'dms_joined': [{'num_dms_exist': 0, 'time_stamp': current_time}],
-                        'messages_sent': [{'num_messages_exist': 0, 'time_stamp': current_time}],
-                        'utilization_rate' : 0.0}
+    assert r1.json() == {'channels_exist': [{'num_channels_exist': 0, 'time_stamp': current_time}],
+                    'dms_joined': [{'num_dms_exist': 0, 'time_stamp': current_time}],
+                    'messages_sent': [{'num_messages_exist': 0, 'time_stamp': current_time}],
+                    'utilization_rate' : 0.0}
 
 	
 
