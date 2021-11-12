@@ -737,8 +737,6 @@ def user_stats():
     #token check 
     token_checker(token)
     
-    
-    
     workspace_stats = users_stats_v1()
     return dumps(workspace_stats)
     

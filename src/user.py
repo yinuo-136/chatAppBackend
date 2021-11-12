@@ -6,6 +6,7 @@ from PIL import Image
 from src.config import url
 from src.data_store import data_store
 from src.error import InputError, AccessError
+from src.stats import stats_update_utilization
 
 
 
@@ -104,6 +105,9 @@ def users_stats_v1():
     store = data_store.get()
     workspace_stats_data = store['workspace_stats']
    
+    #update utilization_rate
+    stats_update_utilization()
+    
     return {
         "workspace_stats": workspace_stats_data
     }

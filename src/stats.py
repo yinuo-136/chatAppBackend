@@ -75,6 +75,9 @@ def stats_update_utilization():
         for u_id in members:
             if u_id not in joined_users:
                 joined_users.append(u_id)
+        if dm['owner_id'] != None and dm['owner_id'] not in joined_users:
+            joined_users.append(dm['owner_id'])    
+        
 
     num_joined_users = len(joined_users)
     

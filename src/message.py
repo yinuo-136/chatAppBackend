@@ -72,7 +72,7 @@ def message_send_v1(user_id, channel_id, message):
 	
     #user/stats helper function calls
     stats_message_send()
-    stats_update_utilization()	
+
     return {'message_id': message_id}
 
 
@@ -137,7 +137,6 @@ def message_senddm_v1(user_id, dm_id, message):
     
     #user/stats helper function calls
     stats_message_send()
-    stats_update_utilization()
     return {'message_id': message_id}
 
 
@@ -256,7 +255,6 @@ def message_remove_v1(user_id, message_id):
     m_dict.pop(message_id) 
     #user/stats helper function calls
     stats_message_send() 
-    stats_update_utilization()
     return {} 
 
 
@@ -553,6 +551,9 @@ def send_later_helper_channel(channel_id, message_id, message, user_id):
     channel = store['channels'].get(channel_id)
     channel[4].append(message_id)
     
+    #user/stats helper function call
+    stats_message_send()
+    
     data_store.set(store)
 
 def message_send_later_channel(user_id, channel_id, message, time_sent):
@@ -600,9 +601,6 @@ def message_send_later_channel(user_id, channel_id, message, time_sent):
     t.start()
     
     
-    #user/stats helper function call
-    stats_message_send()
-    stats_update_utilization()
     return {'message_id': message_id} 
     
 def send_later_helper_dm(dm_id, message_id, message, user_id):
@@ -627,6 +625,9 @@ def send_later_helper_dm(dm_id, message_id, message, user_id):
 
     dm = store['dms'].get(dm_id)
     dm['messages'].append(message_id)
+    
+    #user/stats helper function calls
+    stats_message_send()
     
     data_store.set(store)
     
@@ -673,9 +674,6 @@ def message_send_later_dm(user_id, dm_id, message, time_sent):
     t = threading.Timer(time_until_send, send_later_helper_dm, [dm_id, message_id, message, user_id])
     t.start()
     
-    #user/stats helper function calls
-    stats_message_send()
-    stats_update_utilization()
     return {'message_id': message_id} 
 
 

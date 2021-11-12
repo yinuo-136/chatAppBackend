@@ -97,7 +97,6 @@ def dm_create_v1(owner_u_id, u_ids):
     # dummy code for `dm_id` return
     #call user/stats helper function and append initial object 
     stats_dm_create()
-    stats_update_utilization()
     return { 'dm_id' : dm_id }
 
 
@@ -185,9 +184,7 @@ def dm_remove_v1(u_id, dm_id):
     #print(all_dm_dict)
     all_dm_dict.pop(dm_id) # remove this entry from the dm dict
     #print(all_dm_dict)
-    stats_dm_remove()
-    stats_update_utilization()
-    
+    stats_dm_remove()  
     return {}
 
 
