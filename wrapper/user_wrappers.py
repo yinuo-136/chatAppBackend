@@ -53,3 +53,8 @@ def user_stats(token):
     payload = {'token' : token}
 
     return requests.get(config.url + "user/stats/v1", params = payload)
+
+def users_stats(token):
+    payload = {'token' : token}
+    
+    return requests.get(config.url + "users/stats/v1", params = payload)

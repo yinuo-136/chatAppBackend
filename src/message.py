@@ -6,8 +6,8 @@ from src.data_store import data_store
 from datetime import datetime, timezone
 from src.notifications import notification_tag, update_notification_channel, update_notification_dm, update_react_notification
 from src.user_stats import user_stats_messages
-
-   
+from src.stats import stats_message_send, stats_update_utilization
+    
 def message_send_v1(user_id, channel_id, message):
     store = data_store.get()
     channel_dict = store['channels']
@@ -50,6 +50,8 @@ def message_send_v1(user_id, channel_id, message):
     #add the is_pinned attribute
     is_pinned = False
     
+
+    
     message_info.update({message_id: [user_id, message, time_created, sent_location, shared_message, reacts, is_pinned]})
 
     #notification implementation
@@ -67,12 +69,14 @@ def message_send_v1(user_id, channel_id, message):
 
         #update the notification dict
         update_notification_channel(store, handle_list, n_dict, channel_id)
+	
+    #user/stats helper function calls
+    stats_message_send()
 
     #Analytics
     user_stats_messages(user_id)
 
     return {'message_id': message_id}
-
 
 
 
@@ -136,6 +140,9 @@ def message_senddm_v1(user_id, dm_id, message):
 
     #Analytics
     user_stats_messages(user_id)
+    
+    #user/stats helper function calls
+    stats_message_send()
 
     return {'message_id': message_id}
 
@@ -252,7 +259,9 @@ def message_remove_v1(user_id, message_id):
     else: 
         dm_info = store['dms'][m_location[1]]
         dm_info['messages'].remove(message_id)
-    m_dict.pop(message_id)    
+    m_dict.pop(message_id) 
+    #user/stats helper function calls
+    stats_message_send() 
     return {} 
 
 
@@ -552,6 +561,9 @@ def send_later_helper_channel(channel_id, message_id, message, user_id):
     #Analytics
     user_stats_messages(user_id)
 
+    #user/stats helper function call
+    stats_message_send()
+
     data_store.set(store)
 
 def message_send_later_channel(user_id, channel_id, message, time_sent):
@@ -598,9 +610,6 @@ def message_send_later_channel(user_id, channel_id, message, time_sent):
     t = threading.Timer(time_until_send, send_later_helper_channel, [channel_id, message_id, message, user_id])
     t.start()
     
-    #Analytics
-    user_stats_messages(user_id)
-
     return {'message_id': message_id} 
     
 def send_later_helper_dm(dm_id, message_id, message, user_id):
@@ -625,6 +634,12 @@ def send_later_helper_dm(dm_id, message_id, message, user_id):
 
     dm = store['dms'].get(dm_id)
     dm['messages'].append(message_id)
+    
+    #Analytics
+    user_stats_messages(user_id)
+
+    #user/stats helper function calls
+    stats_message_send()
     
     data_store.set(store)
     
@@ -671,7 +686,5 @@ def message_send_later_dm(user_id, dm_id, message, time_sent):
     t = threading.Timer(time_until_send, send_later_helper_dm, [dm_id, message_id, message, user_id])
     t.start()
 
-    #Analytics
-    user_stats_messages(user_id)
     
     return {'message_id': message_id} 
