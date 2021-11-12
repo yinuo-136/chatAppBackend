@@ -2,6 +2,7 @@ from src.error import InputError
 from src.error import AccessError
 from src.data_store import data_store
 from src.user import user_details
+from src.user_stats import user_stats_dms_join, user_stats_dms_leave
 from itertools import islice
 
 
@@ -91,6 +92,12 @@ def dm_create_v1(owner_u_id, u_ids):
         else:
             store['notifications'][u_id].append(n_dict)
 
+    #Analytics
+    #Owner
+    user_stats_dms_join(owner_u_id)
+    #Members
+    for member in u_ids:
+        user_stats_dms_join(member)
 
     # dummy code for `dm_id` return
     return { 'dm_id' : dm_id }
@@ -181,7 +188,13 @@ def dm_remove_v1(u_id, dm_id):
     all_dm_dict.pop(dm_id) # remove this entry from the dm dict
     #print(all_dm_dict)
 
-    
+    #Analytics
+    #Owner
+    user_stats_dms_leave(u_id)
+    #Members
+    for member in store['dms'][dm_id]['u_ids']:
+        user_stats_dms_leave(member)
+
     return {}
 
 
@@ -310,6 +323,9 @@ def dm_leave_v1(auth_u_id, dm_id):
     }})
 
     data_store.set(store)
+
+    #Analytics
+    user_stats_dms_leave(auth_u_id)
     
     return {}
 

@@ -3,6 +3,7 @@ from src.error import AccessError
 from src.data_store import data_store
 from src.user import user_details
 from src.message import message_send_v1
+from src.user_stats import user_stats_messages
 import threading
 from datetime import datetime, timezone
 import time
@@ -18,6 +19,9 @@ def standup_wait_thread(length, u_id, c_id):
     message = '\n'.join(message_list)
 
     message_send_v1(u_id, c_id, message)
+
+    #Analytics
+    user_stats_messages(u_id)
 
     store['standups'].pop(c_id)
 

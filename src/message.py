@@ -5,7 +5,8 @@ from src.error import AccessError
 from src.data_store import data_store
 from datetime import datetime, timezone
 from src.notifications import notification_tag, update_notification_channel, update_notification_dm, update_react_notification
-    
+from src.user_stats import user_stats_messages
+
    
 def message_send_v1(user_id, channel_id, message):
     store = data_store.get()
@@ -66,6 +67,9 @@ def message_send_v1(user_id, channel_id, message):
 
         #update the notification dict
         update_notification_channel(store, handle_list, n_dict, channel_id)
+
+    #Analytics
+    user_stats_messages(user_id)
 
     return {'message_id': message_id}
 
@@ -129,6 +133,10 @@ def message_senddm_v1(user_id, dm_id, message):
 
         #update the notification dict
         update_notification_dm(store, handle_list, n_dict, dm_id)
+
+    #Analytics
+    user_stats_messages(user_id)
+
     return {'message_id': message_id}
 
 
@@ -541,6 +549,9 @@ def send_later_helper_channel(channel_id, message_id, message, user_id):
     channel = store['channels'].get(channel_id)
     channel[4].append(message_id)
     
+    #Analytics
+    user_stats_messages(user_id)
+
     data_store.set(store)
 
 def message_send_later_channel(user_id, channel_id, message, time_sent):
@@ -587,6 +598,9 @@ def message_send_later_channel(user_id, channel_id, message, time_sent):
     t = threading.Timer(time_until_send, send_later_helper_channel, [channel_id, message_id, message, user_id])
     t.start()
     
+    #Analytics
+    user_stats_messages(user_id)
+
     return {'message_id': message_id} 
     
 def send_later_helper_dm(dm_id, message_id, message, user_id):
@@ -656,7 +670,8 @@ def message_send_later_dm(user_id, dm_id, message, time_sent):
     
     t = threading.Timer(time_until_send, send_later_helper_dm, [dm_id, message_id, message, user_id])
     t.start()
+
+    #Analytics
+    user_stats_messages(user_id)
     
     return {'message_id': message_id} 
-
-
