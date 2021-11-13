@@ -1,7 +1,7 @@
 from src.data_store import data_store
 from src.error import InputError, AccessError
 
-def is_only_global_owner():
+def is_only_global_owner() -> bool:
     store = data_store.get()
     
     num_global_owners = 0
@@ -15,7 +15,7 @@ def is_only_global_owner():
     else:
         return False   
      
-def admin_user_remove(auth_user_id, u_id):
+def admin_user_remove(auth_user_id :int, u_id :int)-> None:
     store = data_store.get()
     
     if u_id not in store['user_details'].keys():
@@ -71,7 +71,7 @@ def admin_user_remove(auth_user_id, u_id):
     data_store.set(store)
     
     
-def admin_permission_change(auth_user_id, u_id, permission_id):
+def admin_permission_change(auth_user_id :int, u_id :int, permission_id :int) -> None:
     store = data_store.get()
 
     if u_id not in store['user_details'].keys():

@@ -7,8 +7,9 @@ from datetime import datetime, timezone
 from src.notifications import notification_tag, update_notification_channel, update_notification_dm, update_react_notification
 from src.user_stats import user_stats_messages
 from src.stats import stats_message_send, stats_update_utilization
-    
-def message_send_v1(user_id, channel_id, message):
+from typing import List, Dict, Union 
+
+def message_send_v1(user_id :int, channel_id :int, message :str)->dict:
     store = data_store.get()
     channel_dict = store['channels']
 
@@ -45,7 +46,7 @@ def message_send_v1(user_id, channel_id, message):
     channel_info[4].append(message_id)
 
     #add the reacts
-    reacts = {1:[]}
+    reacts :dict = {1:[]}
 
     #add the is_pinned attribute
     is_pinned = False
@@ -80,7 +81,7 @@ def message_send_v1(user_id, channel_id, message):
 
 
 
-def message_senddm_v1(user_id, dm_id, message):
+def message_senddm_v1(user_id :int, dm_id :int, message :str)->dict:
     store = data_store.get()
     dm_dict = store['dms']
 
@@ -115,7 +116,7 @@ def message_senddm_v1(user_id, dm_id, message):
     dm_info['messages'].append(message_id)
 
     #add reacts
-    reacts = {1:[]}
+    reacts :dict = {1:[]}
 
     #add the is_pinned attribute
     is_pinned = False
@@ -148,7 +149,7 @@ def message_senddm_v1(user_id, dm_id, message):
 
 
 
-def message_edit_v1(user_id, message_id, message):
+def message_edit_v1(user_id :int, message_id :int, message :str)->dict:
     store = data_store.get()
     m_dict = store['messages']
     if message_id not in m_dict:
@@ -222,7 +223,7 @@ def message_edit_v1(user_id, message_id, message):
 
 
 
-def message_remove_v1(user_id, message_id):
+def message_remove_v1(user_id :int, message_id :int)->dict:
     store = data_store.get()
     m_dict = store['messages']
     if message_id not in m_dict:
@@ -265,7 +266,7 @@ def message_remove_v1(user_id, message_id):
     return {} 
 
 
-def message_share_v1(user_id, message_id, message, channel_id, dm_id):
+def message_share_v1(user_id :int, message_id :int, message :str, channel_id :int, dm_id :int)->dict:
     store = data_store.get() 
     c_list = store['channels']
     dm_list = store['dms']
@@ -325,7 +326,7 @@ def message_share_v1(user_id, message_id, message, channel_id, dm_id):
         dm_list[dm_id]['messages'].append(shared_message_id)
     
     #add reacts
-    reacts = {1:[]}
+    reacts :dict = {1:[]}
 
     #add the is_pinned attribute
     is_pinned = False
@@ -363,7 +364,7 @@ def message_share_v1(user_id, message_id, message, channel_id, dm_id):
 
 
 
-def message_react_v1(user_id, message_id, react_id):
+def message_react_v1(user_id :int, message_id :int, react_id :int)->dict:
     store = data_store.get()
 
     #check if message_id is not a valid message within a channel or DM that the authorised user has joined ot not
@@ -415,7 +416,7 @@ def message_react_v1(user_id, message_id, react_id):
     update_react_notification(store, n_dict, message_id)
     return {}
 
-def message_unreact_v1(user_id, message_id, react_id):
+def message_unreact_v1(user_id :int, message_id :int, react_id :int)->dict:
     store = data_store.get()
 
     #check if message_id is not a valid message within a channel or DM that the authorised user has joined ot not
@@ -452,7 +453,7 @@ def message_unreact_v1(user_id, message_id, react_id):
 
     return {}
 
-def message_pin_v1(user_id, message_id):
+def message_pin_v1(user_id :int, message_id :int)->dict:
     store = data_store.get()
 
     #check if message_id is not a valid message within a channel or DM that the authorised user has joined ot not
@@ -491,7 +492,7 @@ def message_pin_v1(user_id, message_id):
 
     return {}
 
-def message_unpin_v1(user_id, message_id):
+def message_unpin_v1(user_id :int, message_id :int)->dict:
     store = data_store.get()
 
     #check if message_id is not a valid message within a channel or DM that the authorised user has joined ot not
@@ -566,7 +567,7 @@ def send_later_helper_channel(channel_id, message_id, message, user_id):
 
     data_store.set(store)
 
-def message_send_later_channel(user_id, channel_id, message, time_sent):
+def message_send_later_channel(user_id :int, channel_id :int, message :str, time_sent :int) ->dict:
     store = data_store.get()
     
     if channel_id not in store['channels'].keys():
@@ -597,7 +598,7 @@ def message_send_later_channel(user_id, channel_id, message, time_sent):
     shared_message = ''
 
     #add the reacts
-    reacts = {1:[]}
+    reacts :dict = {1:[]}
 
     #add the is_pinned attribute
     is_pinned  = False
@@ -643,7 +644,7 @@ def send_later_helper_dm(dm_id, message_id, message, user_id):
     
     data_store.set(store)
     
-def message_send_later_dm(user_id, dm_id, message, time_sent):
+def message_send_later_dm(user_id :int, dm_id :int, message :str, time_sent :int)->dict:
     #{ "dms" : { "dm_id" : {'name' : 'a, b, c', owner_id' : 1, 'u_ids': [2,3,4], 'messages' : [] } } }
     store = data_store.get()
     
@@ -675,7 +676,7 @@ def message_send_later_dm(user_id, dm_id, message, time_sent):
     shared_message = ''
 
     #add reacts
-    reacts = {1:[]}
+    reacts :dict = {1:[]}
 
     #add the is_pinned attribute
     is_pinned = False     

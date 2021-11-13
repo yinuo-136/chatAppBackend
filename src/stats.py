@@ -1,14 +1,14 @@
 from src.data_store import data_store
 from datetime import datetime, timezone
 
-def current_time():
+def current_time()->int:
     dt = datetime.now(timezone.utc)
     timestamp = dt.replace(tzinfo=timezone.utc).timestamp()
     current_time = int(timestamp)
     
     return current_time
    
-def stats_channel_create():
+def stats_channel_create()->None:
     store = data_store.get()
     
     channels_exist = store["workspace_stats"]["channels_exist"]
@@ -20,7 +20,7 @@ def stats_channel_create():
         'time_stamp' : current_time()
     })
     
-def stats_dm_create():
+def stats_dm_create()->None:
 	store = data_store.get()
 	
 	dms_exist = store["workspace_stats"]["dms_exist"]
@@ -33,7 +33,7 @@ def stats_dm_create():
 	})
 	
 	
-def stats_dm_remove():
+def stats_dm_remove()->None:
     store = data_store.get()
     
     dms_exist = store["workspace_stats"]["dms_exist"]
@@ -44,7 +44,7 @@ def stats_dm_remove():
 		'time_stamp' : current_time()
 	})
 
-def stats_message_send():
+def stats_message_send()->None:
 	store = data_store.get()
 	messages_exist = store["workspace_stats"]["messages_exist"]
 	
@@ -55,7 +55,7 @@ def stats_message_send():
 	    'time_stamp' : current_time()
 	})
 	
-def stats_update_utilization():
+def stats_update_utilization()->None:
     #rate = num_users_who_have_joined_at_least_one_channel_or_dm / num_users
     
     store = data_store.get()

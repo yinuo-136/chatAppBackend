@@ -1,6 +1,6 @@
 from src.data_store import data_store
 
-def clear_v1():
+def clear_v1()->dict:
     store = data_store.get()
     
     store['registered_users'] = {}
