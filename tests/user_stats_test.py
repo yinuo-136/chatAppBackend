@@ -21,8 +21,6 @@ def time():
 def test_stats_new_user(time):
     clear_http()
     
-    current_time = time    
-    
     r = auth_register("test@gmail.com", "password", "Steven", "Wolfe")
     token = r.json()['token']
 
@@ -35,9 +33,7 @@ def test_stats_new_user(time):
 
 
 def test_stats_channel_create_join_leave_invite(time):
-    clear_http()
-    
-    current_time = time    
+    clear_http()   
 
     user = auth_register("test@gmail.com", "password", "Steven", "Wolfe")
     token = user.json()['token']
@@ -65,9 +61,7 @@ def test_stats_channel_create_join_leave_invite(time):
     assert r2.json()['user_stats']['involvement_rate'] == 1.0
 
 def test_stats_dms_create_remove(time):
-    clear_http()
-
-    current_time = time    
+    clear_http() 
     
     user = auth_register("test@gmail.com", "password", "Steven", "Wolfe")
     token = user.json()['token']
