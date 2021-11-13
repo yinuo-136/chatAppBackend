@@ -161,7 +161,7 @@ def user_profile_uploadphoto(user_id, img_url, x_start, y_start, x_end, y_end):
     
     cropped_image.save("src/static/" + path)
     
-    new_img_url = url + "src/static/" + path
+    new_img_url = url + "static/" + path
     
     store['user_details'].update({user_id : (user[0], user[1], user[2], user[3], user[4] , new_img_url)})
     
