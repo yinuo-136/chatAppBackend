@@ -5,7 +5,7 @@ from flask_mail import Message
 from src.error import InputError
 from src.data_store import data_store
 
-def user_has_a_session(user_id):
+def user_has_a_session(user_id :int)->bool:
     store = data_store.get()
     
     for session in store['session_ids']:
@@ -15,7 +15,7 @@ def user_has_a_session(user_id):
     return False
 
     
-def password_request_v1(email):
+def password_request_v1(email :str):
     store = data_store.get()
     
     user_id = store['user_ids'].get(email)
@@ -43,7 +43,7 @@ def password_request_v1(email):
     
     return msg
     
-def password_reset_v1(new_password, reset_code):
+def password_reset_v1(new_password :str, reset_code :str)->None:
     if len(new_password) < 6:
         raise InputError("New password must be 6 or more characters")
     

@@ -1,9 +1,9 @@
 from src.error import InputError
 from src.data_store import data_store
+from typing import List, Dict, Union
 
 
-
-def get_message_info(auth_user_id ,m_id, m_dict):
+def get_message_info(auth_user_id :int,m_id :int, m_dict :dict)->Dict[str,Union[int, str, bool, list]]:
     message_id = m_id
     u_id = m_dict[m_id][0]
     message = m_dict[m_id][1]
@@ -32,7 +32,7 @@ def get_message_info(auth_user_id ,m_id, m_dict):
             'is_pinned': is_pinned}
 
 
-def search_v1(user_id, query_str):
+def search_v1(user_id :int, query_str :str)->Dict[str, list]:
     #raise InputError if length of query_str is less than 1 or over 1000 characters
     if len(query_str) < 1 or len(query_str) > 1000:
         raise InputError(description="length of query_str is less than 1 or over 1000 characters")

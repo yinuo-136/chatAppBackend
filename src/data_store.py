@@ -1,3 +1,4 @@
+import typing
 '''
 data_store.py
 
@@ -25,7 +26,8 @@ Example usage:
 '''
 
 ## YOU SHOULD MODIFY THIS OBJECT BELOW
-initial_object = {
+collection = typing.Union[tuple, list, dict]
+initial_object :typing.Dict[str, collection] = {
     'registered_users' : {},
     'user_ids': {},
     'logged_in_users' : [],

@@ -1,6 +1,7 @@
 from src.data_store import data_store
+from typing import List, Dict, Union
 
-def notification_tag(message):
+def notification_tag(message :str)->List[str]:
     handle_list = []
     temp_handle = ''
 
@@ -58,7 +59,7 @@ def update_react_notification(store, n_dict, m_id):
         store['notifications'][u_id].append(n_dict)
 
 
-def notifications_get_v1(u_id):
+def notifications_get_v1(u_id :int)->dict:
     store = data_store.get()
     n_info = store['notifications']
     if u_id not in n_info:

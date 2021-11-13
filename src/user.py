@@ -7,16 +7,17 @@ from src.config import url
 from src.data_store import data_store
 from src.error import InputError, AccessError
 from src.stats import stats_update_utilization
+import typing
 
 
-
-def user_details(u_id):
+def user_details(u_id :int)->typing.Dict[str, typing.Union[str, int]]:
     store = data_store.get()
     
     if u_id not in store['user_details'].keys():
         raise InputError("The u_id provided doesn't exist")
     
-    user = store['user_details'].get(u_id)
+    user_type = typing.Union[list, tuple]
+    user :user_type = store['user_details'].get(u_id)
     
     return {
         'u_id' : u_id,
@@ -27,7 +28,7 @@ def user_details(u_id):
         'profile_img_url' : user[5]
     }
 
-def list_all_users():
+def list_all_users()->typing.List[typing.Dict[str, typing.Union[str, int]]]:
     store = data_store.get()
     users = []
     
@@ -47,14 +48,15 @@ def list_all_users():
     return users
 
 
-def user_set_name(u_id, name_first, name_last):
+def user_set_name(u_id :int, name_first :str, name_last: str)->None:
     if len(name_first) < 1 or len(name_first) > 50:
         raise InputError("First name must be between 1 and 50 characters")
     elif len(name_last) < 1 or len(name_last) > 50:
         raise InputError("Last name must be between 1 and 50 characters")
         
     store = data_store.get()
-    
+    user_type = typing.Union[list, tuple]
+    user :user_type
     user = list(store['user_details'].get(u_id))
     user[2] = name_first
     user[3] = name_last
@@ -62,7 +64,7 @@ def user_set_name(u_id, name_first, name_last):
     user = tuple(user)
     store['user_details'].update({u_id: user})
 
-def user_set_email(u_id, email):
+def user_set_email(u_id :int, email :str)->None:
     #implement error for email
     regex = r'^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}$'
 
@@ -75,13 +77,17 @@ def user_set_email(u_id, email):
     if email in store['registered_users'].keys():
         raise InputError("A user with that email already exists")
 
+    #type checking   
+    user_type = typing.Union[list, tuple]
+    user :user_type
+
     user = list(store['user_details'].get(u_id))
     user[0] = email
     
     user = tuple(user)
     store['user_details'].update({u_id: user})
 
-def user_set_handle(u_id, handle_str):
+def user_set_handle(u_id :int, handle_str :str)->None:
     if len(handle_str) < 3 or len(handle_str) > 20:
         raise InputError("Handle length must be between 3 to 20 characters")
     elif handle_str.isalnum() == False:
@@ -92,7 +98,10 @@ def user_set_handle(u_id, handle_str):
     for user_id, usr in store['user_details'].items():
         if user_id != u_id and usr[4] == handle_str:
             raise InputError("Handle is taken by another user")
-    
+    #type checking
+    user_type = typing.Union[list, tuple]
+    user :user_type
+
     user = list(store['user_details'].get(u_id))
     user[4] = handle_str
     
@@ -101,7 +110,7 @@ def user_set_handle(u_id, handle_str):
     store['user_details'].update({u_id: user})
     
 
-def users_stats_v1():
+def users_stats_v1()->typing.Dict[str, typing.Union[float, typing.List[typing.Dict[str, int]]]]:
     store = data_store.get()
     workspace_stats_data = store['workspace_stats']
    
@@ -113,7 +122,7 @@ def users_stats_v1():
     }
 
     
-def user_profile_uploadphoto(user_id, img_url, x_start, y_start, x_end, y_end):
+def user_profile_uploadphoto(user_id :int, img_url :str, x_start :int, y_start :int, x_end :int, y_end :int) ->None:
     store = data_store.get()
     
     user = store['user_details'].get(user_id)
@@ -165,7 +174,7 @@ def user_profile_uploadphoto(user_id, img_url, x_start, y_start, x_end, y_end):
     
     store['user_details'].update({user_id : (user[0], user[1], user[2], user[3], user[4] , new_img_url)})
     
-def user_stats_v1(u_id):
+def user_stats_v1(u_id :int)->typing.Dict[str, typing.Union[float, typing.List[typing.Dict[str, int]]]]:
     store = data_store.get()
     
     #(sum(num_channels_joined, num_dms_joined, num_msgs_sent)) / (sum(num_channels, num_dms, num_msgs))

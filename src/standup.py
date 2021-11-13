@@ -8,7 +8,7 @@ import threading
 from datetime import datetime, timezone
 import time
 
-def standup_wait_thread(length, u_id, c_id):
+def standup_wait_thread(length :int, u_id :int, c_id :int)->None:
 
     time.sleep(length) # sleep for the length of time, then send msg
 
@@ -26,7 +26,7 @@ def standup_wait_thread(length, u_id, c_id):
     store['standups'].pop(c_id)
 
 
-def standup_create_v1(u_id, c_id, length):
+def standup_create_v1(u_id :int, c_id :int, length :int)->dict:
 
     '''
     Parameters:     { token, channel_id, length }
@@ -94,7 +94,7 @@ def standup_create_v1(u_id, c_id, length):
 
 
 
-def standup_active_v1(u_id, c_id):
+def standup_active_v1(u_id :int, c_id :int)->dict:
 
 
     #Parameters:{ token, channel_id }Return Type:{ is_active, time_finish }
@@ -138,7 +138,7 @@ def standup_active_v1(u_id, c_id):
 
 
 
-def standup_send_v1(u_id, c_id, message):
+def standup_send_v1(u_id :int, c_id :int, message :str)->dict:
 
     '''
     Parameters:     { token, channel_id, message }

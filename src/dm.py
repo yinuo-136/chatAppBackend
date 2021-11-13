@@ -5,10 +5,10 @@ from src.user import user_details
 from src.user_stats import user_stats_dms_join, user_stats_dms_leave
 from src.stats import stats_dm_create, stats_update_utilization, stats_dm_remove
 from itertools import islice
-
+from typing import List, Dict, Union
 
 # TODO(nick): this function. It is currently a stub.
-def dm_create_v1(owner_u_id, u_ids):
+def dm_create_v1(owner_u_id :int, u_ids :List[int])->Dict[str, int]:
 
     '''
     u_ids contains the user(s) that this DM is directed to, and will not include the creator. 
@@ -66,7 +66,7 @@ def dm_create_v1(owner_u_id, u_ids):
     dm_name = ', '.join(all_user_handles)
     owner_id = owner_u_id
     members = u_ids
-    messages = []
+    messages:List[int] = []
 
     #print(f"Dm Name: \'{dm_name}\'")
 
@@ -109,7 +109,7 @@ def dm_create_v1(owner_u_id, u_ids):
     return { 'dm_id' : dm_id }
 
 
-def dm_list_v1(member_id):
+def dm_list_v1(member_id :int)->dict:
 
     '''
     Returns { dms } => List of dictionaries, where each dictionary contains types { dm_id, name } 
@@ -155,7 +155,7 @@ def dm_list_v1(member_id):
 
 
 # Remove an existing DM, so all members are no longer in the DM. This can only be done by the original creator of the DM.
-def dm_remove_v1(u_id, dm_id):
+def dm_remove_v1(u_id :int, dm_id :int)->dict:
 
     '''
     Parameters:     { token, dm_id }
@@ -204,7 +204,7 @@ def dm_remove_v1(u_id, dm_id):
 
 
 
-def dm_details_v1(auth_u_id, dm_id):
+def dm_details_v1(auth_u_id :int, dm_id :int)->dict:
 
     '''
     Given a DM with ID dm_id that the authorised user is a member of, provide basic details about the DM.
@@ -262,7 +262,7 @@ def dm_details_v1(auth_u_id, dm_id):
 
 
 
-def dm_leave_v1(auth_u_id, dm_id):
+def dm_leave_v1(auth_u_id :int, dm_id :int)->dict:
 
     #Input error when dm_id is INVALID
 
@@ -334,7 +334,7 @@ def dm_leave_v1(auth_u_id, dm_id):
 
 
 
-def dm_messages_v1(auth_u_id, dm_id, start):
+def dm_messages_v1(auth_u_id :int, dm_id :int, start :int)->dict:
 
     '''
     Given a DM with ID dm_id that the authorised user is a member of, return up to 50 messages between index "start" and "start + 50". 

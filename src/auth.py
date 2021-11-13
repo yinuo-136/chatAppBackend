@@ -7,6 +7,7 @@ from src.data_store import data_store
 from src.error import InputError, AccessError
 from src.config import url
 from datetime import datetime, timezone
+import typing
 
 def check_user_details(password, name_first, name_last):
     '''
@@ -36,7 +37,7 @@ def check_user_details(password, name_first, name_last):
     if len(name_last) > 50 or len(name_last) < 1:
         raise InputError("Last Name must be between 1 and 50 characters!")
 
-def auth_login_v1(email, password):
+def auth_login_v1(email :str, password :str) ->typing.Dict[str, int]:
     '''
     <Logs a user into Streams and appends them to logged_in_users member in
     data_store, includes relevant error checking>
@@ -68,7 +69,7 @@ def auth_login_v1(email, password):
     }
 
 
-def auth_register_v1(email, password, name_first, name_last):
+def auth_register_v1(email :str, password :str, name_first :str, name_last :str) ->typing.Dict[str, int]:
     '''
     <Registers a new user with the Streams platform>
 
@@ -125,11 +126,13 @@ def auth_register_v1(email, password, name_first, name_last):
     
     #### INITIALISATION OF WORKSPACE STATS ####
     if len(store['registered_users'].keys()) == 0:
-        workspace_stats = {}
+        workspace_type = typing.Dict[str, typing.Union[float, typing.List[typing.Dict[str, int]]]]
+        workspace_stats : workspace_type = {}
         
         dt = datetime.now(timezone.utc)
         timestamp = dt.replace(tzinfo=timezone.utc).timestamp()
         current_time = int(timestamp)  
+        
         
         workspace_stats.update({'channels_exist' : [{'num_channels_exist' : 0, 'time_stamp' : current_time}]})
         workspace_stats.update({'dms_exist' : [{'num_dms_exist' : 0, 'time_stamp' : current_time}]})     
@@ -174,17 +177,17 @@ def auth_register_v1(email, password, name_first, name_last):
         'auth_user_id': new_id,
     }
     
-def auth_logout_v1(auth_user_id):
+def auth_logout_v1(auth_user_id :int)->None:
     store = data_store.get()
     
     store['logged_in_users'].remove(auth_user_id)
     
-def auth_store_session_id(u_id, session_id):
+def auth_store_session_id(u_id :int, session_id :int)->None:
     store = data_store.get()
 
     store['session_ids'].append((u_id, session_id))
    
-def auth_invalidate_session(u_id, session_id):
+def auth_invalidate_session(u_id :int, session_id :int)->None:
 
     store = data_store.get()
 
