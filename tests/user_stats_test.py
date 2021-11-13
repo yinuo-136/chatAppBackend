@@ -27,11 +27,11 @@ def test_stats_new_user(time):
     token = r.json()['token']
 
     r1 = user_stats(token)
-
-    assert r1.json() == {'channels_joined': [{'num_channels_joined': 0, 'time_stamp': current_time}],
-                         'dms_joined': [{'num_dms_joined': 0, 'time_stamp': current_time}],
-                         'messages_sent': [{'num_messages_sent': 0, 'time_stamp': current_time}],
-                         'involvement_rate' : 0.0}
+                         
+    assert r1.json()['user_stats']['channels_joined'][-1]['num_channels_joined'] == 0
+    assert r1.json()['user_stats']['dms_joined'][-1]['num_dms_joined'] == 0
+    assert r1.json()['user_stats']['messages_sent'][-1]['num_messages_sent'] == 0
+    assert r1.json()['user_stats']['involvement_rate'] == 0.0
 
 
 def test_stats_channel_create_join_leave_invite(time):
@@ -51,21 +51,18 @@ def test_stats_channel_create_join_leave_invite(time):
     channel_invite(token, channel_id, u_id2)
 
     r1 = user_stats(token)
-    assert r1.json() == {'channels_joined': [{'num_channels_joined': 0, 'time_stamp': current_time},
-                                             {'num_channels_joined': 1, 'time_stamp': current_time}],
-                         'dms_joined': [{'num_dms_joined': 0, 'time_stamp': current_time}],
-                         'messages_sent': [{'num_messages_sent': 0, 'time_stamp': current_time}],
-                         'involvement_rate' : 1.0}   
-
+    
+    assert r1.json()['user_stats']['channels_joined'][-1]['num_channels_joined'] == 1
+    assert r1.json()['user_stats']['dms_joined'][-1]['num_dms_joined'] == 0
+    assert r1.json()['user_stats']['messages_sent'][-1]['num_messages_sent'] == 0
+    assert r1.json()['user_stats']['involvement_rate'] == 1.0
+    
     r2 = user_stats(token2)
-    assert r2.json() == {'channels_joined': [{'num_channels_joined': 0, 'time_stamp': current_time},
-                                             {'num_channels_joined': 1, 'time_stamp': current_time},
-                                             {'num_channels_joined': 0, 'time_stamp': current_time},
-                                             {'num_channels_joined': 1, 'time_stamp': current_time}],
-                         'dms_joined': [{'num_dms_joined': 0, 'time_stamp': current_time}],
-                         'messages_sent': [{'num_messages_sent': 0, 'time_stamp': current_time}],
-                         'involvement_rate' : 1.0} 
 
+    assert r2.json()['user_stats']['channels_joined'][-1]['num_channels_joined'] == 1
+    assert r2.json()['user_stats']['dms_joined'][-1]['num_dms_joined'] == 0
+    assert r2.json()['user_stats']['messages_sent'][-1]['num_messages_sent'] == 0
+    assert r2.json()['user_stats']['involvement_rate'] == 1.0
 
 def test_stats_dms_create_remove(time):
     clear_http()
@@ -86,28 +83,25 @@ def test_stats_dms_create_remove(time):
     
 
     r1 = user_stats(token)
-    assert r1.json() == {'channels_joined': [{'num_channels_joined': 0, 'time_stamp': current_time}],
-                         'dms_joined': [{'num_dms_joined': 0, 'time_stamp': current_time},
-                                        {'num_dms_joined': 1, 'time_stamp': current_time},
-                                        {'num_dms_joined': 0, 'time_stamp': current_time}],
-                         'messages_sent': [{'num_messages_sent': 0, 'time_stamp': current_time}],
-                         'involvement_rate' : 0.0}   
+                         
+    assert r1.json()['user_stats']['channels_joined'][-1]['num_channels_joined'] == 0
+    assert r1.json()['user_stats']['dms_joined'][-1]['num_dms_joined'] == 0
+    assert r1.json()['user_stats']['messages_sent'][-1]['num_messages_sent'] == 0
+    assert r1.json()['user_stats']['involvement_rate'] == 0.0 
 
     r2 = user_stats(token2)
-    assert r2.json() == {'channels_joined': [{'num_channels_joined': 0, 'time_stamp': current_time}],
-                         'dms_joined': [{'num_dms_joined': 0, 'time_stamp': current_time},
-                                        {'num_dms_joined': 1, 'time_stamp': current_time},
-                                        {'num_dms_joined': 0, 'time_stamp': current_time}],
-                         'messages_sent': [{'num_messages_sent': 0, 'time_stamp': current_time}],
-                         'involvement_rate' : 0.0}
-
+             
+    assert r2.json()['user_stats']['channels_joined'][-1]['num_channels_joined'] == 0
+    assert r2.json()['user_stats']['dms_joined'][-1]['num_dms_joined'] == 0
+    assert r2.json()['user_stats']['messages_sent'][-1]['num_messages_sent'] == 0
+    assert r2.json()['user_stats']['involvement_rate'] == 0.0
+    
     r3 = user_stats(token3)
-    assert r3.json() == {'channels_joined': [{'num_channels_joined': 0, 'time_stamp': current_time}],
-                         'dms_joined': [{'num_dms_joined': 0, 'time_stamp': current_time},
-                                        {'num_dms_joined': 1, 'time_stamp': current_time},
-                                        {'num_dms_joined': 0, 'time_stamp': current_time}],
-                         'messages_sent': [{'num_messages_sent': 0, 'time_stamp': current_time}],
-                         'involvement_rate' : 0.0}
+    
+    assert r3.json()['user_stats']['channels_joined'][-1]['num_channels_joined'] == 0
+    assert r3.json()['user_stats']['dms_joined'][-1]['num_dms_joined'] == 0
+    assert r3.json()['user_stats']['messages_sent'][-1]['num_messages_sent'] == 0
+    assert r3.json()['user_stats']['involvement_rate'] == 0.0
 
 
 def test_stats_dms_leave(time):
@@ -123,11 +117,11 @@ def test_stats_dms_leave(time):
     dm_leave_wrapper(token2, 1)
 
     r1 = user_stats(token)
-    assert r1.json()['dms_joined'][-1]['num_dms_joined'] == 1
+    assert r1.json()['user_stats']['dms_joined'][-1]['num_dms_joined'] == 1
 
 
     r2 = user_stats(token2)
-    assert r2.json()['dms_joined'][-1]['num_dms_joined'] == 0
+    assert r2.json()['user_stats']['dms_joined'][-1]['num_dms_joined'] == 0
 
 
 
@@ -170,16 +164,16 @@ def test_stats_messages_send(time):
 
     r1 = user_stats(token)
     
-    assert r1.json()['channels_joined'][-1]['num_channels_joined'] == 1
-    assert r1.json()['dms_joined'][-1]['num_dms_joined'] == 1
-    assert r1.json()['messages_sent'][-1]['num_messages_sent'] == 3
-    assert r1.json()['involvement_rate'] == 0.625
+    assert r1.json()['user_stats']['channels_joined'][-1]['num_channels_joined'] == 1
+    assert r1.json()['user_stats']['dms_joined'][-1]['num_dms_joined'] == 1
+    assert r1.json()['user_stats']['messages_sent'][-1]['num_messages_sent'] == 3
+    assert r1.json()['user_stats']['involvement_rate'] == 0.625
     
 
     r2 = user_stats(token2)
     
-    assert r2.json()['channels_joined'][-1]['num_channels_joined'] == 0
-    assert r2.json()['dms_joined'][-1]['num_dms_joined'] == 1
-    assert r2.json()['messages_sent'][-1]['num_messages_sent'] == 3
-    assert r2.json()['involvement_rate'] == 0.5
+    assert r2.json()['user_stats']['channels_joined'][-1]['num_channels_joined'] == 0
+    assert r2.json()['user_stats']['dms_joined'][-1]['num_dms_joined'] == 1
+    assert r2.json()['user_stats']['messages_sent'][-1]['num_messages_sent'] == 3
+    assert r2.json()['user_stats']['involvement_rate'] == 0.5
     

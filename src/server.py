@@ -302,7 +302,7 @@ def user_stats():
     user_id = payload.get('user_id')
     stats = user_stats_v1(user_id)
 
-    return dumps(stats)
+    return dumps({'user_stats' : stats})
 
 @APP.route("/admin/user/remove/v1", methods=['DELETE'])
 def admin_remove():

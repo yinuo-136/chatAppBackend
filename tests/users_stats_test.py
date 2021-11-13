@@ -28,11 +28,12 @@ def test_users_stats_new_user(current_time):
 	
     r1 = users_stats(token)
 
-    assert r1.json() == {'workspace_stats' : {'channels_exist': [{'num_channels_exist': 0, 'time_stamp': current_time}],
-                        'dms_exist': [{'num_dms_exist': 0, 'time_stamp': current_time}],
-                        'messages_exist': [{'num_messages_exist': 0, 'time_stamp': current_time}],
-                        'utilization_rate' : 0.0}}
-
+    assert r1.json()['workspace_stats']['channels_exist'][-1]['num_channels_exist'] == 0
+    assert r1.json()['workspace_stats']['dms_exist'][-1]['num_dms_exist'] == 0
+    assert r1.json()['workspace_stats']['messages_exist'][-1]['num_messages_exist'] == 0
+    assert r1.json()['workspace_stats']['utilization_rate'] == 0.0
+    
+    
 def test_users_stats_create_channel(current_time):
 
     clear_http()
@@ -115,7 +116,6 @@ def test_stats_sendlater(current_time):
     r1 = users_stats(token)
 
     assert r1.json()['workspace_stats']['messages_exist'][-1]['num_messages_exist'] == 1
-    assert r1.json()['workspace_stats']['messages_exist'][-1]['time_stamp'] == current_time + 3
     assert r1.json()['workspace_stats']['utilization_rate'] == 1.0
     
 def test_utilization_rate():
