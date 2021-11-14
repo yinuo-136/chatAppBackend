@@ -5,7 +5,7 @@ from src.user_stats import user_stats_channels_join
 from datetime import datetime, timezone
 from src.stats import stats_channel_create
 
-def channels_list_v1(auth_user_id):
+def channels_list_v1(auth_user_id : int)-> dict:
 
     store = data_store.get()
 
@@ -25,7 +25,7 @@ def channels_list_v1(auth_user_id):
     	'channels':list_dict  
     }
 
-def channels_listall_v1():
+def channels_listall_v1()->dict:
     '''
     <this function checks the auth_user_id then return errors or the list
     of channels that have been created>
@@ -57,7 +57,7 @@ def channels_listall_v1():
         'channels': all_list
     }
 
-def channels_create_v1(auth_user_id, name, is_public):
+def channels_create_v1(auth_user_id : int, name : str, is_public : bool)->dict:
     '''
     <create a channel based on the creator, channel name and property(public/private)>
 

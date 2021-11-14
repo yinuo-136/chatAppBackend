@@ -9,7 +9,7 @@ from src.config import url
 from datetime import datetime, timezone
 import typing
 
-def check_user_details(password, name_first, name_last):
+def check_user_details(password : str, name_first : str, name_last : str)-> None:
     '''
     Checks the validity/length of passwords and users first/last name
 
