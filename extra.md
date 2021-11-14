@@ -1,6 +1,6 @@
-#EXTRA FEATURES
+# EXTRA FEATURES
 
-##DARK MODE
+## DARK MODE
 
 A brief explanation of your additions:
 - Dark mode was implemented on the front end of the project-frontend repo via a fork. The feature required some work as I had to self-learn at least a small portion of React, but was quite simple once I noticed the central `themes.js` file which I was able to leverage.
