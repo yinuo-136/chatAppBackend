@@ -10,7 +10,7 @@ A brief explanation of your additions:
 
 ## TYPE CHECKING
 
--type checking is implemented on the backend toward all the functions called by the server.
--type checking mainly focus on the type correctness of parameters and retuen types of the function.
--type checking also include some checking toward variables(with complicate data structures) that in the function 
--type checking is done by the module `typing`, the mainly used methods are `Tuple`, `List`, `Dict` and `Union`
+- type checking is implemented on the backend toward all the functions called by the server.
+- type checking mainly focus on the type correctness of parameters and retuen types of the function.
+- type checking also include some checking toward variables(with complicate data structures) that in the function 
+- type checking is done by the module `typing`, the mainly used methods are `Tuple`, `List`, `Dict` and `Union`
