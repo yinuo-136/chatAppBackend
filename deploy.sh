@@ -2,7 +2,7 @@
 
 WORKING_DIRECTORY="~/www/cs1531deploy"
 
-USERNAME="H13BALPACA"
+USERNAME="h13balpaca"
 SSH_HOST="ssh-h13balpaca.alwaysdata.net"
 
 rm -rf ./**/__pycache__ ./**/.pytest_cache > /dev/null
