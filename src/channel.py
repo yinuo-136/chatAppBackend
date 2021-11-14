@@ -3,9 +3,9 @@ from src.error import AccessError
 from src.data_store import data_store
 from src.user_stats import user_stats_channels_join, user_stats_channels_leave
 from itertools import islice
+from typing import List, Dict, Union
 
-
-def channel_invite_v1(auth_user_id, channel_id, u_id):
+def channel_invite_v1(auth_user_id :int, channel_id :int, u_id :int)->dict:
     '''
     <Invites a user with ID u_id to join a channel with ID channel_id.>
     <Once invited, the user is added to the channel immediately.>
@@ -73,7 +73,7 @@ def channel_invite_v1(auth_user_id, channel_id, u_id):
     
     return {}
 
-def channel_details_v1(auth_user_id, channel_id):
+def channel_details_v1(auth_user_id :int, channel_id :int)->Dict[str, Union[str, bool, list]]:
     '''
     <Provides basic channel details about the relevant channel>
 
@@ -136,7 +136,7 @@ def channel_details_v1(auth_user_id, channel_id):
     }
 
 
-def channel_messages_v1(auth_user_id, channel_id, start):
+def channel_messages_v1(auth_user_id :int, channel_id :int, start :int)->Dict[str, Union[list, int]]:
     '''
     <return 50 messages from the start point in a channel>
 
@@ -212,7 +212,7 @@ def channel_messages_v1(auth_user_id, channel_id, start):
         'end': end
     }
 
-def channel_join_v1(auth_user_id, channel_id):
+def channel_join_v1(auth_user_id :int, channel_id :int)->dict:
     '''
     <allows authorised user to join the channel>
 
@@ -266,7 +266,7 @@ def channel_join_v1(auth_user_id, channel_id):
     return {}
 
 
-def channel_leave_v1(user_id, channel_id):
+def channel_leave_v1(user_id :int, channel_id :int)->dict:
     store = data_store.get()
 
     channel_dict = store['channels']
@@ -287,7 +287,7 @@ def channel_leave_v1(user_id, channel_id):
     
     return {}
 
-def channel_addowner_v1(auth_user_id, channel_id, u_id):
+def channel_addowner_v1(auth_user_id :int, channel_id :int, u_id :int)->dict:
     store = data_store.get()
 
     #check if channel_id refers to a valid channel
@@ -320,7 +320,7 @@ def channel_addowner_v1(auth_user_id, channel_id, u_id):
 
     return {}
 
-def channel_removeowner_v1(auth_user_id, channel_id, u_id):
+def channel_removeowner_v1(auth_user_id :int, channel_id :int, u_id :int)->dict:
     store = data_store.get()
 
     #check if channel_id refers to a valid channel

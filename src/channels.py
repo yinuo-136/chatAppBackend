@@ -4,8 +4,10 @@ from src.data_store import data_store
 from src.user_stats import user_stats_channels_join
 from datetime import datetime, timezone
 from src.stats import stats_channel_create
+from typing import Dict, List, Union
 
-def channels_list_v1(auth_user_id):
+
+def channels_list_v1(auth_user_id :int)->Dict[str, list]:
 
     store = data_store.get()
 
@@ -25,7 +27,7 @@ def channels_list_v1(auth_user_id):
     	'channels':list_dict  
     }
 
-def channels_listall_v1():
+def channels_listall_v1()->Dict[str, list]:
     '''
     <this function checks the auth_user_id then return errors or the list
     of channels that have been created>
@@ -42,6 +44,7 @@ def channels_listall_v1():
     store = data_store.get()
 
     #implement the return list_all dictionary
+    all_list :list
     all_list = []
     channel_list = store['channels']
     if channel_list == {}:
@@ -57,7 +60,7 @@ def channels_listall_v1():
         'channels': all_list
     }
 
-def channels_create_v1(auth_user_id, name, is_public):
+def channels_create_v1(auth_user_id :int, name :str, is_public :bool)->dict:
     '''
     <create a channel based on the creator, channel name and property(public/private)>
 
@@ -83,7 +86,7 @@ def channels_create_v1(auth_user_id, name, is_public):
     c_id = len(store['channels']) + 1
     owner = [auth_user_id]
     members = [auth_user_id]
-    messages = []
+    messages :list = []
     store['channels'].update({c_id : (name, is_public, owner, members, messages)})
 
     #Analytics
